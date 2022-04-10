@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+ intervalo_app:
+  build:
+   args:
+    user: germanmdd
+    uid: 1001
+   context: ./
+   dockerfile: Dockerfile
+  image: intervalo
+  container_name: intervalo-app
+  restart: unless-stopped
+  working_dir: /usr/share/nginx/html
+  volumes:
+    - /media/psf/Home/www/intervalo/src:/usr/share/nginx/html
+  networks:
+    - intervalo
+
+ intervalo_db:
+  image: mariadb
+  container_name: intervalo-db
+  restart: unless-stopped
+  environment:
+    MYSQL_DATABASE: intervalodb
+    MYSQL_ROOT_PASSWORD: 123123
+    MYSQL_PASSWORD: 123123
+    MYSQL_USER: root
+  volumes:
+  - intervalodata:/var/lib/mysq
+  networks:
+  - intervalo
+
+ nginx_intervalo:
+  image: nginx
+  volumes:
+  - /media/psf/Home/www/intervalo/src:/usr/share/nginx/html
+  - /media/psf/Home/www/intervalo:/etc/nginx/conf.d
+  ports:
+  -  "8005:80"
+  networks:
+  - intervalo
+
+networks:
+  intervalo:
+    driver: bridge
+
+volumes:
+ intervalodata:
+   name: intervalodata
+   external: true
