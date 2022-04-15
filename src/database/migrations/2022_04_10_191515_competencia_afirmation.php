@@ -13,11 +13,11 @@ class CompetenciaAfirmation extends Migration
      */
     public function up()
     {
-        Schema::create('competencia_afirmacion', function (Blueprint $table) {
+        Schema::create('afirmation_competencia', function (Blueprint $table) {
             $table->id();
 
-            $table->bigInteger('competencia_id')->unsigned();
             $table->bigInteger('afirmation_id')->unsigned();
+            $table->bigInteger('competencia_id')->unsigned();
 
             $table->timestamps();
 
@@ -39,6 +39,6 @@ class CompetenciaAfirmation extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('competencia_afirmacion');
+        Schema::dropIfExists('afirmation_competencia');
     }
 }

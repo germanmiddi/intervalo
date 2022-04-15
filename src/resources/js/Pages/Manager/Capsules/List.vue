@@ -3,9 +3,9 @@
         <!-- CONTENT -->
         <div class="focus-within:content flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Competencias</h1>
+                <h1 class="my-10 text-4xl font-bold">Capsulas</h1>
                 <div>
-                    <Link :href="route('competencia.create')">Crear</Link>
+                    <Link :href="route('capsule.create')">Crear</Link>
                 </div>
             </div>
             <div class="card mx-auto 
@@ -15,14 +15,16 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <!-- <th class="px-6 py-4 text-center">ID</th> -->
-                            <th class="px-6 py-4 text-center">Competencia</th>
-                            <th class="px-6 py-4 text-center">Definicion</th>
+                            <th class="px-6 py-4 text-center">Titulo</th>
+                            <th class="px-6 py-4 text-center">Descripción</th>
+                            <th class="px-6 py-4 text-center">Imagen</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
                         <!-- {{orders.items}} -->
-                         <tr v-for="c in competencias.data" :key="c.id" class="hover:bg-gray-50">
-                            <td class="border-t px-6 py-4 text-center">{{c.competencia}}</td>
-                            <td class="border-t px-6 py-4 text-center">{{c.definicion}}</td>
+                         <tr v-for="c in capsules.data" :key="c.id" class="hover:bg-gray-50">
+                            <td class="border-t px-6 py-4 text-center">{{c.title}}</td>
+                            <td class="border-t px-6 py-4 text-center">{{c.description}}</td>
+                            <td class="border-t px-6 py-4 text-center">{{c.image}}</td>
                             <td class="border-t px-6 py-4 text-center">
                                 <div class="flex">
                                     <Link class="hover:text-blue-500"  tabindex="-1" >Detalle</Link>                                    
@@ -44,13 +46,11 @@
 <script>
     import { Head, Link } from '@inertiajs/inertia-vue3';
     import App from '@/Layouts/App.vue'
-    import Pageheader from '@/Layouts/Pageheader.vue'
-    import Pagination from '@/Layouts/Pagination'
     import Icons from '@/Layouts/Components/Icons.vue'    
 
     export default {
         props:{
-            competencias: Object
+            capsules: Object
         },
         components: {
             App,

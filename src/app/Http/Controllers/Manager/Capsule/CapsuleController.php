@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Manager\Competencia;
+namespace App\Http\Controllers\Manager\Capsule;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -8,24 +8,24 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
-use App\Models\Competencia;
+use App\Models\Capsule;
 
-class CompetenciaController extends Controller
+class CapsuleController extends Controller
 {
     public function index()
     {
 
-        $result = Competencia::query();
+        $result = Capsule::query();
         
-        return  Inertia::render('Manager/Competencias/List', 
+        return  Inertia::render('Manager/Capsules/List', 
         [
-            'competencias' =>  $result->paginate(999)
+            'capsules' =>  $result->paginate(999)
                                     ->withQueryString()
                                     ->through(fn ($c) => [
-                                        'id'            => $c->id,
-                                        'competencia'   => $c->competencia,
-                                        'definicion'    => substr($c->definicion,0,50) . '...',
-                                        'comportamiento'=> $c->comportamiento,
+                                        'id'          => $c->id,
+                                        'title'       => $c->title,
+                                        'description' => substr($c->description,0,50) . '...',
+                                        'image'       => $c->image,
                                         ])
         ]);
     }
@@ -38,7 +38,7 @@ class CompetenciaController extends Controller
 
     public function create()
     {
-        return  Inertia::render('Manager/Competencias/Create');        
+        return  Inertia::render('Manager/Capsules/Create');        
     }
 
     /**
@@ -51,11 +51,12 @@ class CompetenciaController extends Controller
     public function store(Request $request)
     {
 
-        Competencia::create($request->all());
+        Capsule::create($request->all());
 
-        return Redirect::route('competencia.list');
+        return Redirect::route('capsule.list');
         
     }
+
 
 
 }

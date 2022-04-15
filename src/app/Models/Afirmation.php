@@ -6,19 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Competencia extends Model
+class Afirmation extends Model
 {
     protected $fillable = [
-        'competencia',
-        'definicion',
-        'comportamiento',
+        'text'
     ];
 
     use HasFactory;
     use SoftDeletes;
 
-    public function afirmations()
+    public function Competencias()
     {
-        return $this->belongsToMany(Afirmation::class);
-    } 
+        return $this->belongsToMany(Competencia::class);
+    }
+
 }

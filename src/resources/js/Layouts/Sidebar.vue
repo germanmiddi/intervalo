@@ -19,20 +19,35 @@
               <li class="nav-item">
                 <nav-link :href="route('competencia.list')" 
                       :active="route().current('competencia.list')">
-                      <Icons name="shopping-cart" class="mr-5 w-6 h-6" ></Icons>
+                      <!-- <Icons name="shopping-cart" class="mr-5 w-6 h-6" ></Icons> -->
                       <span class="nav-label font-medium text-sm pt-1">Competencias</span>
                 </nav-link>   
               </li>
              
-              <!-- <li class="nav-item">
-                <nav-link :href="route('order.list')" 
-                      :active="route().current('books.list')">
-                      <Icons name="truck" class="h-6 w-6 mr-5" />
-                      <span class="nav-label font-medium text-sm pt-1">Envios</span>
+              <li class="nav-item">
+                <nav-link :href="route('afirmation.list')" 
+                      :active="route().current('afirmation.list')">
+                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <span class="nav-label font-medium text-sm pt-1">Afirmaciones</span>
+                </nav-link>   
+              </li>              
+
+              <li class="nav-item">
+                <nav-link :href="route('capsule.list')" 
+                      :active="route().current('capsule.list')">
+                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <span class="nav-label font-medium text-sm pt-1">Capsulas</span>
+                </nav-link>   
+              </li>              
+ 
+              <li class="nav-item">
+                <nav-link >
+                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <span class="nav-label font-medium text-sm pt-1">Usuarios</span>
                 </nav-link>   
               </li>              
               
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <nav-link :href="route('order.list')" 
                       :active="route().current('libraries.list')">
                       <Icons name="file" class="h-6 w-6 mr-5"/>
