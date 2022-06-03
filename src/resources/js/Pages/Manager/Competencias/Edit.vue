@@ -2,7 +2,7 @@
     <App>
         <div class="flex-grow flex flex-col w-10/12 mx-auto p-10">
             <div class="w-full mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Nueva Competencia</h1>
+                <h1 class="my-10 text-4xl font-bold">Editar Competencia</h1>
                 <div>
                     <button class="btn btn-primary" @click.prevent="submit">Guardar</button>
                 </div>
@@ -12,7 +12,7 @@
                     <div class="col-span-3 text-lg px-5 py-4 font-bold">
                         <div>Información General</div> 
                     </div>
-                    <div class="card col-span-3 pt-6 mb-8 pb-80   px-6">
+                    <div class="col-span-3 pt-6 px-6">
                         <div class="">
                             <label for="competencia" class="block text-sm font-semibold text-gray-700">Competencia</label>
                             <input v-model="form.competencia" type="text" name="competencia" id="competencia"  class="mt-1 input input-bordered w-full" />
@@ -51,19 +51,20 @@
                         </div>                    
 
                     </div>
-
-
-                    <!-- <div class="col-span-3 text-lg px-5 py-4 font-bold">
-                        <div>Afirmaciones</div> 
-                    </div>
-                    <div class="card col-span-3 pt-6 pb-8 px-6">
-                        <div class="">
-                            <label for="competencia" class="block text-sm font-semibold text-gray-700">Competencia</label>
-                            <input v-model="form.competencia" type="text" name="competencia" id="competencia"  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                    <div class="col-span-3 w-full mx-auto border-b border-gray-300 py-5"></div>
+                    
+                    <div class="col-span-3" v-if="competencia.afirmations">
+                        <div class="col-span-3 text-lg px-5 py-4 font-bold">
+                            <div>Afirmaciones</div> 
                         </div>
-
-                    </div> -->
-
+                        <div class="col-span-3">
+                            <ul>
+                                <li v-for="af in competencia.afirmations" :key="af.id"
+                                    class="py-2 pl-6 border-b "
+                                    >{{af.text}} <a class="link link-primary ml-2" :href="route('afirmation.edit', af.id)">Ver</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
             </form>
@@ -79,12 +80,9 @@
 
     export default {
         props: {
+            competencia: Object,
             categories:Object,
             capsules: Object
-            // section: String,
-            // title: String,
-            // buttons: Object,
-            // libraries: Object
         },
         components: {
             Head,
@@ -93,14 +91,23 @@
             Multiselect            
         },
         data(){
+            var data = {
+                competencia: this.competencia.competencia,
+                resume: this.competencia.resume,
+                definicion: this.competencia.definicion,
+                comportamiento: this.competencia.comportamiento,
+                category_id: this.competencia.category_id,
+                tags: this.competencia.capsules.map( e => e.id)
+            }
+
             return{
-                form:{},
+                form:this.$inertia.form(data),
                 cap_list: this.capsules
             }
         },
         methods:{
             submit(){
-                this.$inertia.post(route('competencia.store'), this.form)
+                   this.$inertia.put(route('competencia.update', this.$props.competencia.id), this.form)
             }
         }
     }

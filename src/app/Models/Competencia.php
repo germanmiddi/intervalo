@@ -12,6 +12,8 @@ class Competencia extends Model
         'competencia',
         'definicion',
         'comportamiento',
+        'resume',
+        'category_id'
     ];
 
     use HasFactory;
@@ -21,4 +23,14 @@ class Competencia extends Model
     {
         return $this->belongsToMany(Afirmation::class);
     } 
+
+    public function Capsules()
+    {
+        return $this->belongsToMany(Capsule::class);
+    }
+    
+    public function category(){
+
+        return $this->belongTo(Category::class);
+    }
 }

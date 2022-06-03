@@ -2,9 +2,9 @@
     <App>
         <div class="flex-grow flex flex-col w-10/12 mx-auto p-10">
             <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Nueva Afirmacion</h1>
+                <h1 class="my-10 text-4xl font-bold">Editar Afirmación</h1>
                 <div>
-                    <button @click.prevent="submit">Guardar</button>
+                    <button class="btn btn-primary btn-sm" @click.prevent="submit">Guardar</button>
                 </div>
             </div>        
             <form action="#" method="POST">
@@ -46,6 +46,7 @@
 
     export default {
         props: {
+            afirmation: Object,
             competencias: Object
         },
         components: {
@@ -55,15 +56,23 @@
             Multiselect
         },
         data(){
+            var data ={
+                text:      this.afirmation.text,
+                ponderacion: this.afirmation.ponderacion,
+                tags: this.afirmation.competencias.map((e)=>{
+                    return e.id
+                })
+            }
+
             return{
-                form:{},
+                form:this.$inertia.form(data),
                 com_list: this.competencias
             }
         },
         methods:{
 
             submit(){
-                this.$inertia.post(route('afirmation.store'), this.form)
+                this.$inertia.put(route('afirmation.update', this.$props.afirmation.id), this.form)
             }
         }
     }

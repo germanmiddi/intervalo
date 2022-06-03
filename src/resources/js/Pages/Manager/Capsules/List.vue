@@ -1,46 +1,39 @@
 <template>
     <App>
-        <!-- CONTENT -->
-        <div class="focus-within:content flex-grow flex flex-col">
+
+        <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Capsulas</h1>
+                <h1 class="my-10 text-4xl font-bold">Cápsulas</h1>
                 <div>
-                    <Link :href="route('capsule.create')">Crear</Link>
+                    <a class="btn btn-primary" :href="route('capsule.create')">Crear</a>
                 </div>
             </div>
-            <div class="card mx-auto 
-                             xl: w-11/12
-                             lg: w-11/12">
-                <div class="bg-white rounded-md shadow overflow-x-auto">    
-                    <table class="w-full whitespace-nowrap">
-                        <tr class="text-left font-bold bg-blue-500 text-white">
-                            <!-- <th class="px-6 py-4 text-center">ID</th> -->
-                            <th class="px-6 py-4 text-center">Titulo</th>
-                            <th class="px-6 py-4 text-center">Descripción</th>
-                            <th class="px-6 py-4 text-center">Imagen</th>
-                            <th class="px-6 py-4 text-center">Acciones</th>
+
+            <div class="w-11/12 mx-auto">
+                <table class="table w-full">
+                    <thead>
+                        <tr>
+                            <th class="w-1/5">Título</th>
+                            <th class="w-3/5 px-6 py-4 text-center">Descripción</th>
+                            <th class="w-1/5 px-6 py-4 text-center">Acciones</th>
                         </tr>
-                        <!-- {{orders.items}} -->
-                         <tr v-for="c in capsules.data" :key="c.id" class="hover:bg-gray-50">
-                            <td class="border-t px-6 py-4 text-center">{{c.title}}</td>
-                            <td class="border-t px-6 py-4 text-center">{{c.description}}</td>
-                            <td class="border-t px-6 py-4 text-center">{{c.image}}</td>
-                            <td class="border-t px-6 py-4 text-center">
-                                <div class="flex">
-                                    <Link class="hover:text-blue-500"  tabindex="-1" >Detalle</Link>                                    
-
-                                </div>
-                               
+                    </thead>
+                    <tbody>
+                        <tr v-for="c in capsules.data" :key="c.id" class="hover">
+                            <td class="" >{{c.id}} - {{c.title}}</td>
+                            <td class="" >{{c.description}}</td>
+                            <td class="text-center flex justify-center items-center">
+                                <a class="link" :href="route('capsule.edit', c.id)">Detalle</a>
+                                <button class="ml-2"> <Icons class="w-5 h-5" name="trash" /></button>
                             </td>
-                        </tr> 
-                    </table>
-                </div>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <!-- / CONTENT -->
+        </div>
    </App>
-  
+ 
 </template>
 
 <script>

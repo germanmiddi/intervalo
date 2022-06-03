@@ -13,26 +13,28 @@ use App\Models\Competencia;
 
 class AfirmationController extends Controller
 {
+    
     public function index()
     {
+        return  Inertia::render('Manager/Afirmations/List');
+    }
+    
+    public function list()
+    {
+        $length = request('length');
         $result = Afirmation::query();
         
-        return  Inertia::render('Manager/Afirmations/List', 
-        [
-            'afirmaciones' =>  $result->paginate(999)
-                                    ->withQueryString()
-                                    ->through(fn ($a) => [
-                                        'id'     => $a->id,
-                                        'text'   => $a->text
-                                        ])
-        ]);
-    }
+        if(request('search')){
+            $result->where('text','LIKE', '%' . request('search') . '%' );
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+        return $result->paginate($length)
+                        ->withQueryString()
+                        ->through(fn ($a) => [
+                                    'id'     => $a->id,
+                                    'text'   => $a->text
+                        ]);
+    }
 
     public function create()
     {
@@ -62,11 +64,69 @@ class AfirmationController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->input());
+        
         Afirmation::create($request->all())->competencias()->attach($request->input("tags"));
 
-        return Redirect::route('afirmation.list');
+        return Redirect::route('afirmation');
         
+    }
+
+     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Afirmation $afirmation)
+    {
+
+        $competencia = Competencia::all()->toArray();
+        
+        $comp_list = array_map(function ($c){
+                        return 
+                        [
+                            'value'=> $c['id'],
+                            'label' => $c['competencia']
+                        ];
+                    }, $competencia);
+
+        $competencias_asignadas = $afirmation->Competencias;
+
+        return Inertia::render('Manager/Afirmations/Edit', [
+            'afirmation'      => $afirmation,
+            // 'afirmation_compe' =>$competencias_asignadas,
+            'competencias'    => $comp_list
+        ]);
+
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Afirmation $afirmation)
+    {
+        $afirmation->update($request->all());
+        $afirmation->Competencias()->sync($request->input('tags'));
+
+        return Redirect::route('afirmation');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Afirmation $afirmation)
+    {
+        $afirmation->delete();
+
+        return Redirect::back()->with('success', 'Afirmation Eliminado');
     }
 
 }

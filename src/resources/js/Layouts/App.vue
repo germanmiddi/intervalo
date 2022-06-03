@@ -1,6 +1,6 @@
 <template>
 
-<div class="min-h-screen flex flex-col justify-between text-gray-600 ">
+<div data-theme="winter"  class="min-h-screen flex flex-col justify-between text-gray-600 ">
   <!-- TOP NAVBAR -->
   <Navheader/>  
   <!-- / TOP NAVBAR -->

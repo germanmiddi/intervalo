@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Afirmation;
 use App\Models\Competencia;
+use App\Models\Category;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -31,6 +32,17 @@ class DatabaseSeeder extends Seeder
             'definicion' => 'Se refiere a la capacidad de elegir con criterio propio; de llevar ',
             'comportamiento' => "El conocimiento de sí mism@, conciencia y aplicación de valores y actitudes personales "
         ]);
+
+        Category::create(['title'=> 'INNOVACIÓN']);
+        Category::create(['title' => 'LOGRO']);
+        Category::create(['title' => 'COLABORACIÓN']);
+        Category::create(['title' => 'LIDERAZGO']);
+        
+
+        
+
+        
+
 
     }
 }

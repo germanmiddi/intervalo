@@ -1,7 +1,7 @@
 <template>
     <div class="navbar bg-base-100 max-w-screen-xl mx-auto  ">
         <div class="flex-1">
-            <img class="w-40" src="img/logotipo.png" alt="">
+            <img class="w-40" src="/img/logotipo.png" alt="">
             <!-- <a class="btn btn-ghost normal-case text-xl">daisyUI</a> -->
         </div>
         <!-- <div class="flex-none">

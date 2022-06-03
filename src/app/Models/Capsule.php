@@ -17,4 +17,9 @@ class Capsule extends Model
 
     use HasFactory;
     use SoftDeletes;
+
+    public function Competencias()
+    {
+        return $this->belongsToMany(Competencia::class);
+    }
 }

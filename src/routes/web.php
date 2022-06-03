@@ -6,6 +6,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\Manager\Competencia\CompetenciaController;
 use App\Http\Controllers\Manager\Afirmation\AfirmationController;
+use App\Http\Controllers\Manager\Afirmation\ImportController;
 use App\Http\Controllers\Manager\Capsule\CapsuleController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Web\HomeController;
@@ -39,8 +40,27 @@ Route::post('/competencia', [CompetenciaController::class, 'store'])
     ->name('competencia.store')
     ->middleware('auth');
 
+
+Route::get('competencia/{competencia}/edit', [CompetenciaController::class, 'edit'])
+    ->name('competencia.edit')
+    ->middleware('auth');  
+
+Route::put('competencia/{competencia}', [CompetenciaController::class, 'update'])
+    ->name('competencia.update')
+    ->middleware('auth');
+
+Route::delete('competencia/{competencia}', [CompetenciaController::class, 'destroy'])
+    ->name('competencia.destroy')
+    ->middleware('auth');
+
+
+
     //Afirmaciones
 Route::get('/afirmation', [AfirmationController::class, 'index'])
+    ->name('afirmation')
+    ->middleware('auth');
+
+Route::get('/afirmation/list', [AfirmationController::class, 'list'])
     ->name('afirmation.list')
     ->middleware('auth');
 
@@ -51,6 +71,27 @@ Route::get('/afirmation/create', [AfirmationController::class, 'create'])
 Route::post('/afirmation', [AfirmationController::class, 'store'])
     ->name('afirmation.store')
     ->middleware('auth');    
+
+Route::get('/afirmation/import', [ImportController::class, 'import'])
+    ->name('afirmation.import')
+    ->middleware('auth');  
+
+Route::post('/afirmation/importfile', [ImportController::class, 'importfile'])
+    ->name('afirmation.importfile')
+    ->middleware('auth');   
+
+Route::get('afirmation/{afirmation}/edit', [AfirmationController::class, 'edit'])
+    ->name('afirmation.edit')
+    ->middleware('auth');  
+
+Route::put('afirmation/{afirmation}', [AfirmationController::class, 'update'])
+    ->name('afirmation.update')
+    ->middleware('auth');
+
+Route::delete('afirmation/{afirmation}', [AfirmationController::class, 'destroy'])
+    ->name('afirmation.destroy')
+    ->middleware('auth');
+
 
     //Capsulas
 Route::get('/capsule', [CapsuleController::class, 'index'])
@@ -65,11 +106,21 @@ Route::post('/capsule', [CapsuleController::class, 'store'])
     ->name('capsule.store')
     ->middleware('auth');    
 
+Route::get('/capsule/{capsule}/edit', [CapsuleController::class, 'edit'])
+    ->name('capsule.edit')
+    ->middleware('auth');    
+
     
     //Web
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');    
 
     //Web
-Route::get('/quiz', [QuizController::class, 'index'])
+Route::get('/quiz/{competencias}', [QuizController::class, 'index'])
     ->name('quiz');        
+
+Route::post('/quiz/calculate', [QuizController::class, 'calculate'])
+    ->name('quiz.calculate');        
+
+Route::get('/result', [QuizController::class, 'result'])
+    ->name('result');        

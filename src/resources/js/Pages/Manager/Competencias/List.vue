@@ -1,44 +1,39 @@
 <template>
     <App>
-        <!-- CONTENT -->
-        <div class="focus-within:content flex-grow flex flex-col">
+        <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Competencias</h1>
                 <div>
-                    <Link :href="route('competencia.create')">Crear</Link>
+                    <a class="btn btn-primary" :href="route('competencia.create')">Crear</a>
                 </div>
             </div>
-            <div class="card mx-auto 
-                             xl: w-11/12
-                             lg: w-11/12">
-                <div class="bg-white rounded-md shadow overflow-x-auto">    
-                    <table class="w-full whitespace-nowrap">
-                        <tr class="text-left font-bold bg-blue-500 text-white">
-                            <!-- <th class="px-6 py-4 text-center">ID</th> -->
-                            <th class="px-6 py-4 text-center">Competencia</th>
-                            <th class="px-6 py-4 text-center">Definicion</th>
-                            <th class="px-6 py-4 text-center">Acciones</th>
+
+            <div class="w-11/12 mx-auto">
+                <table class="table w-full">
+                    <!-- head -->
+                    <thead>
+                        <tr>
+                            <th class="w-1/5 " >Competencia</th>
+                            <th class="w-3/5 px-6 py-4 text-center">Resumen</th>
+                            <th class="w-1/5 px-6 py-4 text-center">Acciones</th>
                         </tr>
-                        <!-- {{orders.items}} -->
-                         <tr v-for="c in competencias.data" :key="c.id" class="hover:bg-gray-50">
-                            <td class="border-t px-6 py-4 text-center">{{c.competencia}}</td>
-                            <td class="border-t px-6 py-4 text-center">{{c.definicion}}</td>
-                            <td class="border-t px-6 py-4 text-center">
-                                <div class="flex">
-                                    <Link class="hover:text-blue-500"  tabindex="-1" >Detalle</Link>                                    
-
-                                </div>
-                               
-                            </td>
-                        </tr> 
-                    </table>
-                </div>
+                    </thead>
+                    <tbody>
+                    <!-- row 1 -->
+                    <tr v-for="a in competencias.data" :key="a.id" class="hover">
+                        <td class="" >{{a.id}} - {{a.competencia}}</td>
+                        <td class="" >{{a.resume}}</td>
+                        <td class="text-center flex justify-center items-center">
+                            <a class="link" :href="route('competencia.edit', a.id)">Detalle </a>
+                            <button class="ml-2"> <Icons class="w-5 h-5" name="trash" />   </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <!-- / CONTENT -->
-   </App>
-  
+        </div>
+  </App>
 </template>
 
 <script>
