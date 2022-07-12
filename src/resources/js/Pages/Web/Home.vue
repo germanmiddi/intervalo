@@ -66,8 +66,10 @@
         <competencia-item
           @toggleText="toggleText"
           v-for="(c, idx) in competencies"
-          class="transition w-[30%] mt-10"
-          :class="c.visible ? '!w-[100%]' : null"
+          class="transition lg:w-[30%] md:w-[48%] sm:w-[100%] my-5 h-80"
+          :class="
+            c.visible ? 'lg:!w-[63%] md:!w-[100%] sm:!w-[100%] !h-auto' : null
+          "
           :key="c.id"
           :item="c"
           :index="idx"
@@ -132,8 +134,5 @@ export default {
 .transition {
   /* width: 30%; */
   transition: width 0.7s;
-}
-.transition-end {
-  /* width: 100%; */
 }
 </style>

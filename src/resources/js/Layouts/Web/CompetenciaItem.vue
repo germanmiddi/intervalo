@@ -15,7 +15,13 @@
       <p v-if="!item.visible" class="h-24">
         {{ item.resume.slice(0, 150) }}...
       </p>
-      <p v-else class="h-24 overflow-y-hidden">{{ item.resume }}</p>
+      <div v-else>
+        <p>{{ item.resume }}</p>
+        <h3 class="card-title text-academy-accent h-12">
+          {{ item.definicion }}
+        </h3>
+        <p>{{ item.comportamiento }}</p>
+      </div>
       <button
         class="mt-2"
         @click="(item.visible = !item.visible), toggleText()"
