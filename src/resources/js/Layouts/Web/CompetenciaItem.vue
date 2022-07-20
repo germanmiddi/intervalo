@@ -12,32 +12,19 @@
         {{ item.competencia }}
       </h2>
 
-      <p v-if="!item.visible" class="h-24">
-        {{ item.resume.slice(0, 150) }}...
-      </p>
-      <div v-else>
-        <p>{{ item.resume }}</p>
-        <h3 class="card-title text-academy-accent h-12">
-          {{ item.definicion }}
-        </h3>
-        <p>{{ item.comportamiento }}</p>
-      </div>
-      <button
-        class="mt-2"
-        @click="(item.visible = !item.visible), toggleText()"
-      >
-        <span v-if="!item.visible" class="font-bold ml-4">Leer mas</span>
-        <span v-else class="font-bold ml-4">Ocultar</span>
-      </button>
+      <p class="h-24">{{ item.resume.slice(0, 150) }}...</p>
+      <div class="flex items-center justify-between">
+        <button @click="sendItem()">
+          <span class="font-bold hover:underline duration-100">Leer mas</span>
+        </button>
 
-      <div class="flex justify-between">
-        <div class="card-actions justify-end w-full">
+        <div class="card-actions justify-end">
           <!-- <a @click="this.expand = !this.expand"> Más</a>
                 <a @click="this.expand = !this.expand"> Menos</a> -->
           <button
             v-show="!this.selected"
             @click="this.selected = !this.selected"
-            class="btn btn-primary space-x-2 mt-4"
+            class="btn btn-primary space-x-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +44,7 @@
           <button
             v-show="this.selected"
             @click="this.selected = !this.selected"
-            class="btn space-x-2 mt-4"
+            class="btn space-x-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +81,7 @@
 export default {
   props: {
     item: Object,
-    index: String,
+    index: [String, Number],
   },
   data() {
     return {
@@ -103,8 +90,9 @@ export default {
     };
   },
   methods: {
-    toggleText() {
-      this.$emit("toggleText", this.index);
+    sendItem() {
+      this.item.visible = true;
+      this.$emit("sendItem", this.item);
     },
   },
 };

@@ -1,4 +1,11 @@
 <template>
+  <transition name="expand">
+    <Modal
+      class="bg-gray-900/50"
+      :item="modalContent"
+      v-if="modalContent && modalContent.visible"
+    />
+  </transition>
   <App>
     <div
       class="hero"
@@ -24,7 +31,7 @@
                 placeholder="Buscar..."
                 class="input input-bordered"
               />
-              <button class="btn btn-primary">
+              <button class="btn btn-secondary">
                 <Icons name="search" class="h-6 w-6" />
               </button>
             </div>
@@ -63,13 +70,10 @@
       </div>
 
       <div class="flex flex-wrap justify-around">
-        <competencia-item
-          @toggleText="toggleText"
+        <CompetenciaItem
+          @sendItem="sendItem"
           v-for="(c, idx) in competencies"
-          class="transition lg:w-[30%] md:w-[48%] sm:w-[100%] my-5 h-80"
-          :class="
-            c.visible ? 'lg:!w-[63%] md:!w-[100%] sm:!w-[100%] !h-auto' : null
-          "
+          class="lg:w-[30%] md:w-[48%] sm:w-[100%] my-5 h-80"
           :key="c.id"
           :item="c"
           :index="idx"
@@ -85,6 +89,7 @@ import { Head } from "@inertiajs/inertia-vue3";
 import App from "@/Layouts/Web/App.vue";
 import Icons from "@/Layouts/Components/Icons.vue";
 import CompetenciaItem from "@/Layouts/Web/CompetenciaItem.vue";
+import Modal from "@/Layouts/Web/Modal.vue";
 
 export default {
   props: {
@@ -95,18 +100,15 @@ export default {
     App,
     Icons,
     CompetenciaItem,
+    Modal,
   },
   data() {
     return {
+      modalContent: null,
       competencies: null,
       start: true,
       compselected: [],
     };
-  },
-  methods: {
-    toggleText(val) {
-      this.competencies[val].visible = !this.competencies[val].visible;
-    },
   },
   created() {
     this.competencies = this.competencias;
@@ -126,13 +128,21 @@ export default {
         console.log(this.compselected);
       }
     },
+    sendItem(val) {
+      this.modalContent = val;
+    },
   },
 };
 </script>
 
 <style scoped>
-.transition {
-  /* width: 30%; */
-  transition: width 0.7s;
+.expand-enter-from,
+.expand-leave-to {
+  opacity: 0;
+}
+
+.expand-leave-active,
+.expand-enter-active {
+  transition: opacity 0.3s ease;
 }
 </style>

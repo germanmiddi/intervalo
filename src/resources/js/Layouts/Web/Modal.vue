@@ -1,0 +1,53 @@
+<template>
+  <div class="fixed z-10 h-screen w-screen flex justify-center items-center">
+    <div
+      class="card bg-base-100 w-3/5 shadow-xl transition duration-300 ease-in"
+    >
+      <div class="card-body">
+        <h2 class="card-title justify-center text-academy-accent h-12">
+          {{ item.competencia }}
+        </h2>
+        <p>{{ item.resume }}</p>
+        <h3 class="card-title justify-center text-academy-accent h-12">
+          {{ item.definicion }}
+        </h3>
+        <p>{{ item.comportamiento }}</p>
+        <div class="flex justify-center">
+          <div class="card-actions justify-end">
+            <!-- <a @click="this.expand = !this.expand"> Más</a>
+                <a @click="this.expand = !this.expand"> Menos</a> -->
+            <button
+              @click="item.visible = false"
+              class="btn btn-secondary space-x-2 mt-4"
+            >
+              <span>Ocultar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    item: Object,
+  },
+  data() {
+    return {
+      selected: false,
+      expand: false,
+    };
+  },
+  methods: {
+    sendItem() {
+      this.item.visible = true;
+      this.$emit("sendItem", this.item);
+    },
+  },
+};
+</script>
+
+<style scoped>
+</style>>
