@@ -24,6 +24,7 @@ class CapsuleController extends Controller
                                     ->through(fn ($c) => [
                                         'id'          => $c->id,
                                         'title'       => $c->title,
+                                        'url'       => $c->url,
                                         'description' => substr($c->description,0,50) . '...',
                                         'image'       => $c->image,
                                         ])
@@ -51,6 +52,7 @@ class CapsuleController extends Controller
     public function store(Request $request)
     {
 
+        //dd($request);
         Capsule::create($request->all());
 
         return Redirect::route('capsule.list');

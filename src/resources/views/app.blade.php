@@ -21,7 +21,7 @@
         @inertia
 
         @env ('local')
-            <script src="http://192.168.0.170:8005/browser-sync/browser-sync-client.js"></script>
+            <!-- <script src="http://192.168.0.170:8005/browser-sync/browser-sync-client.js"></script> -->
         @endenv
     </body>
 </html>
