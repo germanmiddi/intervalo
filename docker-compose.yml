@@ -2,10 +2,11 @@ version: '3.7'
 
 services:
  intervalo_app:
+  env_file: .env
   build:
    args:
-    user: germanmdd
-    uid: 1001
+    user: ${USER}
+    uid: ${UID}
    context: ./
    dockerfile: Dockerfile
   image: intervalo
@@ -13,7 +14,7 @@ services:
   restart: unless-stopped
   working_dir: /usr/share/nginx/html
   volumes:
-    - /media/psf/Home/www/intervalo/src:/usr/share/nginx/html
+    - ${WORK_DIR_SRC}:/usr/share/nginx/html
   networks:
     - intervalo
 
@@ -28,14 +29,17 @@ services:
     MYSQL_USER: root
   volumes:
   - intervalodata:/var/lib/mysq
+  ports:
+  -  "3306:3306"
   networks:
   - intervalo
 
  nginx_intervalo:
   image: nginx
+  env_file: .env
   volumes:
-  - /media/psf/Home/www/intervalo/src:/usr/share/nginx/html
-  - /media/psf/Home/www/intervalo:/etc/nginx/conf.d
+  - ${WORK_DIR_SRC}:/usr/share/nginx/html
+  - ${WORK_DIR}:/etc/nginx/conf.d
   ports:
   -  "8005:80"
   networks:

@@ -95,7 +95,7 @@ Route::delete('afirmation/{afirmation}', [AfirmationController::class, 'destroy'
 
     //Capsulas
 Route::get('/capsule', [CapsuleController::class, 'index'])
-    ->name('capsule.list')
+    ->name('capsule')
     ->middleware('auth');
 
 Route::get('/capsule/create', [CapsuleController::class, 'create'])
@@ -106,11 +106,18 @@ Route::post('/capsule', [CapsuleController::class, 'store'])
     ->name('capsule.store')
     ->middleware('auth');    
 
-Route::get('/capsule/{capsule}/edit', [CapsuleController::class, 'edit'])
+Route::post('/capsule/{id}/edit', [CapsuleController::class, 'edit'])
     ->name('capsule.edit')
-    ->middleware('auth');    
-
+    ->middleware('auth');   
     
+Route::get('/capsule/list', [CapsuleController::class, 'list'])
+    ->name('capsule.list')
+    ->middleware('auth');
+
+Route::delete('/capsule/{id}', [CapsuleController::class, 'destroy'])
+    ->name('capsule.destroy')
+    ->middleware('auth');
+
     //Web
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');    

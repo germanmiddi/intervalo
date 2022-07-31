@@ -33,8 +33,8 @@
               </li>              
 
               <li class="nav-item">
-                <nav-link :href="route('capsule.list')" 
-                      :active="route().current('capsule.list')">
+                <nav-link :href="route('capsule')" 
+                      :active="route().current('capsule')">
                       <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
                       <span class="nav-label font-medium text-sm pt-1">Capsulas</span>
                 </nav-link>   

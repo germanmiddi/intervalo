@@ -4,30 +4,34 @@
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Cápsulas</h1>
                 <div>
-                    <a class="btn btn-primary" href="#" @click.prevent="open = true">Crear</a>
+                    <a class="btn btn-primary" href="#" @click.prevent="vaciarCapsula(), editing=false, open = true">Crear</a>
                 </div>
             </div>
 
-            <div class="w-11/12 mx-auto">
+            <div class="w-11/12 mx-auto ">
                 <table class="table w-full">
                     <thead>
                         <tr>
-                            <th class="w-1/7">Título</th>
+                            <th class="w-1/7 text-center">Título</th>
                             <th class="w-3/7 px-6 py-4 text-center">Descripción</th>
-                            <th class="w-1/7 px-6 py-4 text-center">Url</th>
-                            <th class="w-1/7 px-6 py-4 text-center">Imagen</th>
+                            <th class="w-2/7 px-6 py-4 text-center">Url</th>
                             <th class="w-1/7 px-6 py-4 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>c
+                    <tbody>
                         <tr v-for="c in capsules.data" :key="c.id" class="hover">
-                            <td class="">{{ c.id }} - {{ c.title }}</td>
-                            <td class="">{{ c.description }}</td>
-                            <td class="">{{ c.url }}</td>
-                            <td class=""><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Pac-Man_Cutscene.svg/1024px-Pac-Man_Cutscene.svg.png" alt=""></td>
-                            <td class="">
-                                <a class="link" :href="route('capsule.edit', c.id)">Detalle</a>
-                                <button class="ml-2">
+                            <td class="text-center">{{ c.id }} - {{ c.title }}</td>
+                            <td class="text-center">{{ c.description }}</td>
+                            <td class="text-center">{{ c.url }}</td>
+                            <td class="text-center">
+                                <a class="link" @click="
+                                    capsule.id=c.id,
+                                    capsule.title=c.title,
+                                    capsule.url=c.url,
+                                    capsule.description=c.description,
+                                    editing=true, 
+                                    open=true">Detalle</a>
+                                <button class="ml-2" v-on:click="eliminar(c.id)">
                                     <Icons class="w-5 h-5" name="trash" />
                                 </button>
                             </td>
@@ -49,11 +53,14 @@
                             leave="transform transition ease-in-out duration-500 sm:duration-700"
                             leave-from="translate-x-0" leave-to="translate-x-full">
                             <div class="w-screen max-w-md">
-                                <form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+                                <form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
+                                    enctype="multipart/form-data">
                                     <div class="flex-1 h-0 overflow-y-auto">
                                         <div class="py-6 px-4 bg-blue-500 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-lg font-medium text-white"> Nueva Capsula
+                                                <DialogTitle v-if="editing == false" class="text-lg font-medium text-white">  Nueva Capsula
+                                                </DialogTitle>
+                                                <DialogTitle v-else class="text-lg font-medium text-white">  Editar Capsula
                                                 </DialogTitle>
                                                 <div class="ml-3 h-7 flex items-center">
                                                     <button type="button"
@@ -73,7 +80,7 @@
                                                         <label for="fullname"
                                                             class="block text-sm font-medium text-gray-900">Titulo</label>
                                                         <div class="mt-1">
-                                                            <input type="text" v-model="formTitulo" name="titulo"
+                                                            <input type="text" v-model="capsule.title" name="titulo"
                                                                 id="titulo"
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                                         </div>
@@ -83,7 +90,7 @@
                                                         <label for="url"
                                                             class="block text-sm font-medium text-gray-900">Url</label>
                                                         <div class="mt-1">
-                                                            <input type="text" name="url" v-model="formUrl" id="url"
+                                                            <input type="text" name="url" v-model="capsule.url" id="url" 
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                                         </div>
                                                     </div>
@@ -92,7 +99,7 @@
                                                             class="block text-sm font-medium text-gray-900">Descripcion</label>
                                                         <div class="mt-1">
                                                             <textarea type="text" name="descripcion" id="descripcion"
-                                                                rows="4" v-model="formDescripcion"
+                                                                rows="4" v-model="capsule.description"
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"></textarea>
                                                         </div>
                                                     </div>
@@ -102,12 +109,11 @@
                                                         <div class="mt-1">
                                                             <input
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-                                                                id="file_input" type="file">
+                                                                id="file_input" type="file" name="file_input" ref="file"
+                                                                @change="obtenerImagen">
                                                         </div>
                                                     </div>
-
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -115,7 +121,7 @@
                                         <button type="button"
                                             class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                             @click="open = false">Cancelar</button>
-                                        <button @click.prevent="submit"     
+                                        <button @click.prevent="guardarCapsule"
                                             class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
                                     </div>
                                 </form>
@@ -134,7 +140,8 @@ import { Head, Link } from '@inertiajs/inertia-vue3';
 import App from '@/Layouts/App.vue'
 import Icons from '@/Layouts/Components/Icons.vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-//import { XIcon } from "@vue-hero-icons/outline"
+import swal from 'sweetalert'
+
 
 export default {
     props: {
@@ -149,41 +156,115 @@ export default {
         DialogTitle,
         TransitionChild,
         TransitionRoot,
-        // XIcon,
     },
 
     data() {
         return {
+            capsule: {
+                id: '',
+                title: '',
+                url: '',
+                description: '',
+                image: ''
+            },
             loading: true,
             open: false,
             showToast: false,
-
+            capsules: "",
+            editing: false,
+            capsules:'',
         }
     },
     methods: {
         async getCapsules() {
             const get = `${route('capsule.list')}`
-       // console.log(get);
             const response = await fetch(get, { method: 'GET' })
             this.capsules = await response.json()
-
         },
-        submit() {
-            axios.post(route('capsule.store'), {
-                title: this.formTitulo,
-                url: this.formUrl,
-                description: this.formDescripcion,
-               /*  email: this.formEmail,
-                truck: this.formTruck,
-                notes: this.formNotes, */
-            }).then(response => {
-                //console.log(response)
-                this.open = false
-                this.showToast = true
-                this.getCapsules()// this.$inertia.get(this.route('drivers.list'), this.params, {replace:true, preserveState:true})
-                // console.log(response)
+        guardarCapsule() {
+            let formData = new FormData();
+            formData.append('id', this.capsule.id);
+            formData.append('title', this.capsule.title);
+            formData.append('url', this.capsule.url);
+            formData.append('description', this.capsule.description);
+            formData.append('image', this.capsule.image);
+            let rt = '';
+            if(this.editing){
+                rt = route('capsule.edit', this.capsule.id);
+            }else{
+                rt = route('capsule.store');
+            }
+
+            axios.post(rt, formData)
+                .then(response => {
+                    this.open = false,
+                    this.getCapsules()
+                if (response.status == 200) {
+                    swal(
+                        response.data['title'],
+                        response.data['message'],
+                        'success'
+                    )
+                } else {
+                    swal(
+                        response.data['title'],
+                        response.data['message'],
+                        'error'
+                    )
+                }
             })
-        }
+            this.vaciarCapsula();
+        },
+        vaciarCapsula() {
+            this.capsule.id = '';
+            this.capsule.title = '';
+            this.capsule.url = '';
+            this.capsule.description = '';
+            this.capsule.image = '';
+        },
+        obtenerImagen(e) {
+            let file = e.target.files[0];
+            this.capsule.image = file;
+        },
+        eliminar: function (id_delete) {
+            swal({
+                imagenMiniatura: '',
+                title: "Eliminar Capsula",
+                text: `Desea eliminar la capsula con ID: ${id_delete}`,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: ["Cancelar", "Eliminar"],
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        axios.delete(`/capsule/${id_delete}`
+                        ).then(response => {
+                            this.getCapsules()
+                            console.log(response);
+                            if (response.status == 200) {
+                                swal(
+                                    response.data['title'],
+                                    response.data['message'],
+                                    'success'
+                                )
+                            } else {
+                                swal(
+                                    response.data['title'],
+                                    response.data['message'],
+                                    'warning'
+                                )
+                            }
+                        }).catch(error => {
+                            swal(
+                                'Capsula',
+                                'Comuniquese con el administrador',
+                                'error'
+                            )
+                        })
+                    }
+                });
+        },
     },
     created() {
         this.getCapsules()

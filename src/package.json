@@ -29,6 +29,7 @@
         "@headlessui/vue": "^1.6.7",
         "@vue-hero-icons/outline": "^1.7.2",
         "@vueform/multiselect": "^2.3.3",
-        "daisyui": "^2.13.6"
+        "daisyui": "^2.13.6",
+        "sweetalert": "^2.1.2"
     }
 }
