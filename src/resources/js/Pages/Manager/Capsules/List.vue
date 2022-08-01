@@ -1,5 +1,9 @@
 <template>
     <App>
+        <Toast  :toast="this.message" 
+                :type="this.labelType"
+                @clear="clearMessage"></Toast>
+
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Cápsulas</h1>
@@ -141,6 +145,7 @@ import App from '@/Layouts/App.vue'
 import Icons from '@/Layouts/Components/Icons.vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import swal from 'sweetalert'
+import Toast from '@/Layouts/Components/Toast.vue'
 
 
 export default {
@@ -156,6 +161,7 @@ export default {
         DialogTitle,
         TransitionChild,
         TransitionRoot,
+        Toast,
     },
 
     data() {
@@ -173,9 +179,13 @@ export default {
             capsules: "",
             editing: false,
             capsules:'',
+            message: "",
         }
     },
     methods: {
+        clearMessage(){
+                this.message = ""
+            },
         async getCapsules() {
             const get = `${route('capsule.list')}`
             const response = await fetch(get, { method: 'GET' })
@@ -200,17 +210,11 @@ export default {
                     this.open = false,
                     this.getCapsules()
                 if (response.status == 200) {
-                    swal(
-                        response.data['title'],
-                        response.data['message'],
-                        'success'
-                    )
+                    this.labelType = "success"
+                    this.message = response.data['message']
                 } else {
-                    swal(
-                        response.data['title'],
-                        response.data['message'],
-                        'error'
-                    )
+                    this.labelType = "danger"
+                    this.message = response.data['message']
                 }
             })
             this.vaciarCapsula();
@@ -241,26 +245,16 @@ export default {
                         axios.delete(`/capsule/${id_delete}`
                         ).then(response => {
                             this.getCapsules()
-                            console.log(response);
                             if (response.status == 200) {
-                                swal(
-                                    response.data['title'],
-                                    response.data['message'],
-                                    'success'
-                                )
+                                this.labelType = "success"
+                    this.message = response.data['message']
                             } else {
-                                swal(
-                                    response.data['title'],
-                                    response.data['message'],
-                                    'warning'
-                                )
+                                this.labelType = "danger"
+                                this.message = response.data['message']
                             }
                         }).catch(error => {
-                            swal(
-                                'Capsula',
-                                'Comuniquese con el administrador',
-                                'error'
-                            )
+                            this.labelType = "danger"
+                            this.message = 'Comuniquese con el administrador'
                         })
                     }
                 });

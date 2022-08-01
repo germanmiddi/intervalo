@@ -109,7 +109,7 @@ class CapsuleController extends Controller
                     'description' => $request->description,
                 ]);
             }
-            return response()->json(['message'=>'Capsula creada con éxito','title'=>'Capsula'], 200);
+            return response()->json(['message'=>'Capsula actualizada con éxito','title'=>'Capsula'], 200);
         } catch (\Throwable $th) {
             dd($th);
             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
