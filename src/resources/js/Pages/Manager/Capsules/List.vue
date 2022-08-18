@@ -8,7 +8,7 @@
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Cápsulas</h1>
                 <div>
-                    <a class="btn btn-primary" href="#" @click.prevent="vaciarCapsula(), editing=false, open = true">Crear</a>
+                    <a class="btn btn-primary btn-sm mr-2" href="#" @click.prevent="vaciarCapsula(), editing=false, open = true">Crear</a>
                 </div>
             </div>
 

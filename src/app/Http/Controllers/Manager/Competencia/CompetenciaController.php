@@ -7,29 +7,39 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Competencia;
 use App\Models\Category;
 use App\Models\Capsule;
+use App\Imports\CompetenciaImport;
+use Illuminate\Support\Facades\Session;
 
 class CompetenciaController extends Controller
 {
     public function index()
     {
+        return  Inertia::render('Manager/Competencias/List');
 
+    }
+
+    public function list()
+    {
+        $length = request('length');
         $result = Competencia::query();
         
-        return  Inertia::render('Manager/Competencias/List', 
-        [
-            'competencias' =>  $result->paginate(999)
-                                    ->withQueryString()
-                                    ->through(fn ($c) => [
-                                        'id'            => $c->id,
-                                        'competencia'   => $c->competencia,
-                                        'definicion'    => substr($c->definicion,0,50) . '...',
-                                        'comportamiento'=> $c->comportamiento,
-                                        ])
-        ]);
+        if(request('search')){
+            $result->where('competencia','LIKE', '%' . request('search') . '%' );
+        }
+
+        return $result->paginate($length)
+                        ->withQueryString()
+                        ->through(fn ($c) => [
+                            'id'            => $c->id,
+                            'competencia'   => $c->competencia,
+                            'definicion'    => substr($c->definicion,0,50) . '...',
+                            'comportamiento'=> $c->comportamiento,
+                        ]);
     }
 
     /**
@@ -131,5 +141,22 @@ class CompetenciaController extends Controller
     }
 
 
+    /*** IMPORT ***/
+    public function import()
+    {
+        return  Inertia::render('Manager/Competencias/Import',[
+            'toast' => Session::get('toast')
+        ]);
+        
+    }    
+    
+    public function importfile(Request $request )
+    {
+        $path = $request->file('import_file');
+        $import = new CompetenciaImport();
+        $data = Excel::import($import, $path);
+        $status = $import->getStatus();
+        return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
+    } 
 
 }

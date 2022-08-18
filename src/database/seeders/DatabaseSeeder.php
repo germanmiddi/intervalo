@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'g@gmail.com',
             'password' => bcrypt('Inicio123')
         ]);
-        Afirmation::create([
+       /*  Afirmation::create([
             'text' => "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam, velit" ,
 
         ]);
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             'competencia' => 'Autonomía',
             'definicion' => 'Se refiere a la capacidad de elegir con criterio propio; de llevar ',
             'comportamiento' => "El conocimiento de sí mism@, conciencia y aplicación de valores y actitudes personales "
-        ]);
+        ]); */
 
         Category::create(['title'=> 'INNOVACIÓN']);
         Category::create(['title' => 'LOGRO']);

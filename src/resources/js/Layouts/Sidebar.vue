@@ -17,8 +17,8 @@
               </li>
 
               <li class="nav-item">
-                <nav-link :href="route('competencia.list')" 
-                      :active="route().current('competencia.list')">
+                <nav-link :href="route('competencia')" 
+                      :active="route().current('competencia')">
                       <!-- <Icons name="shopping-cart" class="mr-5 w-6 h-6" ></Icons> -->
                       <span class="nav-label font-medium text-sm pt-1">Competencias</span>
                 </nav-link>   

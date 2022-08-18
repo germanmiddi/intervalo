@@ -3,9 +3,9 @@
         <!-- CONTENT -->
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Importar Afirmacion</h1>
+                <h1 class="my-10 text-4xl font-bold">Importar Competencias</h1>
                 <div>
-                    <a class="btn btn-primary btn-sm mr-2" :href="route('afirmation')">Volver</a>
+                    <a class="btn btn-primary btn-sm mr-2" :href="route('competencia')">Volver</a>
                 </div>
             </div>
             <div class="w-11/12 mx-auto">
@@ -35,7 +35,6 @@
         </div>
    </App>
 </template>
-
 
 <script>
   import { Head, Link } from '@inertiajs/inertia-vue3'
@@ -68,16 +67,15 @@
           var showSpinner
 
           function submit() {
-
               this.showSpinner = true
 
               form.post('importfile', {
                   forceFormData: true,
-                  onSuccess: () => this.showSpinner = false
+                  onSuccess: (data) => {
+                    this.showSpinner = false
+                  }
               })
-
           }
-
           return { form, submit,showSpinner }
         },
 
@@ -90,7 +88,7 @@
 
         methods:{
             closeResponse(){
-                this.props.flash = ""
+                this.props.flash = "asd"
             },
         }
 

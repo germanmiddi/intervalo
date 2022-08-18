@@ -29,6 +29,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
     //Competencias
 Route::get('/competencia', [CompetenciaController::class, 'index'])
+    ->name('competencia')
+    ->middleware('auth');
+
+Route::get('/competencia/list', [CompetenciaController::class, 'list'])
     ->name('competencia.list')
     ->middleware('auth');
 
@@ -52,6 +56,14 @@ Route::put('competencia/{competencia}', [CompetenciaController::class, 'update']
 Route::delete('competencia/{competencia}', [CompetenciaController::class, 'destroy'])
     ->name('competencia.destroy')
     ->middleware('auth');
+
+Route::get('/competencia/import', [CompetenciaController::class, 'import'])
+    ->name('competencia.import')
+    ->middleware('auth');  
+
+Route::post('/competencia/importfile', [CompetenciaController::class, 'importfile'])
+    ->name('competencia.importfile')
+    ->middleware('auth');   
 
 
 

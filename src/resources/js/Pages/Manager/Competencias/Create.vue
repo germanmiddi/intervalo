@@ -4,7 +4,8 @@
             <div class="w-full mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Nueva Competencia</h1>
                 <div>
-                    <button class="btn btn-primary" @click.prevent="submit">Guardar</button>
+                    <button class="btn btn-primary btn-sm mr-2" @click.prevent="submit">Guardar</button>
+                    <a class="btn btn-primary btn-sm mr-2" :href="route('competencia')">Volver</a>
                 </div>
             </div>        
             <form action="#" method="POST">

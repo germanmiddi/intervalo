@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 use App\Models\Afirmation;
 use App\Imports\AfirmationImport;
@@ -25,18 +26,25 @@ class ImportController extends Controller
     */
     public function import()
     {
-        return  Inertia::render('Manager/Afirmations/Import');
+        return  Inertia::render('Manager/Afirmations/Import',[
+            'toast' => Session::get('toast')
+        ]);
 
     }    
 
     public function importfile(Request $request )
     {
 
-        $path = $request->file('import_file');
+/*         $path = $request->file('import_file');
 
         $data = Excel::import(new AfirmationImport, $path);
         
-        return Redirect::back()->withFlash('Archivo Importado con éxito' );
+        return Redirect::back()->withFlash('Archivo Importado con éxito' ); */
+        $path = $request->file('import_file');
+        $import = new AfirmationImport();
+        $data = Excel::import($import, $path);
+        $status = $import->getStatus();
+        return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
 
     }  
 
