@@ -11,8 +11,7 @@
       <h2 class="card-title text-academy-accent h-12">
         {{ item.competencia }}
       </h2>
-
-      <p class="h-24">{{ item.resume.slice(0, 150) }}...</p>
+      <p class="h-24 text-justify">{{ item.definicion.slice(0, 150) }}...</p>
       <div class="flex items-center justify-between">
         <button @click="sendItem()">
           <span class="font-bold hover:underline duration-100">Leer mas</span>

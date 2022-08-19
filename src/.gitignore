@@ -14,3 +14,4 @@ yarn-error.log
 /.idea
 /.vscode
 src/public/mix-manifest.json
+src/package-lock.json

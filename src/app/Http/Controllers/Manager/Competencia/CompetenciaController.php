@@ -78,7 +78,7 @@ class CompetenciaController extends Controller
 
         Competencia::create($request->all())->capsules()->attach($request->input("tags"));
 
-        return Redirect::route('competencia.list');
+        return Redirect::route('competencia');
         
     }
 
@@ -124,7 +124,7 @@ class CompetenciaController extends Controller
         $competencia->update($request->all());
         $competencia->Capsules()->sync($request->input('tags'));
 
-        return Redirect::route('competencia.list');
+        return Redirect::route('competencia');
     }
 
     /**
