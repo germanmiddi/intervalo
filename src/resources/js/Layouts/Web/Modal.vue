@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed z-10 h-screen w-screen flex justify-center items-center overflow-y-auto modal-scrollbar-measure" @click="item.visible = false">
+  <div class="fixed z-10 h-screen w-screen flex justify-center items-center overflow-y-auto" @click="item.visible = false">
     <div class="card bg-base-100 w-3/5 shadow-xl transition duration-300 ease-in">
       <div class="px-6 py-4">
         <div class="font-bold text-xl mb-2 text-academy-accent text-center">{{ item.competencia }}</div>

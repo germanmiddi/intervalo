@@ -7,17 +7,18 @@
       'col-span-1': this.expand == false,
     }"
   >
-    <div class="card-body">
+    <div class="card-body ">
       <h2 class="card-title text-academy-accent h-12">
         {{ item.competencia }}
       </h2>
-      <p v-if="item.definicion" class="h-24 text-justify">{{ item.definicion.slice(0, 150) }}...</p>
-      <div class="flex items-center justify-between">
+      <p v-if="item.definicion" class="h-24 w-auto text-justify ">{{ item.definicion.slice(0, 150) }}...</p>
+      <p v-else class="h-24 text-justify">...</p>
+      <div class="flex items-center justify-between ">
         <button @click="sendItem()">
           <span class="font-bold hover:underline duration-100">Leer mas</span>
         </button>
 
-        <div class="card-actions justify-end">
+        <div class="card-actions justify-end ">
           <!-- <a @click="this.expand = !this.expand"> Más</a>
                 <a @click="this.expand = !this.expand"> Menos</a> -->
           <button
