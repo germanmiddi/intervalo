@@ -1,8 +1,6 @@
 <template>
     <App>
-        <Toast  :toast="this.message" 
-                :type="this.labelType"
-                @clear="clearMessage"></Toast>
+        <Toast :toast="this.message" :type="this.labelType" @clear="clearMessage"></Toast>
 
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
@@ -16,7 +14,7 @@
                 <table class="table w-full">
                     <thead>
                         <tr>
-                            <th class="w-1/7 text-center">Título</th>
+                            <th class="w-1/7 px-6 py-4 text-center">Título</th>
                             <th class="w-3/7 px-6 py-4 text-center">Descripción</th>
                             <th class="w-2/7 px-6 py-4 text-center">Url</th>
                             <th class="w-1/7 px-6 py-4 text-center">Acciones</th>
@@ -29,13 +27,14 @@
                             <td class="text-center">{{ c.url }}</td>
                             <td class="text-center">
                                 <a class="link" @click="
-                                    capsule.id=c.id,
-                                    capsule.title=c.title,
-                                    capsule.url=c.url,
-                                    capsule.description=c.description,
-                                    editing=true, 
-                                    open=true">Detalle</a>
-                                <button class="ml-2" v-on:click="eliminar(c.id)">
+                                                capsule.id = c.id,
+                                                capsule.title = c.title,
+                                                capsule.url = c.url,
+                                                capsule.description = c.description,
+                                                editing = true,
+                                                open = true">
+                                Detalle</a>
+                                <button class="ml-2" @click="idDelete = c.id, openDelete = true">
                                     <Icons class="w-5 h-5" name="trash" />
                                 </button>
                             </td>
@@ -62,9 +61,11 @@
                                     <div class="flex-1 h-0 overflow-y-auto">
                                         <div class="py-6 px-4 bg-blue-500 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle v-if="editing == false" class="text-lg font-medium text-white">  Nueva Capsula
+                                                <DialogTitle v-if="editing == false"
+                                                    class="text-lg font-medium text-white"> Nueva Capsula
                                                 </DialogTitle>
-                                                <DialogTitle v-else class="text-lg font-medium text-white">  Editar Capsula
+                                                <DialogTitle v-else class="text-lg font-medium text-white"> Editar
+                                                    Capsula
                                                 </DialogTitle>
                                                 <div class="ml-3 h-7 flex items-center">
                                                     <button type="button"
@@ -94,7 +95,7 @@
                                                         <label for="url"
                                                             class="block text-sm font-medium text-gray-900">Url</label>
                                                         <div class="mt-1">
-                                                            <input type="text" name="url" v-model="capsule.url" id="url" 
+                                                            <input type="text" name="url" v-model="capsule.url" id="url"
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                                         </div>
                                                     </div>
@@ -135,6 +136,58 @@
                 </div>
             </Dialog>
         </TransitionRoot>
+
+
+            <TransitionRoot as="template" :show="openDelete">
+                <Dialog as="div" class="relative z-10" @close="openDelete = false">
+
+                    <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0"
+                        enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100"
+                        leave-to="opacity-0">
+                        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                    </TransitionChild>
+
+                    <div class="fixed z-10 inset-0 overflow-y-auto">
+                        <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+                            <TransitionChild as="template" enter="ease-out duration-300"
+                                enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200"
+                                leave-from="opacity-100 translate-y-0 sm:scale-100"
+                                leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                                <DialogPanel
+                                    class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div
+                                                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <Icons class="h-6 w-6 text-red-600" name="info" aria-hidden="true" />
+                                            </div>
+                                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                <DialogTitle as="h3"
+                                                    class="text-lg leading-6 font-medium text-gray-900"> Eliminar
+                                                    Capsula </DialogTitle>
+                                                <div class="mt-2">
+                                                    <p class="text-sm text-gray-500">Desea Eliminar la Capsula ID:
+                                                        {{ idDelete }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <button type="button"
+                                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                            @click="eliminar()">Eliminar</button>
+                                        <button type="button"
+                                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                            @click="openDelete = false" ref="cancelButtonRef">Cancelar</button>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
+
     </App>
 
 </template>
@@ -144,8 +197,8 @@ import { Head, Link } from '@inertiajs/inertia-vue3';
 import App from '@/Layouts/App.vue'
 import Icons from '@/Layouts/Components/Icons.vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import swal from 'sweetalert'
 import Toast from '@/Layouts/Components/Toast.vue'
+import ToastConfirm from '@/Layouts/Components/ToastConfirm.vue';
 
 
 export default {
@@ -162,6 +215,7 @@ export default {
         TransitionChild,
         TransitionRoot,
         Toast,
+        ToastConfirm
     },
 
     data() {
@@ -178,14 +232,23 @@ export default {
             showToast: false,
             capsules: "",
             editing: false,
-            capsules:'',
+            capsules: '',
             message: "",
+            methodConfirm: "",
+            messageConfirm: "DELETE",
+            openDelete: false,
+            idDelete: '',
         }
     },
     methods: {
-        clearMessage(){
-                this.message = ""
-            },
+        clearMessage() {
+            this.message = ""
+        },
+        clearMethodsConfirm() {
+            this.messageConfirm = ""
+            this.methodConfirm = ""
+            this.ver = false
+        },
         async getCapsules() {
             const get = `${route('capsule.list')}`
             const response = await fetch(get, { method: 'GET' })
@@ -199,24 +262,24 @@ export default {
             formData.append('description', this.capsule.description);
             formData.append('image', this.capsule.image);
             let rt = '';
-            if(this.editing){
+            if (this.editing) {
                 rt = route('capsule.edit', this.capsule.id);
-            }else{
+            } else {
                 rt = route('capsule.store');
             }
 
             axios.post(rt, formData)
                 .then(response => {
                     this.open = false,
-                    this.getCapsules()
-                if (response.status == 200) {
-                    this.labelType = "success"
-                    this.message = response.data['message']
-                } else {
-                    this.labelType = "danger"
-                    this.message = response.data['message']
-                }
-            })
+                        this.getCapsules()
+                    if (response.status == 200) {
+                        this.labelType = "success"
+                        this.message = response.data['message']
+                    } else {
+                        this.labelType = "danger"
+                        this.message = response.data['message']
+                    }
+                })
             this.vaciarCapsula();
         },
         vaciarCapsula() {
@@ -230,41 +293,28 @@ export default {
             let file = e.target.files[0];
             this.capsule.image = file;
         },
-        eliminar: function (id_delete) {
-            swal({
-                imagenMiniatura: '',
-                title: "Eliminar Capsula",
-                text: `Desea eliminar la capsula con ID: ${id_delete}`,
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-                buttons: ["Cancelar", "Eliminar"],
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        axios.delete(`/capsule/${id_delete}`
-                        ).then(response => {
-                            this.getCapsules()
-                            if (response.status == 200) {
-                                this.labelType = "success"
+        eliminar: function () {
+            axios.delete(`/capsule/${this.idDelete}`
+            ).then(response => {
+                this.getCapsules()
+                if (response.status == 200) {
+                    this.labelType = "success"
                     this.message = response.data['message']
-                            } else {
-                                this.labelType = "danger"
-                                this.message = response.data['message']
-                            }
-                        }).catch(error => {
-                            this.labelType = "danger"
-                            this.message = 'Comuniquese con el administrador'
-                        })
-                    }
-                });
-        },
+                } else {
+                    this.labelType = "danger"
+                    this.message = response.data['message']
+                }
+            }).catch(error => {
+                this.labelType = "danger"
+                this.message = 'Comuniquese con el administrador'
+            })
+            this.openDelete=false;
+        }
     },
-    created() {
-        this.getCapsules()
-    }
+        created() {
+            this.getCapsules()
+        }
 }
-
 </script>
 
 <style>
@@ -275,5 +325,11 @@ export default {
 
 ul.dropdown-menu {
     right: 0px;
+}
+
+.table th:first-child {
+  position: initial !important;
+  left: 0px;
+  z-index: 11;
 }
 </style>

@@ -3,25 +3,23 @@
     <transition name="slide-fade">
         <div v-if="toast && this.visible" class="max-w-xs w-full flex items-center absolute p-4 top-0 mt-5 mr-5 right-0 z-50 rounded-lg  shadow-xl bg-white">
             <div class="mr-2">
-                <Icons v-if="type === 'danger'"       name="danger"  class="w-7 h-7 text-red-500"/> 
-                <Icons v-else-if="type === 'success'" name="success" class="w-7 h-7 text-green-500"/> 
-                <Icons v-else-if="type === 'info'"    name="info"    class="w-7 h-7 text-blue-500"/> 
+                <Icons v-if="type === 'danger'"       name="danger"  class="w-7 h-7 text-red-500"/>
+                <Icons v-else-if="type === 'success'" name="success" class="w-7 h-7 text-green-500"/>
+                <Icons v-else-if="type === 'info'"    name="info"    class="w-7 h-7 text-blue-500"/>
             </div>
-    
+
             <div class="flex-1 text-gray-800">{{this.toast}} </div>
 
-            <div class="ml-2">
-                <Icons name="x" class="w-4 h-4" />
+            <div class="ml-2" >
+                <Icons name="x" @click="visible = false" class="w-4 h-4" />
             </div>
-        </div>  
+        </div>
     </transition>
 
-  
-</template>
 
+</template>
 <script>
     import Icons from '@/Layouts/Components/Icons.vue'
-
     export default {
         props:{
             toast: Object,
@@ -43,7 +41,7 @@
                     if(this.timeOut){
                         clearTimeout(this.timeOut)
                     }
-                    this.timeOut = setTimeout(()=> { 
+                    this.timeOut = setTimeout(()=> {
                         this.visible = false
                         this.$emit("clear")
                         }, 3000)
