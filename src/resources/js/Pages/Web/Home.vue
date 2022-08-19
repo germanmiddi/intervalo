@@ -41,7 +41,7 @@
     </div>
 
     <div class="content">
-      <div class="flex justify-end">
+      <div class="flex justify-center">
         <div
           v-show="start"
           class="grid-span-1 md:col-span-2 xl:col-span-3 flex justify-end"

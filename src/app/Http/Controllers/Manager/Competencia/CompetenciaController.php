@@ -78,7 +78,7 @@ class CompetenciaController extends Controller
 
         Competencia::create($request->all())->capsules()->attach($request->input("tags"));
 
-        return Redirect::route('competencia.list');
+        return Redirect::route('competencia');
         
     }
 
@@ -124,7 +124,7 @@ class CompetenciaController extends Controller
         $competencia->update($request->all());
         $competencia->Capsules()->sync($request->input('tags'));
 
-        return Redirect::route('competencia.list');
+        return Redirect::route('competencia');
     }
 
     /**
@@ -152,11 +152,21 @@ class CompetenciaController extends Controller
     
     public function importfile(Request $request )
     {
-        $path = $request->file('import_file');
-        $import = new CompetenciaImport();
-        $data = Excel::import($import, $path);
-        $status = $import->getStatus();
-        return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
+
+        if( $request->file('import_file')){
+            try {
+                $path = $request->file('import_file');
+                $import = new CompetenciaImport();
+                $data = Excel::import($import, $path);
+                $status = $import->getStatus();
+                return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
+            } catch (\Throwable $th) {
+                return Redirect::back()->with(['toast' => ['message' => 'Error al momento de procesar el archivo', 'status' => '203']]);
+            }
+        }else{
+            return Redirect::back()->with(['toast' => ['message' => 'Debe cargar un archivo', 'status' => '203']]);
+        }
+        
     } 
 
 }
