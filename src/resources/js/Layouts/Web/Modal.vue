@@ -1,23 +1,19 @@
 <template>
   <div class="fixed z-10 h-screen w-screen flex justify-center items-center overflow-y-auto" @click="item.visible = false">
     <div class="card bg-base-100 w-3/5 shadow-xl transition duration-300 ease-in">
-      <div class="px-6 py-4">
+    
+      <div class="px-6 pt-8 pb-4">
         <div class="font-bold text-xl mb-2 text-academy-accent text-center">{{ item.competencia }}</div>
       </div>
-      <div class="px-6 pt-4 pb-2 over ">
-        <p class="text-justify"><b>{{ item.definicion }}</b></p>
+    
+      <div class="px-6 pt-4 pb-2">
+        <p class="text-justify">{{ item.definicion }}</p>
         <br>
-        <p class="text-justify">{{ item.comportamiento }}</p>
+
+        <p class="text-justify"><b>Comportamientos observables: </b>{{ item.comportamiento }}</p>
       </div>
+    
       <div class="card-body">
-        <!-- <h2 class="card-title justify-center text-academy-accent h-12">
-          {{ item.competencia }}
-        </h2>
-        
-        <h3 class="card-title justify-center text-academy-accent h-12">
-          {{ item.definicion }}
-        </h3>
-        <p>{{ item.comportamiento }}</p> -->
         <div class="flex justify-center">
           <div class="card-actions justify-end">
             <button @click="item.visible = false" class="btn btn-secondary space-x-2 mt-4">
@@ -26,6 +22,7 @@
           </div>
         </div>
       </div>
+    
     </div>
   </div>
 </template>
