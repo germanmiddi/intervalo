@@ -43,12 +43,14 @@
             </div>
         </div>
 
-        <div v-if="this.showResult">
+        <div v-if="this.showResult">a
+            asd
             <div class="w-3/5 mx-auto mt-10 mb-20">
 
                 <div class="my-10 text-4xl" >Resultado</div>
+                <p>{{this.resultado}}</p>
                 
-                <div v-for="r in this.resultado" :key="r.id" class="w-full mx-auto bg-white rounded-2xl p-10 shadow mb-6">
+                <!-- <div v-for="r in this.resultado" :key="r.id" class="w-full mx-auto bg-white rounded-2xl p-10 shadow mb-6">
                     <div class="text-xl text-academy-accent mb-4">{{r.competencia}}</div>
 
                     <div class="flex justify-between items-center">
@@ -63,17 +65,17 @@
                                     <div class="card-body">
                                         <h2 class="card-title">{{c.title}}</h2>
                                         <p>{{c.description}}</p>
-                                        <!-- <div class="card-actions justify-end">
+                                        <div class="card-actions justify-end">
                                             <div class="badge badge-outline">Liderazgo</div> 
                                             <div class="badge badge-outline">Innovación</div>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>        
     </App>

@@ -33,4 +33,12 @@ class Competencia extends Model
 
         return $this->belongTo(Category::class);
     }
+
+    public function competencias_relate()
+    {
+        return $this->hasMany(CompetenciaRelated::class);
+    }
+
+
+    
 }
