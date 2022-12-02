@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompetenciaRelated extends Model
 {
+    use HasFactory;
+    use SoftDeletes;
+    
     protected  $table = 'competencias_related';
     
     protected $fillable = [
@@ -27,6 +30,9 @@ class CompetenciaRelated extends Model
         return $this->belongsTo(Competencia::class, 'relate_id');
     }
 
-    use HasFactory;
-    use SoftDeletes;
+    public function test()
+    {
+        return $this->hasMany(Test::class);
+    }
+
 }

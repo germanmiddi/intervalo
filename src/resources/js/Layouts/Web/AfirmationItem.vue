@@ -1,5 +1,4 @@
 <template>
-
     <div class="flex">
         <div class="w-1/2">
             {{item.text}}

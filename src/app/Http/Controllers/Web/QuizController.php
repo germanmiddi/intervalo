@@ -11,6 +11,9 @@ use Illuminate\Support\Arr;
 use App\Models\Afirmation;
 use App\Models\Competencia;
 use App\Models\CompetenciaRelated;
+use App\Models\Test;
+use App\Models\TestDetail;
+use App\Models\TestStatus;
 
 class QuizController extends Controller
 {
@@ -19,40 +22,14 @@ class QuizController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($competencias)
-    {
-        
-        $competencias =  explode(",", $competencias);
-        $ids    = [];
-        $result = [];
-        $output = [];
-
-        foreach($competencias as $c){
-            $result = Afirmation::wherehas('competencias',function($query) use ($c){
-                                                            $query = $query->where('competencia_id', $c);
-                                                        })
-                                ->whereNotIn('id',$ids)
-                                ->limit(15)
-                                ->get()->toArray();
-            
-            $result_final = array_map(function($r) use ($c) {
-                                        $r['id_competencia'] = $c;
-                                        return $r;
-                                        
-                                    },$result);
-
-            $output = array_merge($output, $result_final);
-            
-            $ids = $ids + array_map(function($r){ return ['id' => $r['id']]; }, $result_final);
-           
-        }
-        return  Inertia::render('Web/Quiz',['afirmations' => $output ]);
-    }
-    
     public function calculate(Request $request){
         
         //Recupero respuestas.
-        $input = $request->request;
+
+        $input = $request->afirmations;
+        $person = $request->form_person;
+        $test = $request->form_test;
+        //dd($input);
         //Agrupo las respuestas segun las competencias.
         $competencias = $this->group_by("id_competencia", $input);
         $comp_rel = [];
@@ -105,7 +82,7 @@ class QuizController extends Controller
             }
             // Se cargan los feedback y las capsulas..
             foreach ($result as $r) {
-                $result[$r['competencia']]['promedio'] = round(($r['suma']/$r['cantidad'])/5) * 5 .'%';
+                $result[$r['competencia']]['promedio'] = round(($r['suma']/$r['cantidad'])/5) * 5;
 
                 $feedback = CompetenciaRelated::where('competencia_id', $details_competencia->id)->where('relate_id', $r['competencia_id'])->first();
                 if(($r['suma']/$r['cantidad']) >= 50){
@@ -114,6 +91,23 @@ class QuizController extends Controller
                     $result[$r['competencia']]['texto'] = $feedback->feedback_disapprove ?? '';
                 }
 
+                // ACTUALIZO DETALLE TEST..
+                /* TestDetail::where('test_id', $test['id'])->where('competencia_related_id', $feedback->id)->update([
+                    'score' => $result[$r['competencia']]['promedio'],
+                ]); */
+
+                TestDetail::updateOrCreate(
+                    [
+                        'test_id' =>  $test['id'],
+                        'competencia_related_id' => $feedback->id
+                    ],
+                    [
+                        'test_id' =>  $test['id'],
+                        'competencia_related_id' => $feedback->id,
+                        'score' => $result[$r['competencia']]['promedio'],
+                    ]
+
+                );
                 $capsulas = Competencia::select()->where('id',$r['competencia_id'])->with('capsules')->get()->toArray();
                 foreach ($capsulas[0]['capsules'] as $cap) {
                     $result[$r['competencia']]['capsulas'][$cap['id']] = $cap['title'];
@@ -121,7 +115,11 @@ class QuizController extends Controller
             }
             array_push($data, $result);
         }
-        //$resultado[] = ['data' => $data];
+
+        // Finalizar Examen
+        Test::where('id', $test['id'])->update([
+            'status_id' => TestStatus::select('id')->where('description', 'FINISHED')->first()->id,
+        ]);
         
         return response()->json($data, 200);
         

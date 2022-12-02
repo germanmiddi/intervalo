@@ -9,8 +9,10 @@ use App\Http\Controllers\Manager\Afirmation\AfirmationController;
 use App\Http\Controllers\Manager\Afirmation\ImportController;
 use App\Http\Controllers\Manager\Capsule\CapsuleController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
+use App\Http\Controllers\Manager\Test\TestController as TestManagerController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\QuizController;
+use App\Http\Controllers\Web\TestController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -130,16 +132,29 @@ Route::delete('/capsule/{id}', [CapsuleController::class, 'destroy'])
     ->name('capsule.destroy')
     ->middleware('auth');
 
+    // TEST
+Route::get('/test', [TestManagerController::class, 'index'])
+    ->name('test')
+    ->middleware('auth');
+
+Route::get('/test/list', [TestManagerController::class, 'list'])
+    ->name('test.list')
+    ->middleware('auth');
+
     //Web
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');    
 
     //Web
 Route::get('/quiz/{competencias}', [QuizController::class, 'index'])
-    ->name('quiz');        
+    ->name('quiz');  
 
 Route::post('/quiz/calculate', [QuizController::class, 'calculate'])
     ->name('quiz.calculate');        
 
 Route::get('/result', [QuizController::class, 'result'])
-    ->name('result');        
+    ->name('result');
+    
+    //Web Test
+Route::post('/test', [TestController::class, 'store'])
+    ->name('test.store');
