@@ -49,7 +49,15 @@
                                         :searchable="true"
                                         :options="cap_list" />
 
-                        </div>                    
+                        </div> 
+                        <div class="mt-4 ">
+                            <label for="approve" class="block text-sm font-semibold text-gray-700">Respuesta Aprobada:</label>
+                            <textarea v-model="form.feedback_approve" type="text" name="approve" id="approve" rows="5" class="mt-1 textarea textarea-bordered w-full"></textarea>
+                        </div>
+                        <div class="mt-4 ">
+                            <label for="disapprove" class="block text-sm font-semibold text-gray-700">Respuesta Desaprobada:</label>
+                            <textarea v-model="form.feedback_disapprove" type="text" name="disapprove" id="disapprove" rows="5" class="mt-1 textarea textarea-bordered w-full"></textarea>
+                        </div>                   
 
                     </div>
 

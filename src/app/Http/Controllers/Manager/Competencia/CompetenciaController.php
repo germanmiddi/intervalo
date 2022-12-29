@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Competencia;
+use App\Models\CompetenciaRelated;
 use App\Models\Category;
 use App\Models\Capsule;
 use App\Imports\CompetenciaImport;
@@ -75,11 +76,15 @@ class CompetenciaController extends Controller
 
     public function store(Request $request)
     {
-
         Competencia::create($request->all())->capsules()->attach($request->input("tags"));
-
+        $competencia = Competencia::latest()->first();
+        CompetenciaRelated::create([
+            'competencia_id' => $competencia->id,
+            'relate_id' => $competencia->id,
+            'feedback_approve' => $request->feedback_approve,
+            'feedback_disapprove' => $request->feedback_disapprove
+        ]);
         return Redirect::route('competencia');
-        
     }
 
      /**
@@ -103,14 +108,30 @@ class CompetenciaController extends Controller
 
         $capsulas_asignadas = $competencia->Capsules;
         $afirmations_asignadas = $competencia->Afirmations;
+                    //dd($competencia->competencias_relate[0]->competencia);
+        $competencia_relate = array();
 
+        foreach ($competencia->competencias_relate as $value) {
+            $c = array (
+                'competencia' => $value->competencia->competencia,
+                'competencia_id' => $value->competencia_id,
+                'competencia_relate' => $value->competencia_relate->competencia,
+                'relate_id' => $value->relate_id,
+                'feedback_approve' => $value->feedback_approve,
+                'feedback_disapprove' => $value->feedback_disapprove,
+                'action' => 'U'
+            );
+            array_push($competencia_relate, $c);
+        }
         return Inertia::render('Manager/Competencias/Edit', [
-                            'competencia' => $competencia,
-                            "categories"  => Category::all(),
-                            "capsules"    => $capsulas_list
-                        ]);
+                'competencia' => $competencia,
+                "categories"  => Category::all(),
+                "capsules"    => $capsulas_list,
+                "competencias" => Competencia::all(),
+                "competencias_related" => $competencia_relate
+            ]);
 
-    }    
+        }    
 
     /**
      * Update the specified resource in storage.
@@ -121,8 +142,36 @@ class CompetenciaController extends Controller
      */
     public function update(Request $request, Competencia $competencia)
     {
+        foreach ($request->input('competencias_related') as $competencia_related) {
+            switch ($competencia_related['action']) {
+                case 'D':
+                    //DELETED
+                    CompetenciaRelated::where('competencia_id', $competencia_related['competencia_id'])->where('relate_id', $competencia_related['relate_id'])->delete();
+                    break;
+                case 'N':
+                    //NUEVA COMPETENCIA
+                    CompetenciaRelated::create([
+                        'competencia_id' => $competencia_related['competencia_id'],
+                        'relate_id' => $competencia_related['relate_id'],
+                        'feedback_approve' => $competencia_related['feedback_approve'],
+                        'feedback_disapprove' => $competencia_related['feedback_disapprove']
+                    ]);
+                    break;
+                case 'U':
+                    //UPDATE COMPETENCIA
+                    CompetenciaRelated::where('competencia_id', $competencia_related['competencia_id'])->where('relate_id', $competencia_related['relate_id'])->update([
+                        'feedback_approve' => $competencia_related['feedback_approve'],
+                        'feedback_disapprove' => $competencia_related['feedback_disapprove']
+                    ]);
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+        }
         $competencia->update($request->all());
         $competencia->Capsules()->sync($request->input('tags'));
+
 
         return Redirect::route('competencia');
     }

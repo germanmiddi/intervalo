@@ -16,7 +16,6 @@ class CapsuleController extends Controller
 {
     public function index()
     {
-
         return  Inertia::render('Manager/Capsules/List');
         /* $result = Capsule::query();
         return  Inertia::render('Manager/Capsules/List', 

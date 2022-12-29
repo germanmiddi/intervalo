@@ -10,6 +10,10 @@ use Illuminate\Support\Arr;
 
 use App\Models\Afirmation;
 use App\Models\Competencia;
+use App\Models\CompetenciaRelated;
+use App\Models\Test;
+use App\Models\TestDetail;
+use App\Models\TestStatus;
 
 class QuizController extends Controller
 {
@@ -18,108 +22,107 @@ class QuizController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($competencias)
-    {
-        
-        $competencias =  explode(",", $competencias);
-        $ids    = [];
-        $result = [];
-        $output = [];
-
-        foreach($competencias as $c){
-            $result = Afirmation::wherehas('competencias',function($query) use ($c){
-                                                            $query = $query->where('competencia_id', $c);
-                                                        })
-                                ->whereNotIn('id',$ids)
-                                ->limit(15)
-                                ->get()->toArray();
-            
-            $result_final = array_map(function($r) use ($c) {
-                                        $r['id_competencia'] = $c;
-                                        return $r;
-                                        
-                                      },$result);
-
-            $output = array_merge($output, $result_final);
-            
-            $ids = $ids + array_map(function($r){ return ['id' => $r['id']]; }, $result_final);
-           
-        }
-        return  Inertia::render('Web/Quiz',['afirmations' => $output ]);
-    }
-    
     public function calculate(Request $request){
         
-        
-        $input = $request->request;
-        
+        //Recupero respuestas.
+
+        $input = $request->afirmations;
+        $person = $request->form_person;
+        $test = $request->form_test;
+        //dd($input);
+        //Agrupo las respuestas segun las competencias.
         $competencias = $this->group_by("id_competencia", $input);
         $comp_rel = [];
-
+        $data = array();
         foreach($competencias as $key => $respuestas){
-            $cant = count($respuestas);
-            $sum = 0;
-        
-            foreach($respuestas as $r){
-                $sum += $r['value'];
-                
-                // Si el valor es menor a 50, busco las Compt relacionadas a la afirmacion.
-                // En caso que la Competencia a evaluar, de mas de 50 %, se recomiendan las capsulas de las compe relacionadas
-                if($r['value'] < 50 ){ 
-                    $id = $r['id'];
+            $result = array();
+            $details_competencia = Competencia::where('id',$key)->first();
+            // Comienza la carga del array
+            $result[$details_competencia->competencia]['competencia'] = $details_competencia->competencia;
+            $result[$details_competencia->competencia]['competencia_id'] = $details_competencia->id;
+            $result[$details_competencia->competencia]['suma'] = 0;
+            $result[$details_competencia->competencia]['cantidad'] = count($respuestas);
+            $result[$details_competencia->competencia]['tipo'] = 'main';
 
-                    $competencias = Competencia::select('id')
-                                                ->wherehas('afirmations', function($query) use ($id){
-                                                                            $query = $query->where('afirmation_id', $id);
-                                                                        })
-                                                ->where('id', '!=',$key) //Levanto solo las competencias distintas a la q estoy sumando
-                                                // ->with('capsules')
-                                                ->get()->toArray();
-                    
-                    $comp_rel = array_merge($comp_rel, $competencias);
+            foreach($respuestas as $r){
+                $result[$details_competencia->competencia]['suma'] += $r['value'];
+                // Busqueda de las competencias relacionadas a la afirmacion.
+                $id = $r['id'];
+                $competencias = Competencia::select('id')
+                                    ->wherehas('afirmations', function($query) use ($id){
+                                                                $query = $query->where('afirmation_id', $id);
+                                                            })
+                                    ->where('id', '!=', $key) //Levanto solo las competencias distintas a la q estoy sumando
+                                    ->get()->toArray();
+
+                // Se Analisis las competencias relacionadas. 
+                foreach ($competencias as $c) {
+                    $competencia_relate = Competencia::where('id',$c['id'])->first();
+                    $exist = false;
+                    foreach ($details_competencia->competencias_relate as $cr) {
+                        if($c['id'] === $cr->relate_id){
+                            $exist = true;
+                        }
+                    }
+                    // Se verifica si existe la relacion de la competencia con sus competencias relacionadas. 
+                    if($exist){
+                        $result[$competencia_relate->competencia]['competencia'] = $competencia_relate->competencia;
+                        $result[$competencia_relate->competencia]['competencia_id'] = $c['id'];
+                        //Verifica si es la primera ves que se carga las suma y cantidad
+                        if(!isset($result[$competencia_relate->competencia]['suma'])){
+                            $result[$competencia_relate->competencia]['suma'] = $r['value'];
+                            $result[$competencia_relate->competencia]['cantidad'] = 1;
+                        }else{
+                            $result[$competencia_relate->competencia]['suma'] += $r['value'];
+                            $result[$competencia_relate->competencia]['cantidad'] += 1;
+                        }
+                        $result[$competencia_relate->competencia]['tipo'] = 'related';
+                    }
+                }
+            }
+            // Se cargan los feedback y las capsulas..
+            foreach ($result as $r) {
+                $result[$r['competencia']]['promedio'] = round(($r['suma']/$r['cantidad'])/5) * 5;
+
+                $feedback = CompetenciaRelated::where('competencia_id', $details_competencia->id)->where('relate_id', $r['competencia_id'])->first();
+                if(($r['suma']/$r['cantidad']) >= 50){
+                    $result[$r['competencia']]['texto'] = $feedback->feedback_approve ?? '';
+                }else{
+                    $result[$r['competencia']]['texto'] = $feedback->feedback_disapprove ?? '';
                 }
 
+                // ACTUALIZO DETALLE TEST..
+                /* TestDetail::where('test_id', $test['id'])->where('competencia_related_id', $feedback->id)->update([
+                    'score' => $result[$r['competencia']]['promedio'],
+                ]); */
+
+                TestDetail::updateOrCreate(
+                    [
+                        'test_id' =>  $test['id'],
+                        'competencia_related_id' => $feedback->id
+                    ],
+                    [
+                        'test_id' =>  $test['id'],
+                        'competencia_related_id' => $feedback->id,
+                        'score' => $result[$r['competencia']]['promedio'],
+                    ]
+
+                );
+                $capsulas = Competencia::select()->where('id',$r['competencia_id'])->with('capsules')->get()->toArray();
+                foreach ($capsulas[0]['capsules'] as $cap) {
+                    $result[$r['competencia']]['capsulas'][$cap['id']] = $cap['title'];
+                }
             }
-
-            $promedio = $sum / $cant;
-           
-
-            $capsules = array(); //"";
-            $list = [];
-
-            // foreach($comp_rel as $m){
-            //     $list[] = $m['id']; 
-            // }
-            // dd(count($comp_rel));
-            $compe = Competencia::select('id', 'competencia')->where('id',$key)->with('capsules')->first();
-
-            if($promedio < 50){
-                $capsules = $compe->capsules;
-
-            }elseif( count($comp_rel) > 0){
-                
-                $compe_aux = Competencia::select('id', 'competencia')->whereIn('id',$comp_rel)->with('capsules')->get()->toArray();
-                // $capsules = Arr::get($compe_aux,'capsules');
-                $caps = array_map( function($e){return $e['capsules'];}, $compe_aux);
-                
-                // $capsules = new Array();
-                foreach($caps as $c){  $capsules += $c; }
-                
-            }
-            
-            $resultado[] = [ 'competencia' => $compe->competencia, 
-                             'promedio' => round($promedio/5) * 5 ,
-                             'capsules' => $capsules,
-                             'comp_rel' => $comp_rel ];
-
+            array_push($data, $result);
         }
-        
 
-        // $sum = array_sum(array_map(fn ($item) => $item['qty'], $respuestas));
-        return response()->json($resultado, 200);
+        // Finalizar Examen
+        Test::where('id', $test['id'])->update([
+            'status_id' => TestStatus::select('id')->where('description', 'FINISHED')->first()->id,
+        ]);
         
-        // return  Inertia::render('Web/Result');
-
+        return response()->json($data, 200);
+        
     }
 
     function group_by($key, $data) {
