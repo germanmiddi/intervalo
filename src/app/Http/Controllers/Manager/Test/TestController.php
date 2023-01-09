@@ -21,12 +21,29 @@ class TestController extends Controller
 
         $length = request('length');
         $result = TestDetail::query();
+
+        $sort_by = request('sort_by') ?? 'p.name';
+        $sort_order = request('sort_order') ?? 'DESC';
+
+        $result->join('competencias_related as cr', function($join)
+                        {
+                            $join->on('test_detail.competencia_related_id', '=', 'cr.id');
+                            $join->on('cr.competencia_id','=','cr.relate_id');
+                        });
+
+        $result->join('test as t', 'test_detail.test_id', '=', 't.id');
+        $result->join('test_status as ts', 't.status_id', '=', 'ts.id');
+        $result->join('persons as p', 't.person_id', '=', 'p.id');
+       
         
         if(request('search')){
-            $result->where('id','LIKE', '%' . request('search') . '%' );
+            $result->where('p.name','LIKE', '%' . request('search') . '%' );
+            $result->orWhere('p.lastname','LIKE', '%' . request('search') . '%' );
+            $result->orWhere('ts.description','LIKE', '%' . request('search') . '%' );
         }
 
-        return $result->paginate($length)
+        return $result->orderBy($sort_by, $sort_order)
+                        ->paginate($length)
                         ->withQueryString()
                         ->through(fn ($t) => [
                                 'person'          => $t->test->person,

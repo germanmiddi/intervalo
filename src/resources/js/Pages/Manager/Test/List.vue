@@ -19,7 +19,6 @@
                 <div>
                     <label class="font-semibold mr-2" for="">Ver: </label>
                     <select class="text-sm border-gray-300 rounded-md" v-model="length" @change="getTests">
-                        <option value="1">1</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
                         <option value="30">30</option>
@@ -34,11 +33,65 @@
                     <!-- head -->
                     <thead>
                         <tr>
-                            <th class="w-2/10 px-6 py-4 text-center">Persona</th>
-                            <th class="w-3/10 px-6 py-4 text-center">Competencia</th>
-                            <th class="w-2/10 px-6 py-4 text-center">Fecha</th>
-                            <th class="w-1/10 px-6 py-4 text-center">Estado</th>
-                            <th class="w-1/10 px-6 py-4 text-center">Resultado</th>
+                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 'p.name', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Persona
+                                    <Icons v-if="sort_by == 'p.name' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'p.name' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
+
+                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 'test_detail.competencia_related_id', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Competencia
+                                    <Icons v-if="sort_by == 'test_detail.competencia_related_id' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'test_detail.competencia_related_id' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
+
+                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 't.fecha', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Fecha
+                                    <Icons v-if="sort_by == 't.fecha' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 't.fecha' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
+
+                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 'ts.description', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Estado
+                                    <Icons v-if="sort_by == 'ts.description' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'ts.description' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
+                            
+                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 'test_detail.score', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Resultado
+                                    <Icons v-if="sort_by == 'test_detail.score' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'test_detail.score' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
                             <th class="w-1/10 px-6 py-4 text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -107,16 +160,17 @@ export default {
             length: "10",
             search: "",
             afirmaciones: "",
-            tests: ""
-            // nextpage: "",
-            // prevpage: "",                
-
+            tests: "",
+            sort_order: 'DESC',
+            sort_by: "p.name"
         }
     },
     methods: {
         async getTests() {
 
             let filter = `&length=${this.length}`
+            filter += `&sort_by=${this.sort_by}`
+            filter += `&sort_order=${this.sort_order}`
 
             if (this.search) {
                 filter += `&search=${this.search}`
@@ -137,6 +191,10 @@ export default {
             // this.nextpage = this.afirmaciones.next_page_url
             // this.prevpage = this.afirmaciones.prev_page_url
 
+        },
+        sortTest() {
+            this.sort_order = this.sort_order === 'ASC' ? 'DESC' : 'ASC'
+            this.getTests()
         },
 
     },
