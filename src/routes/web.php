@@ -67,6 +67,9 @@ Route::post('/competencia/importfile', [CompetenciaController::class, 'importfil
     ->name('competencia.importfile')
     ->middleware('auth');   
 
+Route::post('/competencia/importfilerelated', [CompetenciaController::class, 'importfilerelated'])
+    ->name('competencia.importfilerelated')
+    ->middleware('auth'); 
 
 
     //Afirmaciones
