@@ -58,7 +58,11 @@
 export default {
     data() {
         return {
-            form_register: {}
+            form_register: {
+                name: 'Hector',
+                lastname: 'Skieba',
+                email: 'skiebah@gmail.com'
+            }
         };
     },
     methods: {

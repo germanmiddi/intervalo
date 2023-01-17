@@ -27,4 +27,9 @@ class Test extends Model
     {
         return $this->belongsTo(TestStatus::class);
     }
+
+    public function test_detail()
+    {
+        return $this->hasMany(TestDetail::class);
+    }
 }

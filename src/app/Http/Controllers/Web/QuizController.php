@@ -25,11 +25,10 @@ class QuizController extends Controller
     public function calculate(Request $request){
         
         //Recupero respuestas.
-
         $input = $request->afirmations;
         $person = $request->form_person;
         $test = $request->form_test;
-        //dd($input);
+
         //Agrupo las respuestas segun las competencias.
         $competencias = $this->group_by("id_competencia", $input);
         $comp_rel = [];
@@ -66,19 +65,21 @@ class QuizController extends Controller
                     }
                     // Se verifica si existe la relacion de la competencia con sus competencias relacionadas. 
                     if($exist){
-                        $result[$competencia_relate->competencia]['competencia'] = $competencia_relate->competencia;
-                        $result[$competencia_relate->competencia]['competencia_id'] = $c['id'];
+                        $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['competencia'] = $competencia_relate->competencia;
+                        $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['competencia_id'] = $c['id'];
                         //Verifica si es la primera ves que se carga las suma y cantidad
                         if(!isset($result[$competencia_relate->competencia]['suma'])){
-                            $result[$competencia_relate->competencia]['suma'] = $r['value'];
-                            $result[$competencia_relate->competencia]['cantidad'] = 1;
+                            $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['suma'] = $r['value'];
+                            $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['cantidad'] = 1;
                         }else{
-                            $result[$competencia_relate->competencia]['suma'] += $r['value'];
-                            $result[$competencia_relate->competencia]['cantidad'] += 1;
+                            $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['suma'] += $r['value'];
+                            $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['cantidad'] += 1;
                         }
-                        $result[$competencia_relate->competencia]['tipo'] = 'related';
+                        $result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['tipo'] = 'related';
+                        //$result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['texto'] = $competencia_relate->feedback_approve;
                     }
                 }
+
             }
             // Se cargan los feedback y las capsulas..
             foreach ($result as $r) {
@@ -91,10 +92,6 @@ class QuizController extends Controller
                     $result[$r['competencia']]['texto'] = $feedback->feedback_disapprove ?? '';
                 }
 
-                // ACTUALIZO DETALLE TEST..
-                /* TestDetail::where('test_id', $test['id'])->where('competencia_related_id', $feedback->id)->update([
-                    'score' => $result[$r['competencia']]['promedio'],
-                ]); */
 
                 TestDetail::updateOrCreate(
                     [
@@ -112,9 +109,25 @@ class QuizController extends Controller
                 foreach ($capsulas[0]['capsules'] as $cap) {
                     $result[$r['competencia']]['capsulas'][$cap['id']] = $cap['title'];
                 }
+
+                // Cargar Detalle de competencias relacionadas. 
+                if(isset($r['competencia_relacionada'])){
+                    foreach ($r['competencia_relacionada'] as $cr) {
+                        $result[$r['competencia']]['competencia_relacionada'][$cr['competencia']]['promedio'] = round(($cr['suma']/$cr['cantidad'])/5) * 5;
+    
+                        $feedback_cr = $feedback = CompetenciaRelated::where('competencia_id', $r['competencia_id'])->where('relate_id', $cr['competencia_id'])->first();
+                        if(($cr['suma']/$cr['cantidad']) >= 50){
+                            $result[$r['competencia']]['competencia_relacionada'][$cr['competencia']]['texto'] = $feedback_cr->feedback_approve ?? '';
+                        }else{
+                            $result[$r['competencia']]['competencia_relacionada'][$cr['competencia']]['texto'] = $feedback_cr->feedback_disapprove ?? '';
+                        }
+                    }
+                }
             }
             array_push($data, $result);
         }
+
+        //dd($data);
 
         // Finalizar Examen
         Test::where('id', $test['id'])->update([
@@ -135,8 +148,8 @@ class QuizController extends Controller
                 $result[""][] = $val;
             }
         }
-    
         return $result;
     }
+
 
 }

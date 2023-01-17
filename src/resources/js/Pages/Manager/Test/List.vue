@@ -5,14 +5,21 @@
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-10 text-4xl font-bold">Resultados</h1>
                 <div>
-                    <a class="btn btn-primary btn-sm mr-2" href="#">Descargar Excel</a>
+                    <a class="btn btn-primary btn-sm mr-2" href="test/downloadexcel" _blank>Descargar Excel</a>
                 </div>
             </div>
 
             <div class="w-11/12 mx-auto my-2 flex justify-between align-middle">
                 <div>
                     <label class="font-semibold mr-2" for="search">Buscar:</label>
-                    <input class="input input-sm" type="text" id="search" v-model="search" placeholder="Buscar...">
+                    <input class="input input-sm" type="text" id="search" v-model="filter.search" placeholder="Buscar...">
+
+                    <label class="font-semibold ml-2 mr-2" for="search">Competencia:</label>
+                    <select class="text-sm border-none rounded-md" v-model="filter.competencia">
+                            <option value="" disabled selected>Seleccione una categoría</option>
+                            <option v-for="com in competencias" :key="com.id" :value="com.id">{{com.competencia}}</option>
+                    </select>
+                    
                     <button class="ml-2 btn btn-primary btn-outline btn-sm" @click="getTests">Buscar</button>
                 </div>
 
@@ -144,9 +151,9 @@ import Pagination from '@/Layouts/Pagination'
 import Icons from '@/Layouts/Components/Icons.vue'
 
 export default {
-    // props:{
-    //     afirmaciones: Object
-    // },
+    props:{
+        competencias: Object
+    },
     components: {
         App,
         Icons,
@@ -158,7 +165,7 @@ export default {
         return {
             loading: true,
             length: "10",
-            search: "",
+            filter: {},
             afirmaciones: "",
             tests: "",
             sort_order: 'DESC',
@@ -172,8 +179,12 @@ export default {
             filter += `&sort_by=${this.sort_by}`
             filter += `&sort_order=${this.sort_order}`
 
-            if (this.search) {
-                filter += `&search=${this.search}`
+            if (this.filter.search) {
+                filter += `&search=${this.filter.search}`
+            }
+
+            if (this.filter.competencia) {
+                filter += `&competencia=${this.filter.competencia}`
             }
 
             const get = `${route('test.list')}?${filter}`

@@ -9,12 +9,19 @@ use Carbon\Carbon;
 
 use App\Models\Test;
 use App\Models\TestDetail;
+use App\Models\Competencia;
+
+use App\Exports\TestsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TestController extends Controller
 {
     public function index()
     {
-        return  Inertia::render('Manager/Test/List');
+        return  Inertia::render('Manager/Test/List', 
+        [
+            'competencias' =>  Competencia::all()
+        ]);
     }
 
     public function list(){
@@ -40,6 +47,10 @@ class TestController extends Controller
             $result->where('p.name','LIKE', '%' . request('search') . '%' );
             $result->orWhere('p.lastname','LIKE', '%' . request('search') . '%' );
             $result->orWhere('ts.description','LIKE', '%' . request('search') . '%' );
+        }
+
+        if(request('competencia')){
+            $result->where('cr.competencia_id',request('competencia'));
         }
 
         return $result->orderBy($sort_by, $sort_order)
@@ -71,5 +82,9 @@ class TestController extends Controller
                         ]); */
 
 
+    }
+
+    public function download_excel(){
+        return Excel::download(new TestsExport, 'Resumen Test.xlsx');
     }
 }

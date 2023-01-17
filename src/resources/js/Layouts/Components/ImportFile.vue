@@ -21,30 +21,15 @@
 
 
 <script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import App from '@/Layouts/App.vue'
-import Pageheader from '@/Layouts/Pageheader.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
-import Icons from '@/Layouts/Components/Icons.vue'
 
 export default {
   props: {
-    section: String,
-    title: String,
-    file: String,
-    flash: Object,
-    imports: Object,
-    toast: Object,
-
     title: String,
     route: String
   },
   components: {
-    Head,
-    App,
-    Pageheader,
-    Link,
-    Icons
+
   },
   setup(props) {
     const form = useForm({
@@ -66,20 +51,7 @@ export default {
 
     return { form, submit, showSpinner }
   },
-
-  // data(){
-  //     return{
-  //       persons:"",
-  //       showImportId:""
-  //     }
-  // },
-
   methods: {
-    closeResponse() {
-      this.props.flash = ""
-    },
   }
-
-
 }
 </script>
