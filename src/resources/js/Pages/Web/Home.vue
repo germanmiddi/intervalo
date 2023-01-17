@@ -55,8 +55,7 @@
 
       <ResultItem v-if="result" :resultado="resultado" @return_start="result = !result, start = !start"></ResultItem>
     </div>
-
-
+    
   </App>
 </template>
 

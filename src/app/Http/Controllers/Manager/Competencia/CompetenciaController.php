@@ -14,6 +14,7 @@ use App\Models\CompetenciaRelated;
 use App\Models\Category;
 use App\Models\Capsule;
 use App\Imports\CompetenciaImport;
+use App\Imports\CompetenciaRelatedImport;
 use Illuminate\Support\Facades\Session;
 
 class CompetenciaController extends Controller
@@ -217,5 +218,24 @@ class CompetenciaController extends Controller
         }
         
     } 
+
+    public function importfilerelated(Request $request )
+    {
+
+        if( $request->file('import_file')){
+            try {
+                $path = $request->file('import_file');
+                $import = new CompetenciaRelatedImport();
+                $data = Excel::import($import, $path);
+                $status = $import->getStatus();
+                return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
+            } catch (\Throwable $th) {
+                return Redirect::back()->with(['toast' => ['message' => 'Error al momento de procesar el archivo', 'status' => '203']]);
+            }
+        }else{
+            return Redirect::back()->with(['toast' => ['message' => 'Debe cargar un archivo', 'status' => '203']]);
+        }
+        
+    }
 
 }

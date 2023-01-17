@@ -67,6 +67,9 @@ Route::post('/competencia/importfile', [CompetenciaController::class, 'importfil
     ->name('competencia.importfile')
     ->middleware('auth');   
 
+Route::post('/competencia/importfilerelated', [CompetenciaController::class, 'importfilerelated'])
+    ->name('competencia.importfilerelated')
+    ->middleware('auth'); 
 
 
     //Afirmaciones
@@ -141,6 +144,9 @@ Route::get('/test/list', [TestManagerController::class, 'list'])
     ->name('test.list')
     ->middleware('auth');
 
+Route::get('/test/downloadexcel', [TestManagerController::class, 'download_excel'])
+    ->name('test.downloadexcel');
+
     //Web
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');    
@@ -158,3 +164,5 @@ Route::get('/result', [QuizController::class, 'result'])
     //Web Test
 Route::post('/test', [TestController::class, 'store'])
     ->name('test.store');
+
+
