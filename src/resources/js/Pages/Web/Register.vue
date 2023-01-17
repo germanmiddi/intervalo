@@ -59,9 +59,9 @@ export default {
     data() {
         return {
             form_register: {
-                name: 'Hector',
-                lastname: 'Skieba',
-                email: 'skiebah@gmail.com'
+                name: '',
+                lastname: '',
+                email: ''
             }
         };
     },
