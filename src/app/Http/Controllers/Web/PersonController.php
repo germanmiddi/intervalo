@@ -12,9 +12,9 @@ class PersonController extends Controller
     {   
         try {
             $person = Person::create([
-                'name' => $request['name'],
-                'lastname' => $request['lastname'],
-                'email' => $request['email']
+                'name' => $request->name,
+                'lastname' => $request->lastname,
+                'email' => $request->email
             ]);
 
             return $data = [
@@ -34,14 +34,14 @@ class PersonController extends Controller
     public function update($request) 
     {   
         try {
-            Person::where('email',$request['email'])->update([
-                'name' => $request['name'],
-                'lastname' => $request['lastname']
+            Person::where('email',$request->email)->update([
+                'name' => $request->name,
+                'lastname' => $request->lastname
             ]);
             //dd($person);
             return $data = [
                 'code' => 200,
-                'data' => Person::where('email',$request['email'])->first(),
+                'data' => Person::where('email',$request->email)->first(),
                 'message' => 'Se ha creado correctamente la persona'
             ];
         } catch (\Throwable $th) {

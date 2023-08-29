@@ -18,12 +18,13 @@ class TestController extends Controller
 {
     public function store(Request $request)
     {   
+
         try {
             $controllerPerson = New PersonController();
-            if(Person::where('email',$request->form_person['email'])->exists()){
-                $data_person = $controllerPerson->update($request->form_person);
+            if(Person::where('email',$request->email)->exists()){
+                $data_person = $controllerPerson->update($request);
             }else{
-                $data_person = $controllerPerson->store($request->form_person);
+                $data_person = $controllerPerson->store($request);
             }
 
             if($data_person['code'] == 200){
@@ -33,22 +34,36 @@ class TestController extends Controller
                     'status_id' => TestStatus::select('id')->where('description', 'ABANDONED')->first()->id,
                 ]);
                 
-                foreach ($request->form_competencias as $competencia) {
-                    TestDetail::create([
-                        'test_id' => $test->id,
-                        'competencia_related_id' =>  CompetenciaRelated::select('id')->where('competencia_id', $competencia)->where('relate_id', $competencia)->first()->id,
-                        'score' => 0,
-                    ]);
+                $form_competencias = explode(',', $request->input('form_competencias'));
+
+                foreach ($form_competencias as $competencia) {
+                    $id_competencia_related = CompetenciaRelated::select('id')
+                                                                ->where('competencia_id', $competencia)
+                                                                ->where('relate_id', $competencia)
+                                                                ->first();
+                                                                
+                    if ($id_competencia_related) {
+                        $id = $id_competencia_related->id;
+                    
+                        TestDetail::create([
+                            'test_id' => $test->id,
+                            'competencia_related_id' =>  $id,
+                            'score' => 0,
+                        ]);
+                    }
                 }
 
                 $controllerAfirmation = New AfirmationController();
 
-                $afirmations = $controllerAfirmation->get_afirmations($request->form_competencias);
+                $afirmations = $controllerAfirmation->get_afirmations($form_competencias);
 
-                return response()->json(['message'=>'Se registrado correctamente', 'data' => $afirmations, 'person' => $data_person, 'test' => $test],200);
+                return response()->json(['message'=>'Se registrado correctamente', 
+                                         'data'   => $afirmations, 
+                                         'person' => $data_person, 
+                                         'test'   => $test], 200);
             }
         } catch (\Throwable $th) {
-            dd($th);
+            
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
     }

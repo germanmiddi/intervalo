@@ -1,4 +1,5 @@
 <template>
+  <!--eslint-disable -->
   <transition name="expand">
     <Modal class="bg-gray-900/50" :item="modalContent" v-if="modalContent && modalContent.visible" />
   </transition>
@@ -114,7 +115,9 @@ export default {
     clearMessage() {
       this.message = ""
     },
-    storePerson(data) {
+
+    async storePerson(data) {
+
       if (this.compselected == '') {
         this.labelType = "danger"
         this.message = 'Debe seleccionar una competencia.'
@@ -123,26 +126,36 @@ export default {
 
         let rt = route('test.store');
 
-        axios.post(rt, {
-          form_person: this.form_person,
-          form_competencias: this.compselected
-        })
-          .then(response => {
-            if (response.status == 200) {
-              console.log("QUIz");
-              console.log(response);
-              this.afirmations = response.data.data
-              this.form_person.id = response.data.person.id
-              this.form_test = response.data.test
-              this.register = false
-              this.quiz = true
-            } else {
-              this.labelType = "error"
-              this.message = response.data['message']
-            }
-          })
+        let formData = new FormData();
+
+        formData.append('name', this.form_person.name);        
+        formData.append('lastname', this.form_person.lastname);        
+        formData.append('email', this.form_person.email);        
+        formData.append('form_competencias', this.compselected);
+
+        console.log(formData);
+        const response = await axios.post(rt, formData)
+        // const response = await request.json()
+        console.log(response.data)
+        if(response.status == 200) {
+          this.afirmations    = response.data.data
+          this.form_person.id = response.data.person.data.id
+          this.form_test      = response.data.test
+          if (response.data.data.length == 0) {
+            this.labelType = "error"
+            this.message = 'No hay afirmaciones para esta competencia.'
+          }else{
+            this.register       = false
+            this.quiz           = true
+          }
+
+        } else {
+          this.labelType = "error"
+          this.message = response.data['message']
+        }
       }
     },
+
     processQuiz(data) {
       let post = route('quiz.calculate')
       axios.post(post, {

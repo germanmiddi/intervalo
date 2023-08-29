@@ -162,7 +162,6 @@ Route::get('/result', [QuizController::class, 'result'])
     ->name('result');
     
     //Web Test
-Route::post('/test', [TestController::class, 'store'])
-    ->name('test.store');
+Route::post('/test', [TestController::class, 'store'])->name('test.store');
 
 
