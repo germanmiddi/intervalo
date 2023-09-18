@@ -81,17 +81,23 @@ class QuizController extends Controller
                 }
 
             }
+            
             // Se cargan los feedback y las capsulas..
             foreach ($result as $r) {
                 $result[$r['competencia']]['promedio'] = round(($r['suma']/$r['cantidad'])/5) * 5;
 
-                $feedback = CompetenciaRelated::where('competencia_id', $details_competencia->id)->where('relate_id', $r['competencia_id'])->first();
+                $feedback = CompetenciaRelated::where('competencia_id', $details_competencia->id)
+                                              ->where('relate_id', $r['competencia_id'])
+                                              ->first();
+
+                if(!$feedback){continue;}
+
                 if(($r['suma']/$r['cantidad']) >= 50){
                     $result[$r['competencia']]['texto'] = $feedback->feedback_approve ?? '';
                 }else{
                     $result[$r['competencia']]['texto'] = $feedback->feedback_disapprove ?? '';
                 }
-
+            
 
                 TestDetail::updateOrCreate(
                     [

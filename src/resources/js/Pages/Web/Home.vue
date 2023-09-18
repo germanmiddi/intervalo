@@ -12,19 +12,19 @@
           <h1 class="mb-5 text-4xl lg:text-5xl font-bold">
             Diagnostico de Competencias
           </h1>
-          <p class="mb-5">
+          <!-- <p class="mb-5">
             Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
             excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
             a id nisi.
-          </p>
-          <div class="form-control">
+          </p> -->
+          <!-- <div class="form-control">
             <div class="input-group">
               <input type="text" placeholder="Buscar..." class="input input-bordered" />
               <button class="btn btn-secondary">
                 <Icons name="search" class="h-6 w-6" />
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

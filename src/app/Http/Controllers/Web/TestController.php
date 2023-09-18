@@ -12,7 +12,7 @@ use App\Models\CompetenciaRelated;
 
 
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
@@ -20,6 +20,7 @@ class TestController extends Controller
     {   
 
         try {
+            DB::beginTransaction();
             $controllerPerson = New PersonController();
             if(Person::where('email',$request->email)->exists()){
                 $data_person = $controllerPerson->update($request);
@@ -56,14 +57,15 @@ class TestController extends Controller
                 $controllerAfirmation = New AfirmationController();
 
                 $afirmations = $controllerAfirmation->get_afirmations($form_competencias);
-
+                DB::commit();
                 return response()->json(['message'=>'Se registrado correctamente', 
                                          'data'   => $afirmations, 
                                          'person' => $data_person, 
                                          'test'   => $test], 200);
             }
         } catch (\Throwable $th) {
-            
+            DB::rollBack();
+            dd($th);
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
     }
