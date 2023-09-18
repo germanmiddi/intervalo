@@ -78,6 +78,10 @@ class CompetenciaRelatedImport implements ToModel,WithHeadingRow
         return $retorno;
     }
 
+    // esta funcion compara la competencia importada con las competencias de la base de datos
+    // si encuentra una coincidencia retorna el id de la competencia
+    // si no encuentra coincidencia retorna 0
+    
     function comparar_competencia($competencia){
         $competencia_import = preg_replace("/[^a-zA-Z0-9\_\-]+/", "", $this->elimina_acentos($competencia));
         $competencias = Competencia::select('competencia','id')->get();
@@ -92,6 +96,7 @@ class CompetenciaRelatedImport implements ToModel,WithHeadingRow
         }
         return 0;
     }
+
     function elimina_acentos($text)
     {
         $text = htmlentities($text, ENT_QUOTES, 'UTF-8');

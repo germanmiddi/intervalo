@@ -38,6 +38,6 @@ class CompetenciasRelated extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('competencias_complementary');
+        Schema::dropIfExists('competencias_related');
     }
 }

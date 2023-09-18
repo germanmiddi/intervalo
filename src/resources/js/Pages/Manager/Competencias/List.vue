@@ -30,21 +30,68 @@
             </div>
 
             <div class="w-11/12 mx-auto">
-                <table class="table w-full">
+                <table class="w-full my-7">
                     <!-- head -->
-                    <thead>
+                    <thead class="bg-blue-100 text-left text-sm font-semibold">
                         <tr>
-                            <th>Afirmacion</th>
+                            <th class="py-2 px-2">COMPETENCIAS</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                     <!-- row 1 -->
-                    <tr v-for="a in competencias.data" :key="a.id" class="hover">
-                        <td class="whitespace-normal" >{{a.competencia}}</td>
+                        <tr v-for="a in competencias.data" :key="a.id" class="bg-white hover:bg-gray-50 border-b border-gray-100 ">
+                            <td class="whitespace-normal p-3">
+                                <!-- {{a.competencia}}{{ a.related }} -->
+                                <p class="mb-2 pl-1 font-semibold "> {{ a.competencia }} - <span class="text-xs font-normal"> Afirmaciones: {{a.afirmations}}</span></p>
+                                <div class="flex flex-wrap items-center">
+                                    <span v-for="rel in a.related" :key="rel" class="mr-2 bg-indigo-100 border-white rounded-md text-sm flex item-center py-1 px-2 mb-2">
+                                        <label class="mr-2 inline-block">{{ rel.competencia }}</label>
+                                        <i :class="{ 'text-green-400': rel.feedback_approve, 'text-gray-400': !rel.feedback_approve } ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </i>
+                                        <i :class="{ 'text-green-400': rel.feedback_disapprove, 'text-gray-400': !rel.feedback_disapprove } ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </i>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="w-1/6 text-center">
+                                <a :href="route('competencia.edit', a.id)" 
+                                class="bg-blue-600 border text-blue-50 border-gray-100 px-3 py-3 rounded-lg text-sm hover:bg-blue-700 hover:text-gray-200 hover:border-transparent font-medium ">Detalle </a>
+                            </td>
+                        </tr>
+                    
+                    <!-- <tr v-for="a in competencias.data" :key="a.id" class="hover">
+                        <td class="whitespace-normal" >
+                         
+                             <p class="mb-1 pl-1"> {{ a.competencia }}</p>
+                             <span v-for="rel in a.related" :key="rel"
+                                   class="mr-2 bg-indigo-200 px-2 py-1 text-xs border border-white rounded-md flex items-center" >
+                                   
+                                    <label class="mr-2">{{ rel.competencia }}</label>
+                                    <i :class="{ 'text-green-400'  : rel.feedback_approve,
+                                                                 'text-gray-400' : !rel.feedback_approve } ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg></i>
+                                    <i :class="{ 'text-green-400'  : rel.feedback_disapprove,
+                                                                 'text-gray-400' : !rel.feedback_disapprove } ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg></i> 
+                                </span>
+
+                        </td>
                         <td class="w-1/6 text-center">
-                            <a :href="route('competencia.edit', a.id)">Detalle </a></td>
-                    </tr>
+                            <a :href="route('competencia.edit', a.id)" class="border border-gray-100 px-2 py-1 rounded-lg text-sm hover:bg-blue-200 hover:text-gray-600 hover:border-transparent font-medium ">Detalle </a>
+                            
+                        </td>
+                    </tr> -->
                     </tbody>
                 </table>
             </div>

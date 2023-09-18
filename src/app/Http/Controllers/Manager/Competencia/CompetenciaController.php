@@ -25,24 +25,89 @@ class CompetenciaController extends Controller
 
     }
 
+    // public function list()
+    // {
+    //     $length = request('length');
+    //     $result = Competencia::query()->with('competencias_relate');
+        
+    //     if(request('search')){
+    //         $result->where('competencia','LIKE', '%' . request('search') . '%' );
+    //     }
+
+    //     $result->load('competencias_relate.competencia');
+
+    //     return $result->paginate($length)
+    //                     ->withQueryString()
+    //                     ->through(function ($c) {
+    //                         $competenciasRelacionadas = $c->competencias_relate->pluck('competencia.competencia')->unique()->toArray();
+
+    //                         return [
+    //                             'id' => $c->id,
+    //                             'competencia' => $c->competencia,
+    //                             'definicion' => substr($c->definicion, 0, 50) . '...',
+    //                             'comportamiento' => $c->comportamiento,
+    //                             'related' => $competenciasRelacionadas,
+    //                         ];
+    //                     });                        
+    // }
+
+    // public function list()
+    // {
+    //     $length = request('length');
+        
+    //     $result = Competencia::query()->with('competencias_relate')->with(['competencias_relate.competencia_relate']);
+        
+    //     if (request('search')) {
+    //         $result->where('competencia', 'LIKE', '%' . request('search') . '%');
+    //     }
+    
+    //     return $result->paginate($length)
+    //         ->withQueryString()
+    //         ->through(function ($c) {
+    //             $competenciasRelacionadas = $c->competencias_relate->pluck('competencia_relate.competencia')->unique()->toArray();
+
+    //             return [
+    //                 'id' => $c->id,
+    //                 'competencia' => $c->competencia,
+    //                 'related' => $competenciasRelacionadas,
+    //             ];
+    //         });
+    // }
+    
+
     public function list()
     {
-        $length = request('length');
-        $result = Competencia::query();
-        
-        if(request('search')){
-            $result->where('competencia','LIKE', '%' . request('search') . '%' );
-        }
-
-        return $result->paginate($length)
-                        ->withQueryString()
-                        ->through(fn ($c) => [
-                            'id'            => $c->id,
-                            'competencia'   => $c->competencia,
-                            'definicion'    => substr($c->definicion,0,50) . '...',
-                            'comportamiento'=> $c->comportamiento,
-                        ]);
+    $length = request('length');
+    
+    $result = Competencia::query()->with('afirmations')->with('competencias_relate')->with(['competencias_relate.competencia_relate']);
+    
+    if (request('search')) {
+        $result->where('competencia', 'LIKE', '%' . request('search') . '%');
     }
+
+    return $result->paginate($length)
+        ->withQueryString()
+        ->through(function ($c) {
+            $relatedCompetencias = $c->competencias_relate->unique('competencia_relate.competencia')->toArray();
+            $relatedData = [];
+
+            foreach ($relatedCompetencias as $relatedCompetencia) {
+                $relatedData[] = [
+                    'competencia' => $relatedCompetencia['competencia_relate']['competencia'],
+                    'feedback_approve' => $relatedCompetencia['feedback_approve'] ? true : false ,
+                    'feedback_disapprove' => $relatedCompetencia['feedback_disapprove'] ? true : false 
+                ];
+            }
+
+            return [
+                'id' => $c->id,
+                'competencia' => $c->competencia,
+                'afirmations' => $c->afirmations->count(),
+                'related' => $relatedData,
+            ];
+        });
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -230,6 +295,7 @@ class CompetenciaController extends Controller
                 $status = $import->getStatus();
                 return Redirect::back()->with(['toast' => ['message' => $status, 'status' => '200']]);
             } catch (\Throwable $th) {
+                dd($th);
                 return Redirect::back()->with(['toast' => ['message' => 'Error al momento de procesar el archivo', 'status' => '203']]);
             }
         }else{
