@@ -8,11 +8,15 @@ use App\Http\Controllers\Manager\Competencia\CompetenciaController;
 use App\Http\Controllers\Manager\Afirmation\AfirmationController;
 use App\Http\Controllers\Manager\Afirmation\ImportController;
 use App\Http\Controllers\Manager\Capsule\CapsuleController;
+use App\Http\Controllers\Manager\Companie\CompanieController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Test\TestController as TestManagerController;
+use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\QuizController;
 use App\Http\Controllers\Web\TestController;
+use Illuminate\Support\Facades\Mail;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,144 +28,78 @@ use App\Http\Controllers\Web\TestController;
 |
 */
 
-    //Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard')
-    ->middleware('auth');
+//************************** */
+// RUTAS PUBLICAS
+//************************** */
 
-    //Competencias
-Route::get('/competencia', [CompetenciaController::class, 'index'])
-    ->name('competencia')
-    ->middleware('auth');
-
-Route::get('/competencia/list', [CompetenciaController::class, 'list'])
-    ->name('competencia.list')
-    ->middleware('auth');
-
-Route::get('/competencia/create', [CompetenciaController::class, 'create'])
-    ->name('competencia.create')
-    ->middleware('auth');
-    
-Route::post('/competencia', [CompetenciaController::class, 'store'])
-    ->name('competencia.store')
-    ->middleware('auth');
-
-
-Route::get('competencia/{competencia}/edit', [CompetenciaController::class, 'edit'])
-    ->name('competencia.edit')
-    ->middleware('auth');  
-
-Route::put('competencia/{competencia}', [CompetenciaController::class, 'update'])
-    ->name('competencia.update')
-    ->middleware('auth');
-
-Route::delete('competencia/{competencia}', [CompetenciaController::class, 'destroy'])
-    ->name('competencia.destroy')
-    ->middleware('auth');
-
-Route::get('/competencia/import', [CompetenciaController::class, 'import'])
-    ->name('competencia.import')
-    ->middleware('auth');  
-
-Route::post('/competencia/importfile', [CompetenciaController::class, 'importfile'])
-    ->name('competencia.importfile')
-    ->middleware('auth');   
-
-Route::post('/competencia/importfilerelated', [CompetenciaController::class, 'importfilerelated'])
-    ->name('competencia.importfilerelated')
-    ->middleware('auth'); 
-
-
-    //Afirmaciones
-Route::get('/afirmation', [AfirmationController::class, 'index'])
-    ->name('afirmation')
-    ->middleware('auth');
-
-Route::get('/afirmation/list', [AfirmationController::class, 'list'])
-    ->name('afirmation.list')
-    ->middleware('auth');
-
-Route::get('/afirmation/create', [AfirmationController::class, 'create'])
-    ->name('afirmation.create')
-    ->middleware('auth');
-
-Route::post('/afirmation', [AfirmationController::class, 'store'])
-    ->name('afirmation.store')
-    ->middleware('auth');    
-
-Route::get('/afirmation/import', [ImportController::class, 'import'])
-    ->name('afirmation.import')
-    ->middleware('auth');  
-
-Route::post('/afirmation/importfile', [ImportController::class, 'importfile'])
-    ->name('afirmation.importfile')
-    ->middleware('auth');   
-
-Route::get('afirmation/{afirmation}/edit', [AfirmationController::class, 'edit'])
-    ->name('afirmation.edit')
-    ->middleware('auth');  
-
-Route::put('afirmation/{afirmation}', [AfirmationController::class, 'update'])
-    ->name('afirmation.update')
-    ->middleware('auth');
-
-Route::delete('afirmation/{afirmation}', [AfirmationController::class, 'destroy'])
-    ->name('afirmation.destroy')
-    ->middleware('auth');
-
-
-    //Capsulas
-Route::get('/capsule', [CapsuleController::class, 'index'])
-    ->name('capsule')
-    ->middleware('auth');
-
-Route::get('/capsule/create', [CapsuleController::class, 'create'])
-    ->name('capsule.create')
-    ->middleware('auth');
-
-Route::post('/capsule', [CapsuleController::class, 'store'])
-    ->name('capsule.store')
-    ->middleware('auth');    
-
-Route::post('/capsule/{id}/edit', [CapsuleController::class, 'edit'])
-    ->name('capsule.edit')
-    ->middleware('auth');   
-    
-Route::get('/capsule/list', [CapsuleController::class, 'list'])
-    ->name('capsule.list')
-    ->middleware('auth');
-
-Route::delete('/capsule/{id}', [CapsuleController::class, 'destroy'])
-    ->name('capsule.destroy')
-    ->middleware('auth');
-
-    // TEST
-Route::get('/test', [TestManagerController::class, 'index'])
-    ->name('test')
-    ->middleware('auth');
-
-Route::get('/test/list', [TestManagerController::class, 'list'])
-    ->name('test.list')
-    ->middleware('auth');
-
-Route::get('/test/downloadexcel', [TestManagerController::class, 'download_excel'])
-    ->name('test.downloadexcel');
-
-    //Web
-Route::get('/', [HomeController::class, 'index'])
-    ->name('home');    
-
-    //Web
-Route::get('/quiz/{competencias}', [QuizController::class, 'index'])
-    ->name('quiz');  
-
-Route::post('/quiz/calculate', [QuizController::class, 'calculate'])
-    ->name('quiz.calculate');        
-
-Route::get('/result', [QuizController::class, 'result'])
-    ->name('result');
-    
-    //Web Test
+Route::get('/test/downloadexcel', [TestManagerController::class, 'download_excel'])->name('test.downloadexcel');
 Route::post('/test', [TestController::class, 'store'])->name('test.store');
 
+    //Web
+Route::get('/', [HomeController::class, 'index'])->name('home');    
+Route::get('/quiz/{competencias}', [QuizController::class, 'index'])->name('quiz');  
+Route::post('/quiz/calculate', [QuizController::class, 'calculate'])->name('quiz.calculate');        
+Route::get('/result', [QuizController::class, 'result'])->name('result');
+
+//************************** */
+// RUTAS PRIVADAS
+//************************** */
+Route::middleware('auth')->group(function () {
+
+    //Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    //Competencias
+    Route::get('/competencia', [CompetenciaController::class, 'index'])->name('competencia');
+    Route::get('/competencia/list', [CompetenciaController::class, 'list'])->name('competencia.list');
+    Route::get('/competencia/create', [CompetenciaController::class, 'create'])->name('competencia.create');
+    Route::post('/competencia', [CompetenciaController::class, 'store'])->name('competencia.store');
+    Route::get('competencia/{competencia}/edit', [CompetenciaController::class, 'edit'])->name('competencia.edit');  
+    Route::put('competencia/{competencia}', [CompetenciaController::class, 'update'])->name('competencia.update');
+    Route::delete('competencia/{competencia}', [CompetenciaController::class, 'destroy'])->name('competencia.destroy');
+    Route::get('/competencia/import', [CompetenciaController::class, 'import'])->name('competencia.import');
+    Route::post('/competencia/importfile', [CompetenciaController::class, 'importfile'])->name('competencia.importfile');   
+    Route::post('/competencia/importfilerelated', [CompetenciaController::class, 'importfilerelated'])->name('competencia.importfilerelated'); 
+    
+    //Afirmaciones
+    Route::get('/afirmation', [AfirmationController::class, 'index'])->name('afirmation');
+    Route::get('/afirmation/list', [AfirmationController::class, 'list'])->name('afirmation.list');
+    Route::get('/afirmation/create', [AfirmationController::class, 'create'])->name('afirmation.create');
+    Route::post('/afirmation', [AfirmationController::class, 'store'])->name('afirmation.store');
+    Route::get('/afirmation/import', [ImportController::class, 'import'])->name('afirmation.import');  
+    Route::post('/afirmation/importfile', [ImportController::class, 'importfile'])->name('afirmation.importfile');   
+    Route::get('afirmation/{afirmation}/edit', [AfirmationController::class, 'edit'])->name('afirmation.edit');  
+    Route::put('afirmation/{afirmation}', [AfirmationController::class, 'update'])->name('afirmation.update');
+    Route::delete('afirmation/{afirmation}', [AfirmationController::class, 'destroy'])->name('afirmation.destroy');
+    
+    //Capsulas
+    Route::get('/capsule', [CapsuleController::class, 'index'])->name('capsule');
+    Route::get('/capsule/create', [CapsuleController::class, 'create'])->name('capsule.create');
+    Route::post('/capsule', [CapsuleController::class, 'store'])->name('capsule.store');    
+    Route::post('/capsule/{id}/edit', [CapsuleController::class, 'edit'])->name('capsule.edit');   
+    Route::get('/capsule/list', [CapsuleController::class, 'list'])->name('capsule.list');
+    Route::delete('/capsule/{id}', [CapsuleController::class, 'destroy'])->name('capsule.destroy');
+    
+    // TEST
+    Route::get('/test', [TestManagerController::class, 'index'])->name('test');
+    Route::get('/test/list', [TestManagerController::class, 'list'])->name('test.list');
+
+    // USERS
+    Route::get('/user', [UserController::class, 'index'])->name('user');
+    Route::get('/user/list', [UserController::class, 'list'])->name('user.list');
+    Route::post('/users/store', [UserController::class, 'store'])->name('user.store');
+
+    // COMPANIES
+    Route::get('/companie', [CompanieController::class, 'index'])->name('companie');
+    Route::get('/companie/list', [CompanieController::class, 'list'])->name('companie.list');
+    Route::get('/companie/create', [CompanieController::class, 'create'])->name('companie.create');
+    Route::post('/companie', [CompanieController::class, 'store'])->name('companie.store');    
+
+    Route::get('/companie/{id}/edit', [CompanieController::class, 'edit'])->name('companie.edit');   
+    Route::post('/companie/{id}/update', [CompanieController::class, 'update'])->name('companie.update'); 
+    Route::get('/companie/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
+    Route::delete('/companie/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
+    Route::get('/companie/listUserByCompanie/{id}', [CompanieController::class, 'listUserByCompanie'])->name('companie.listUserByCompanie');
+
+});
 

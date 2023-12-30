@@ -58,7 +58,7 @@
         },
         data(){
             var data ={
-                text:      this.afirmation.text,
+                text:     this.afirmation.text,
                 ponderacion: this.afirmation.ponderacion,
                 tags: this.afirmation.competencias.map((e)=>{
                     return e.id

@@ -39,6 +39,9 @@ class Competencia extends Model
         return $this->hasMany(CompetenciaRelated::class);
     }
 
+    public function companies(){
+        return $this->belongsToMany(Companie::class, 'companies_competencias');
+    }
 
     
 }

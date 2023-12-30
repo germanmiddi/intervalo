@@ -41,9 +41,18 @@
               </li>              
  
               <li class="nav-item">
-                <nav-link >
+                <nav-link :href="route('user')" 
+                      :active="route().current('user')">
                       <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
                       <span class="nav-label font-medium text-sm pt-1">Usuarios</span>
+                </nav-link>   
+              </li> 
+
+              <li class="nav-item">
+                <nav-link :href="route('companie')" 
+                      :active="route().current('companie')">
+                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <span class="nav-label font-medium text-sm pt-1">Empresas</span>
                 </nav-link>   
               </li>   
               

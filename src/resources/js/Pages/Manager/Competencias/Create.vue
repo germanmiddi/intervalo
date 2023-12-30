@@ -13,7 +13,7 @@
                     <div class="col-span-3 text-lg px-5 py-4 font-bold">
                         <div>Información General</div> 
                     </div>
-                    <div class="card col-span-3 pt-6 mb-8 pb-80   px-6">
+                    <div class="card col-span-3 pt-6 mb-8 pb-80 px-6">
                         <div class="">
                             <label for="competencia" class="block text-sm font-semibold text-gray-700">Competencia</label>
                             <input v-model="form.competencia" type="text" name="competencia" id="competencia"  class="mt-1 input input-bordered w-full" />
