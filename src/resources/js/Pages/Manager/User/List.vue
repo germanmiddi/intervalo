@@ -1,11 +1,12 @@
 <template>
     <App>
+        <Toast :toast="this.message" :type="this.labelType" @clear="clearMessage"></Toast>
         <!-- CONTENT -->
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-5 text-4xl font-bold">Usuarios</h1>
                 <div>
-                    <a class="btn btn-primary btn-sm" @click="open=true">Nuevo</a>
+                    <a class="btn btn-primary btn-sm" @click="openNuevo=true">Nuevo</a>
                 </div>
             </div>
             <hr>
@@ -109,9 +110,93 @@
 
         <!-- / CONTENT -->
 
-        <!-- MANEJO DE ALTA DE USUARIO- -->
+        <!-- MANEJO DE DETALLE DE USUARIO- -->
         <TransitionRoot as="template" :show="open">
             <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
+                <div class="absolute inset-0 overflow-hidden">
+                    <DialogOverlay class="absolute inset-0" />
+
+                    <div class="fixed inset-y-0 pl-16 max-w-full right-0 flex">
+                        <TransitionChild as="template"
+                            enter="transform transition ease-in-out duration-500 sm:duration-700"
+                            enter-from="translate-x-full" enter-to="translate-x-0"
+                            leave="transform transition ease-in-out duration-500 sm:duration-700"
+                            leave-from="translate-x-0" leave-to="translate-x-full">
+                            <div class="w-screen max-w-md">
+                                <form class="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
+                                    enctype="multipart/form-data">
+                                    <div class="flex-1 h-0 overflow-y-auto">
+                                        <div class="py-6 px-4 bg-blue-500 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <DialogTitle
+                                                    class="text-lg font-medium text-white"> Detalle Usuario
+                                                </DialogTitle>
+                                                <div class="ml-3 h-7 flex items-center">
+                                                    <button type="button"
+                                                        class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                                        @click="open = false">
+                                                        <span class="sr-only">Cerrar</span>
+                                                        <Icons class="w-5 h-5" name="closed" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-1 flex flex-col justify-between">
+                                            <div class="px-4 divide-y divide-gray-200 sm:px-6">
+
+                                                <div class="space-y-2 pt-2 pb-5">
+                                                    <div>
+                                                        <label for="time"
+                                                            class="block text-xl font-medium text-gray-700 "><b>Usuario: </b>{{form.name}}</label>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="flex text-sm text-gray-700">
+                                                        <label class="text-bold w-24 font-bold">Email: </label>
+                                                        <span>{{form.email}}</span>
+                                                    </div>
+
+                                                    <div class="flex text-sm text-gray-700">
+                                                        <label class="text-bold w-24 font-bold">Empresa: </label>
+                                                        <span> {{form.empresa.description ?? '-'}} </span>
+                                                    </div>
+
+                                                    <div class="flex text-sm text-gray-700">
+                                                        <label class="text-bold w-24 font-bold">Rol:</label>
+                                                        <span> {{form.rol.name ?? '-'}} </span>
+                                                    </div>
+
+                                                    <hr>
+                                                    <div>
+                                                        <label for="time"
+                                                            class="block text-xl font-medium text-gray-700 "><b>Recuperar Contraseña</b></label>
+                                                    </div>
+                                                    <hr>
+                                                    <button type="button"
+                                                        class="bg-red-500 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                        @click="resetPassword">Enviar Email</button>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="flex-shrink-0 px-4 py-4 flex justify-end">
+                                        <button type="button"
+                                            class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                            @click="open = false">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </TransitionChild>
+                    </div>
+                </div>
+            </Dialog>
+        </TransitionRoot>
+
+        <!-- MANEJO DE ALTA DE USUARIO- -->
+        <TransitionRoot as="template" :show="openNuevo">
+            <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="openNuevo = false">
                 <div class="absolute inset-0 overflow-hidden">
                     <DialogOverlay class="absolute inset-0" />
 
@@ -131,78 +216,28 @@
                                                     class="text-lg font-medium text-white"> Nuevo Usuario
                                                 </DialogTitle>
                                                 <!-- <DialogTitle v-else class="text-lg font-medium text-white"> Editar
-                                                    Capsula
+                                                    Usuario
                                                 </DialogTitle> -->
                                                 <div class="ml-3 h-7 flex items-center">
                                                     <button type="button"
                                                         class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                                                        @click="open = false">
+                                                        @click="openNuevo = false">
                                                         <span class="sr-only">Cerrar</span>
                                                         <Icons class="w-5 h-5" name="closed" />
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="flex-1 flex flex-col justify-between">
-                                            <div class="px-4 divide-y divide-gray-200 sm:px-6">
-
-                                                <div class="space-y-2 pt-2 pb-5">
-                                                    <div>
-                                                        <label for="time"
-                                                            class="block text-xl font-medium text-gray-700 "><b>Usuario: {{ form.description }}</b></label>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="flex text-sm text-gray-700">
-                                                        <label class="text-bold w-24 font-bold">Dirección:</label>
-                                                        <span>{{ form.address}}</span>
-                                                    </div>
-                                                    
-                                                    <hr>
-                                                    <div>
-                                                        <label for="time"
-                                                            class="block text-xl font-medium text-gray-800">Datos de Contacto</label>
-                                                    </div>
-
-                                                    <div class="flex text-sm text-gray-700">
-                                                        <label class="text-bold w-24 font-bold">Nombre:</label>
-                                                        <span>{{  form.contact_name ?? '-'  }}</span>
-                                                    </div>
-
-                                                    <div class="flex text-sm text-gray-700">
-                                                        <label class="text-bold w-24 font-bold">Email:</label>
-                                                        <span>{{  form.contact_email ?? '-'  }}</span>
-                                                    </div>
-
-                                                    <div class="flex text-sm text-gray-700">
-                                                        <label class="text-bold w-24 font-bold">Telefono:</label>
-                                                        <span>{{  form.contact_phone ?? '-'  }}</span>
-                                                    </div>
-
-                                                    <hr>
-                                                    <div>
-                                                        <label for="time"
-                                                            class="block text-xl font-medium text-gray-800">Competencias</label>
-                                                    </div>
-                                                    <hr>
-
-                                                    <div v-for="c in this.form.competencias" :key="c.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
-                                                        {{ c.competencia}}
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="flex-1 flex flex-col justify-between">
                                             <div class="px-4 divide-y divide-gray-200 sm:px-6">
 
                                                 <div class="space-y-6 pt-6 pb-5">
                                                     <div>
                                                         <label for="fullname"
-                                                            class="block text-sm font-medium text-gray-900">Titulo</label>
+                                                            class="block text-sm font-medium text-gray-900">Nombre</label>
                                                         <div class="mt-1">
                                                             <input type="text" v-model="user.name" name="name" autocomplete="off"
-                                                                id="titulo"
+                                                                id="name"
                                                                 class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                                         </div>
                                                     </div>
@@ -219,7 +254,7 @@
                                                         <label for="rol"
                                                             class="block text-sm font-medium text-gray-900">Rol</label>
                                                         <div class="mt-1">
-                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.rol" name="rol" id="rol">
+                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.idRol" name="idRol" id="idRol">
                                                                 <option value="" disabled selected>Seleccione un rol</option>
                                                                 <option v-for="r in roles" :key="r.id" :value="r.id">{{r.name}}</option>
                                                             </select>
@@ -229,7 +264,7 @@
                                                         <label for="rol"
                                                             class="block text-sm font-medium text-gray-900">Empresa</label>
                                                         <div class="mt-1">
-                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.companie" name="rol" id="rol">
+                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.idCompanie" name="idCompanie" id="idCompanie">
                                                                 <option value="" disabled selected>Seleccione una empresa</option>
                                                                 <option v-for="e in empresas" :key="e.id" :value="e.id">{{e.description}}</option>
                                                             </select>
@@ -237,13 +272,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> -->
+                                        </div>
+                                        
                                     </div>
                                     <div class="flex-shrink-0 px-4 py-4 flex justify-end">
                                         <button type="button"
                                             class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                            @click="open = false">Cancelar</button>
-                                        <button @click.prevent="guardarCapsule"
+                                            @click="openNuevo = false">Cancelar</button>
+                                            <button @click.prevent="guardarUser"
                                             class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
                                     </div>
                                 </form>
@@ -263,7 +299,8 @@
     import App from '@/Layouts/App.vue'
     import Pageheader from '@/Layouts/Pageheader.vue'
     import Pagination from '@/Layouts/Pagination'
-    import Icons from '@/Layouts/Components/Icons.vue'    
+    import Icons from '@/Layouts/Components/Icons.vue'        
+    import Toast from '@/Layouts/Components/Toast.vue'
     import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 
     export default {
@@ -277,10 +314,11 @@
             Link,
             Pagination,
             Dialog,
-        DialogOverlay,
-        DialogTitle,
-        TransitionChild,
-        TransitionRoot,
+            DialogOverlay,
+            DialogTitle,
+            TransitionChild,
+            TransitionRoot,
+            Toast,
         },
 
         data(){
@@ -291,16 +329,63 @@
                 users:"",
                 filter: {},
                 open: false,
+                openNuevo: false,
                 user: {},
-                // nextpage: "",
-                // prevpage: "",                
+                form: {},
+                showToast: false,
+                message: "",
+                labelType: "success"                
                 
             }
         },
         methods:{
+            clearMessage() {
+                this.message = ""
+            },
             clearFilter(){
                 this.filter = {}
                 this.getUser()
+            },
+            async resetPassword() {
+                try {
+                    let rt = route('user.sendResetLink');
+                    const response = await axios.post(rt, { email: this.form.email });
+
+                    console.log("RESETE: ", response.data.message);
+
+                    if (response.status === 200) {
+                        console.log("OK")
+                        this.labelType = "success";
+                        this.message = response.data.message;
+                    } else {
+                        console.log("NO OK")
+                        this.labelType = "danger";
+                        this.message = response.data.message;
+                    }
+
+                    this.open = false;
+                    this.getUser();
+                } catch (error) {
+                    console.error(error);
+                    // Manejar errores aquí si es necesario
+                }
+            },
+            guardarUser() {
+                let rt = route('user.store');
+
+                axios.post(rt, this.user)
+                    .then(response => {
+                        this.openNuevo = false,
+                            this.getUser()
+                        if (response.status == 200) {
+                            this.labelType = "success"
+                            this.message = response.data['message']
+                        } else {
+                            this.labelType = "danger"
+                            this.message = response.data['message']
+                        }
+                    })
+                this.user = {}
             },
             async getUser(){
 
@@ -326,22 +411,7 @@
                 // this.prevpage = this.afirmaciones.prev_page_url
                 console.log(this.users)   
 
-            },
-            recoverPassword(email) {
-                email = 'skiebah@gmail.com'
-                axios.post('/forgot-password', {
-    email: email
-  })
-  .then(response => {
-    // Manejar la respuesta exitosa aquí
-    console.log('Correo de restablecimiento enviado');
-  })
-  .catch(error => {
-    // Manejar cualquier error aquí
-    console.error('Error al enviar el correo de restablecimiento', error);
-  });
-            },         
-
+            }
         },
         created(){
             this.getUser()

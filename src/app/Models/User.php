@@ -10,7 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -64,7 +64,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Rol::class, 'roles_users');
     }
 
-    public function companie(){
+    public function companies(){
         return $this->belongsToMany(Companie::class, 'companies_users');
     }
 }

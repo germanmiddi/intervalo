@@ -16,6 +16,9 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\QuizController;
 use App\Http\Controllers\Web\TestController;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController;
+use Laravel\Fortify\Http\Controllers\EmailVerificationPromptController;
+use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +90,9 @@ Route::middleware('auth')->group(function () {
     // USERS
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/list', [UserController::class, 'list'])->name('user.list');
-    Route::post('/users/store', [UserController::class, 'store'])->name('user.store');
+    Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+
+    Route::post('/user/sendResetLink', [UserController::class, 'sendResetLink'])->name('user.sendResetLink');
 
     // COMPANIES
     Route::get('/companie', [CompanieController::class, 'index'])->name('companie');

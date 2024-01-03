@@ -7,6 +7,8 @@ use App\Models\Companie;
 use App\Models\Rol;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -43,26 +45,30 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
-    
-        $randomPassword = Str::random(15); 
 
-        $user = User::create([
-            'name' => request()->input('name'),
-            'email' => request()->input('email'),
-            'password' => bcrypt($randomPassword) 
-        ]);
+        DB::beginTransaction();
+        try {
+            $randomPassword = Str::random(15); 
 
-        // Asignar Empresa
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($randomPassword) 
+            ]);
 
-        // Asignar Rol
+            // Asignar Empresa
+            $user->companies()->sync($request->idCompanie);
 
+            // Asignar Rol
+            $user->roles()->sync($request->idRol);
 
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-            'user' => $user
-        ]);
+            //$user->sendEmailVerificationNotification();
+            DB::commit();
+            return response()->json(['message'=>'Se ha almacenado correctamente el usuario'], 200);    
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['message'=>'Se ha producido un error al momento de almacenar el usuario'], 500);
+        }
     }
 
     /**
@@ -118,9 +124,31 @@ class UserController extends Controller
                             'id'        => $u->id,
                             'name'      => $u->name,
                             'email'     => $u->email,
-                            'empresa'   => $u->companie->first(),
+                            'empresa'   => $u->companies->first(),
                             'rol'       => $u->roles->first()    
                         ]);
 
     } 
+
+    public function sendResetLink(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+            ]);
+    
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            if($status === 'passwords.sent'){
+                return response()->json(['message' => 'Se ha enviado correctamente el email de recupero.'], 200);
+            }else{
+                return response()->json(['message'=>'Demasiados intentos de restablecimiento de contraseña. Por favor, inténtelo de nuevo más tarde.'], 203);    
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error al momento de enviar el email'], 500);
+        }
+
+    }
 }
