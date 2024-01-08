@@ -46,6 +46,14 @@
                                 <input v-model="filter.contact" type="text" name="email" id="email" autocomplete="name-level2" placeholder="Buscar Contacto."
                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                             </div>
+                            <!-- <div class="col-span-12 sm:col-span-3 ">
+                                <select class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" 
+                                    v-model="filter.status" placeholder="Buscar Estado.">
+                                    <option value="" disabled selected>Seleccione un estado</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -335,7 +343,6 @@
                 this.getCompanie()
             },
             vaciarForm(){
-                console.log('VACIAR FORM');
                 this.form = {};
             },
             async getCompanie(){
@@ -348,6 +355,10 @@
 
                 if(this.filter.contact){
                     filter += `&contact=${this.filter.contact}`
+                }
+
+                if(this.filter.status){
+                    filter += `&status=${this.filter.status}`
                 }
 
                 const get = `${route('companie.list')}?${filter}` 

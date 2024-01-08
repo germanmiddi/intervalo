@@ -1,13 +1,10 @@
 <template>
     <App>
-        <!-- <Head title="Dashboard" />
-    
-        <Pageheader :buttons="buttons"/> -->
+        
+        <PanelAdministrador v-if="this.rol.name === 'Administrador'"></PanelAdministrador>
+        <PanelManager v-else-if="this.rol.name === 'Manager'"></PanelManager>
+        <PanelEmpleado v-else></PanelEmpleado>
 
-        <div class="content flex-grow flex flex-col justify-between mt-8">
-  
-
-        </div>  
     </App>
 </template>
 
@@ -16,13 +13,23 @@
     import App from '@/Layouts/App.vue'
     import Pageheader from '@/Layouts/Pageheader.vue'
     import Icons from '@/Layouts/Components/Icons.vue'
+    import PanelAdministrador from './Components/PanelAdministrador.vue'
+    import PanelManager from './Components/PanelManager.vue'
+    import PanelEmpleado from './Components/PanelEmpleado.vue'
+
 
     export default {
+        props:{
+            rol: Object
+        },
         components: {
             Head,
             App,
             Pageheader,
-            Icons
+            Icons,
+            PanelAdministrador,
+            PanelManager,
+            PanelEmpleado
         },
     }
 

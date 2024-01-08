@@ -4,11 +4,11 @@
         <!-- CONTENT -->
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-5 text-4xl font-bold">Editar Empresa</h1>
-                <div>
+                <h1 class="my-5 text-4xl font-bold">Empresa | {{this.companie.description}}</h1>
+                <!-- <div>
                     <button  button class="btn btn-primary btn-sm mr-2" @click.prevent="submit">Guardar</button>
                     <a class="btn btn-primary btn-sm" :href="route('companie')">Volver</a>
-                </div>
+                </div> -->
             </div>
             <hr>
 
@@ -17,32 +17,25 @@
                    
                     <div class="card-body">
                         <h2 class="card-title">Datos de Empresa</h2>
+                        <hr>
                         <div class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 gap-4 ">
-                            <div class="mt-4 ">
-                                <label for="description" class="block text-sm font-semibold text-gray-700">Nombre</label>
-                                <input v-model="form.description" type="text" name="description" id="description"  class="mt-1 input input-bordered w-full" />
-                            </div>
-                            
-                            <div class="mt-4 col-span-2">
-                                <label for="address" class="block text-sm font-semibold text-gray-700">Dirección</label>
-                                <input v-model="form.address" type="text" name="address" id="address"  class="mt-1 input input-bordered w-full" />
+                            <div>
+                                <label for="time"
+                                    class="block text-sm font-medium text-gray-700 "><b>Empresa: </b>{{ this.companie.description }}</label>
+                                <label for="time"
+                                    class="block text-sm font-medium text-gray-700 "><b>Dirección: </b>{{ this.companie.address ?? '-' }}</label>
                             </div>
                         </div>
                         <h2 class="card-title mt-4">Datos de Contacto</h2>
+                        <hr>
                         <div class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 gap-4 ">
-                            <div class="mt-4 ">
-                                <label for="contact_name" class="block text-sm font-semibold text-gray-700">Apellido y Nombre</label>
-                                <input v-model="form.contact_name" type="text" name="contact_name" id="contact_name"  class="mt-1 input input-bordered w-full" />
-                            </div>
-                            
-                            <div class="mt-4 ">
-                                <label for="contact_email" class="block text-sm font-semibold text-gray-700">Email</label>
-                                <input v-model="form.contact_email" type="text" name="contact_email" id="contact_email"  class="mt-1 input input-bordered w-full" />
-                            </div>
-                            
-                            <div class="mt-4 ">
-                                <label for="contact_phone" class="block text-sm font-semibold text-gray-700">Telefono</label>
-                                <input v-model="form.contact_phone" type="text" name="contact_phone" id="contact_phone"  class="mt-1 input input-bordered w-full" />
+                            <div>
+                                <label for="time"
+                                    class="block text-sm font-medium text-gray-700 "><b>Nombre: </b>{{ this.companie.contact_name ?? '-' }}</label>
+                                <label for="time"
+                                    class="block text-sm font-medium text-gray-700 "><b>Email: </b>{{ this.companie.contact_email ?? '-' }}</label>
+                                <label for="time"
+                                    class="block text-sm font-medium text-gray-700 "><b>Telefono: </b>{{ this.companie.contact_phone ?? '-' }}</label>
                             </div>
                         </div>
                     </div>
@@ -106,7 +99,7 @@
     import Pageheader from '@/Layouts/Pageheader.vue'
     import Icons from '@/Layouts/Components/Icons.vue'
     import Toast from '@/Layouts/Components/Toast.vue'
-    import ListUser from './User/ListUser.vue'
+    import ListUser from '../User/ListUser.vue'
 
     export default {
         props:{

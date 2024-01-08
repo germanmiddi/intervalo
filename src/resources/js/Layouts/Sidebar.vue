@@ -5,7 +5,7 @@
           <!-- MAIN NAVIGATION -->
           <div>
             <ul class="nav-sidebar">
-              <li class="nav-item-header py-3 px-5"><div class="text-xs text-gray-400">MAIN</div></li>
+              <li class="nav-item-header py-3 px-5"><div class="text-xs text-gray-400">Principal</div></li>
               
               <li class="nav-item">
                 <nav-link :href="route('dashboard')" 
@@ -43,7 +43,7 @@
               <li class="nav-item">
                 <nav-link :href="route('user')" 
                       :active="route().current('user')">
-                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <Icons name="user" class="h-6 w-6 mr-5" />
                       <span class="nav-label font-medium text-sm pt-1">Usuarios</span>
                 </nav-link>   
               </li> 
@@ -51,18 +51,35 @@
               <li class="nav-item">
                 <nav-link :href="route('companie')" 
                       :active="route().current('companie')">
-                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <Icons name="building-office" class="h-6 w-6 mr-5" />
                       <span class="nav-label font-medium text-sm pt-1">Empresas</span>
+                </nav-link>   
+              </li>
+
+              <li class="nav-item">
+                <nav-link :href="route('mycompanie')" 
+                      :active="route().current('mycompanie')">
+                      <Icons name="briefcase" class="h-6 w-6 mr-5" />
+                      <span class="nav-label font-medium text-sm pt-1">Mi Empresa</span>
                 </nav-link>   
               </li>   
               
               <li class="nav-item">
                 <nav-link :href="route('test')" 
                       :active="route().current('test')">
-                      <!-- <Icons name="truck" class="h-6 w-6 mr-5" /> -->
+                      <Icons name="chart-pie" class="h-6 w-6 mr-5" />
                       <span class="nav-label font-medium text-sm pt-1">Resultados</span>
                 </nav-link>   
               </li>     
+
+              <hr>
+
+              <li class="nav-item">
+                <nav-link :href="route('home')" >
+                      <Icons name="web" class="h-6 w-6 mr-5" />
+                      <span class="nav-label font-medium text-sm pt-1">Ver Sitio</span>
+                </nav-link>   
+              </li>  
               
               <!-- <li class="nav-item">
                 <nav-link :href="route('order.list')" 

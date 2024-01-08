@@ -6,7 +6,8 @@
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-5 text-4xl font-bold">Usuarios</h1>
                 <div>
-                    <a class="btn btn-primary btn-sm" @click="openNuevo=true">Nuevo</a>
+                    <a class="btn btn-primary btn-sm" @click="this.user = {},openNuevo=true">Nuevo</a>
+                    <a class="btn btn-primary btn-sm ml-4" :href="route('user.importView')">Importar</a>
                 </div>
             </div>
             <hr>
@@ -23,7 +24,7 @@
                                 <button v-if="Object.keys(this.filter).length" class="text-xs font-medium text-gray-500 hover:text-gray-700 mr-2" 
                                     @click="clearFilter">Limpiar Filtro</button>
                                 <button type="button"
-                                    class="btn btn-primary btn-outline btn-sm mr-4" @click="getTramites()">Aplicar Filtro</button>
+                                    class="btn btn-primary btn-outline btn-sm mr-4" @click="getUser()">Aplicar Filtro</button>
                             </div>
                             <div>
                                 <label class="font-semibold mr-2" for="">Ver: </label>
@@ -82,8 +83,12 @@
                                {{u.rol.name ?? '-'}}
                             </td>
                             <td class="w-2/12 text-center">
-                                <button class="ml-2" @click="this.open = true, this.form = u">
-                                    <Icons class="w-5 h-5" name="details" />
+                                <button class="ml-2" @click="this.openNuevo = true,this.editing = true, this.user.id = u.id, 
+                                        this.user.name = u.name, this.user.email = u.email, this.user.empresa_id = u.empresa.id, this.user.rol_id = u.rol.id">
+                                    <Icons class="w-5 h-5" name="edit" />
+                                </button>
+                                <button class="ml-2" @click="resetPassword(u.email)" title="Recuperar Contraseña">
+                                    <Icons class="w-5 h-5" name="envelope" />
                                 </button>
                             </td>
                         </tr>
@@ -111,7 +116,7 @@
         <!-- / CONTENT -->
 
         <!-- MANEJO DE DETALLE DE USUARIO- -->
-        <TransitionRoot as="template" :show="open">
+        <!-- <TransitionRoot as="template" :show="open">
             <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
                 <div class="absolute inset-0 overflow-hidden">
                     <DialogOverlay class="absolute inset-0" />
@@ -192,11 +197,11 @@
                     </div>
                 </div>
             </Dialog>
-        </TransitionRoot>
+        </TransitionRoot> -->
 
         <!-- MANEJO DE ALTA DE USUARIO- -->
         <TransitionRoot as="template" :show="openNuevo">
-            <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="openNuevo = false">
+            <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="openNuevo = false, this.editing=false">
                 <div class="absolute inset-0 overflow-hidden">
                     <DialogOverlay class="absolute inset-0" />
 
@@ -212,12 +217,12 @@
                                     <div class="flex-1 h-0 overflow-y-auto">
                                         <div class="py-6 px-4 bg-blue-500 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle
+                                                <DialogTitle v-if="!this.editing"
                                                     class="text-lg font-medium text-white"> Nuevo Usuario
                                                 </DialogTitle>
-                                                <!-- <DialogTitle v-else class="text-lg font-medium text-white"> Editar
+                                                <DialogTitle v-else class="text-lg font-medium text-white"> Editar
                                                     Usuario
-                                                </DialogTitle> -->
+                                                </DialogTitle>
                                                 <div class="ml-3 h-7 flex items-center">
                                                     <button type="button"
                                                         class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
@@ -230,7 +235,6 @@
                                         </div>
                                         <div class="flex-1 flex flex-col justify-between">
                                             <div class="px-4 divide-y divide-gray-200 sm:px-6">
-
                                                 <div class="space-y-6 pt-6 pb-5">
                                                     <div>
                                                         <label for="fullname"
@@ -254,7 +258,7 @@
                                                         <label for="rol"
                                                             class="block text-sm font-medium text-gray-900">Rol</label>
                                                         <div class="mt-1">
-                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.idRol" name="idRol" id="idRol">
+                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.rol_id" name="idRol" id="idRol">
                                                                 <option value="" disabled selected>Seleccione un rol</option>
                                                                 <option v-for="r in roles" :key="r.id" :value="r.id">{{r.name}}</option>
                                                             </select>
@@ -264,7 +268,7 @@
                                                         <label for="rol"
                                                             class="block text-sm font-medium text-gray-900">Empresa</label>
                                                         <div class="mt-1">
-                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.idCompanie" name="idCompanie" id="idCompanie">
+                                                            <select class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" v-model="user.empresa_id" name="idCompanie" id="idCompanie">
                                                                 <option value="" disabled selected>Seleccione una empresa</option>
                                                                 <option v-for="e in empresas" :key="e.id" :value="e.id">{{e.description}}</option>
                                                             </select>
@@ -278,9 +282,11 @@
                                     <div class="flex-shrink-0 px-4 py-4 flex justify-end">
                                         <button type="button"
                                             class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                            @click="openNuevo = false">Cancelar</button>
-                                            <button @click.prevent="guardarUser"
+                                            @click="openNuevo = false, editing=false">Cancelar</button>
+                                            <button v-if="!this.editing" @click.prevent="guardarUser"
                                             class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
+                                            <button v-else @click.prevent="guardarUser"
+                                            class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Actualizar</button>
                                     </div>
                                 </form>
                             </div>
@@ -330,6 +336,7 @@
                 filter: {},
                 open: false,
                 openNuevo: false,
+                editing: false,
                 user: {},
                 form: {},
                 showToast: false,
@@ -346,13 +353,12 @@
                 this.filter = {}
                 this.getUser()
             },
-            async resetPassword() {
+            async resetPassword($email) {
                 try {
                     let rt = route('user.sendResetLink');
-                    const response = await axios.post(rt, { email: this.form.email });
-
-                    console.log("RESETE: ", response.data.message);
-
+                    this.labelType = "info";
+                    this.message = 'Se esta procesando el reseteo de contraseña. Por favor aguarde!';
+                    const response = await axios.post(rt, { email: $email });
                     if (response.status === 200) {
                         console.log("OK")
                         this.labelType = "success";
@@ -367,12 +373,17 @@
                     this.getUser();
                 } catch (error) {
                     console.error(error);
-                    // Manejar errores aquí si es necesario
                 }
             },
             guardarUser() {
-                let rt = route('user.store');
 
+                let rt = '';
+                if (this.editing) {
+                    rt = route('user.update', this.user.id);
+                } else {
+                    rt = route('user.store');
+                }
+                
                 axios.post(rt, this.user)
                     .then(response => {
                         this.openNuevo = false,
@@ -391,8 +402,12 @@
 
                 let filter = `&length=${this.length}` 
                 
-                if(this.search){
-                    filter += `&search=${this.search}`
+                if(this.filter.name){
+                    filter += `&name=${this.filter.name}`
+                }
+
+                if(this.filter.email){
+                    filter += `&email=${this.filter.email}`
                 }
 
                 const get = `${route('user.list')}?${filter}` 

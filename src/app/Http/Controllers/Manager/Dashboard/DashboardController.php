@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
+use App\Models\Companie;
+use App\Models\Test;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -17,7 +20,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return  Inertia::render('Manager/Dashboard/Index');
+        return  Inertia::render('Manager/Dashboard/Index', [
+            'rol' => Auth::user()->roles[0]
+        ]);
     }
 
     /**
@@ -84,5 +89,19 @@ class DashboardController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function details() 
+    {
+        // $recueperar Competencias 
+        $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
+        $test = Test::where('user_id', Auth::user()->id)->with('test_detail')->get();
+        
+        return  [
+                    'id'            => 1,
+                    'competencias'  => $companie->competencias,
+                    'total_competencias' => $companie->competencias->count(),
+                    'test' => $test,
+                ];
     }
 }

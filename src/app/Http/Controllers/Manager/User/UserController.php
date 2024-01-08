@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager\User;
 
 use App\Http\Controllers\Controller;
+use App\Imports\UserCompanieImport;
 use App\Models\Companie;
 use App\Models\Rol;
 use App\Models\User;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -57,10 +60,10 @@ class UserController extends Controller
             ]);
 
             // Asignar Empresa
-            $user->companies()->sync($request->idCompanie);
+            $user->companies()->sync($request->empresa_id);
 
             // Asignar Rol
-            $user->roles()->sync($request->idRol);
+            $user->roles()->sync($request->rol_id);
 
             //$user->sendEmailVerificationNotification();
             DB::commit();
@@ -90,7 +93,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+       
     }
 
     /**
@@ -102,7 +105,31 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $randomPassword = Str::random(15); 
+
+            User::where('id', $id)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($randomPassword) 
+            ]);
+            
+            $user = User::find($id);
+
+            // Asignar Empresa
+            $user->companies()->sync($request->empresa_id);
+
+            // Asignar Rol
+            $user->roles()->sync($request->rol_id);
+
+            //$user->sendEmailVerificationNotification();
+            DB::commit();
+            return response()->json(['message'=>'Se ha actualizado correctamente el usuario'], 200);    
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['message'=>'Se ha producido un error al momento de almacenar el usuario'], 500);
+        }
     }
 
     /**
@@ -117,7 +144,34 @@ class UserController extends Controller
     }
 
     public function list(){
-        return  User::orderBy("created_at", 'DESC')
+
+        $length = request('length');
+        
+        $result = User::query();
+
+        if(request('name')){
+            $name = json_decode(request('name'));
+            $result->where('name', 'LIKE', '%'.$name.'%');
+        }
+
+        if(request('email')){
+            $email = json_decode(request('email'));
+            $result->where('email', 'LIKE', '%'.$email.'%');
+        }
+
+        return  $result->orderBy("created_at", 'DESC')
+                        ->paginate($length)
+                        ->withQueryString()
+                        ->through(fn ($u)   => [
+                            'id'        => $u->id,
+                            'name'      => $u->name,
+                            'email'     => $u->email,
+                            'empresa'   => $u->companies->first(),
+                            'rol'       => $u->roles->first()    
+                        ]);
+
+
+        /* return  User::orderBy("created_at", 'DESC')
                         ->paginate(999)
                         ->withQueryString()
                         ->through(fn ($u) => [
@@ -126,7 +180,7 @@ class UserController extends Controller
                             'email'     => $u->email,
                             'empresa'   => $u->companies->first(),
                             'rol'       => $u->roles->first()    
-                        ]);
+                        ]); */
 
     } 
 
@@ -150,5 +204,38 @@ class UserController extends Controller
             return response()->json(['message'=>'Se ha producido un error al momento de enviar el email'], 500);
         }
 
+    }
+
+    public function importView()
+    {
+        return  Inertia::render('Manager/User/Import',
+        [
+            //'roles' => Rol::all(),
+            'companies' => Companie::active()->get()
+        ]);
+    }
+
+    public function import(Request $request)
+    {
+
+        if( $request->file('file')){
+                $archivoCSV = $request->file('file');
+                try {
+                    $import = new UserCompanieImport($request->idCompanie);
+                    Excel::import($import, $archivoCSV);
+                    $status = $import->getStatus();
+                    return response()->json(['message' => 'Se ha finalizado el proceso de importacion de Entidades.', 'status' => $status], 200);
+                } catch (\Exception $e) {
+                    dd($e);
+                    return response()->json(['message' => 'Error al procesar el archivo.'], 203);
+                }
+        }else{
+            return response()->json(['message' => 'Error al procesar el importador. Contacte al Administrador'], 203);
+        }
+    }
+
+    public function donwloadTemplate(){
+        $url = public_path('templates/templateImportUserMasivo.xlsx');
+        return Response::download($url);
     }
 }

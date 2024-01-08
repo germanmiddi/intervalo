@@ -14,6 +14,7 @@ class Test extends Model
     
     protected $fillable = [
         'person_id',
+        'user_id',
         'fecha',
         'status_id'
     ];
@@ -21,6 +22,11 @@ class Test extends Model
     public function person(){
 
         return $this->belongsTo(Person::class, 'person_id');
+    }
+
+    public function user(){
+
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function status()

@@ -4,7 +4,6 @@
     <Modal class="bg-gray-900/50" :item="modalContent" v-if="modalContent && modalContent.visible" />
   </transition>
   <App>
-
     <div class="hero" style="background-image: url('img/banner-aprendizaje-por-competencias.jpeg');">
       <div class="hero-overlay bg-opacity-60"></div>
       <div class="hero-content text-center text-neutral-content">
@@ -12,19 +11,6 @@
           <h1 class="mb-5 text-4xl lg:text-5xl font-bold">
             Diagnostico de Competencias
           </h1>
-          <!-- <p class="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p> -->
-          <!-- <div class="form-control">
-            <div class="input-group">
-              <input type="text" placeholder="Buscar..." class="input input-bordered" />
-              <button class="btn btn-secondary">
-                <Icons name="search" class="h-6 w-6" />
-              </button>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -32,7 +18,7 @@
     <div class="content">
       <div v-if="start" class="flex justify-center">
         <div class="flex justify-end">
-          <a @click="start = false, register = true" class="btn btn-primary space-x-2">
+          <a @click="registerUser($page.props.user)" class="btn btn-primary space-x-2">
             <span>Comenzar</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="2">
@@ -48,13 +34,13 @@
           @click="selectCompetencia(c.id)" />
       </div>
 
-      <RegisterItem v-if="register" @register="storePerson" @return_start="register = !register, start = !start">
+      <RegisterItem v-if="register" @register="storePerson" @return_start="register = !register, start = !start, this.compselected = []">
       </RegisterItem>
 
       <QuizItem v-if="quiz" :afirmations="afirmations" @processQuiz="processQuiz"
-        @return_start="(quiz = !quiz, start = !start)"></QuizItem>
+        @return_start="(quiz = !quiz, start = !start, this.compselected = [])"></QuizItem>
 
-      <ResultItem v-if="result" :resultado="resultado" @return_start="result = !result, start = !start"></ResultItem>
+      <ResultItem v-if="result" :resultado="resultado" @return_start="result = !result, start = !start, this.compselected = []"></ResultItem>
     </div>
     
   </App>
@@ -116,18 +102,24 @@ export default {
       this.message = ""
     },
 
-    async storePerson(data) {
-
+    registerUser($user) {
       if (this.compselected == '') {
         this.labelType = "danger"
         this.message = 'Debe seleccionar una competencia.'
-      } else {
+      }else{
+        if($user){
+          this.storeUser($user);
+        }else{
+          console.log('USER UNREGISTER');
+          this.start = false, 
+          this.register = true
+        }
+      }
+    },
+    async storePerson(data) {
         this.form_person = data
-
         let rt = route('test.store');
-
         let formData = new FormData();
-
         formData.append('name', this.form_person.name);        
         formData.append('lastname', this.form_person.lastname);        
         formData.append('email', this.form_person.email);        
@@ -135,8 +127,7 @@ export default {
 
         console.log(formData);
         const response = await axios.post(rt, formData)
-        // const response = await request.json()
-        console.log(response.data)
+
         if(response.status == 200) {
           this.afirmations    = response.data.data
           this.form_person.id = response.data.person.data.id
@@ -153,7 +144,38 @@ export default {
           this.labelType = "error"
           this.message = response.data['message']
         }
-      }
+      
+    },
+
+    async storeUser(data) {
+        this.form_person = data
+        let rt = route('test.storeUser');
+        let formData = new FormData();
+        formData.append('id', data.id);        
+        formData.append('name', data.name);            
+        formData.append('email', data.email);      
+        formData.append('form_competencias', this.compselected);
+
+        console.log(formData);
+        const response = await axios.post(rt, formData)
+
+        if(response.status == 200) {
+          this.afirmations    = response.data.data
+          this.form_person.id = response.data.person
+          this.form_test      = response.data.test
+          if (response.data.data.length == 0) {
+            this.labelType = "error"
+            this.message = 'No hay afirmaciones para esta competencia.'
+          }else{
+            this.start = false, 
+            this.quiz = true
+          }
+
+        } else {
+          this.labelType = "error"
+          this.message = response.data['message']
+        }
+      
     },
 
     processQuiz(data) {

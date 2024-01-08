@@ -35,6 +35,10 @@ use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 // RUTAS PUBLICAS
 //************************** */
 
+/* Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+            ->middleware(['guest:'.config('fortify.guard')])
+            ->name('login'); */
+
 Route::get('/test/downloadexcel', [TestManagerController::class, 'download_excel'])->name('test.downloadexcel');
 Route::post('/test', [TestController::class, 'store'])->name('test.store');
 
@@ -51,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
     //Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboardDetails', [DashboardController::class, 'details'])->name('dashboard.details');
     
     //Competencias
     Route::get('/competencia', [CompetenciaController::class, 'index'])->name('competencia');
@@ -86,11 +91,17 @@ Route::middleware('auth')->group(function () {
     // TEST
     Route::get('/test', [TestManagerController::class, 'index'])->name('test');
     Route::get('/test/list', [TestManagerController::class, 'list'])->name('test.list');
+    Route::post('/testUser', [TestController::class, 'storeUser'])->name('test.storeUser');
 
     // USERS
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/list', [UserController::class, 'list'])->name('user.list');
     Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+    Route::post('/user/{id}/update', [UserController::class, 'update'])->name('user.update');   
+
+    Route::get('/user/import', [UserController::class, 'importView'])->name('user.importView');
+    Route::post('/user/import', [UserController::class, 'import'])->name('user.import');
+    Route::get('/user/downloadTemplate', [UserController::class, 'donwloadTemplate'])->name('user.donwloadTemplate');
 
     Route::post('/user/sendResetLink', [UserController::class, 'sendResetLink'])->name('user.sendResetLink');
 
@@ -105,6 +116,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/companie/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
     Route::delete('/companie/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
     Route::get('/companie/listUserByCompanie/{id}', [CompanieController::class, 'listUserByCompanie'])->name('companie.listUserByCompanie');
+
+    Route::get('/mycompanie', [CompanieController::class, 'myCompanie'])->name('mycompanie');
+    Route::get('/mycompanie/list', [CompanieController::class, 'mylist'])->name('mycompanie.list');
+
+
 
 });
 

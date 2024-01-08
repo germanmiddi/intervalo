@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Manager\Companie;
 use App\Http\Controllers\Controller;
 use App\Models\Companie;
 use App\Models\Competencia;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session as FacadesSession;
 use Illuminate\Support\Str;
@@ -142,7 +144,6 @@ class CompanieController extends Controller
     }
 
     public function list(){
-
         $length = request('length');
         
         $result = Companie::query();
@@ -158,6 +159,7 @@ class CompanieController extends Controller
                 ->orWhere('contact_email', 'LIKE', '%'.$contact.'%')
                 ->orWhere('contact_phone', 'LIKE', '%'.$contact.'%');
         }
+
 
         return  $result->orderBy("created_at", 'DESC')
                         ->paginate($length)
@@ -176,7 +178,40 @@ class CompanieController extends Controller
     }  
 
     public function listUserByCompanie($id){
-        dd($id);
+        $length = request('length');
+
+        $result = User::query();
+
+        $result->whereIn('id', function ($sub) use($id) {
+            $sub->selectRaw('users.id')
+                ->from('users')
+                ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
+                ->where('companies_users.companie_id', $id);
+        });
+
+        return  $result->orderBy("created_at", 'DESC')
+                        ->paginate($length)
+                        ->withQueryString()
+                        ->through(fn ($c) => [
+                            'id'    => $c->id,
+                            'name'  => $c->name,
+                            'email' => $c->email,
+                            'rol'   => $c->roles[0]->name
+                        ]);
         
+    }
+
+
+    /* MY COMPANIE*/
+
+    public function myCompanie()
+    {
+        $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
+
+        return  Inertia::render('Manager/Companie/MyCompanie/Index', [
+            'toast' => FacadesSession::get('toast'),
+            'companie' => $companie,
+            'competencias_asociadas' => $companie->competencias
+        ]);
     }
 }
