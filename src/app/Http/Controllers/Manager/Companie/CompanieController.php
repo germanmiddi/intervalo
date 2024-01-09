@@ -149,7 +149,7 @@ class CompanieController extends Controller
         $result = Companie::query();
 
         if(request('description')){
-            $description = json_decode(request('description'));
+            $description = request('description');
             $result->where('description', 'LIKE', '%'.$description.'%');
         }
 

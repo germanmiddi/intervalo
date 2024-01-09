@@ -59,12 +59,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    public function companies()
+    {
+        return $this->belongsToMany(Companie::class, 'companies_users');
+    }
     public function roles()
     {
         return $this->belongsToMany(Rol::class, 'roles_users');
     }
 
-    public function companies(){
-        return $this->belongsToMany(Companie::class, 'companies_users');
-    }
 }

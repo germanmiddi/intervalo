@@ -3,7 +3,7 @@
 namespace App\Imports;
    
 use App\Models\User;
-
+use App\Notifications\NuevoUsuarioNotification;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -46,6 +46,8 @@ class UserCompanieImport implements ToModel,WithHeadingRow
         
                     // Asignar Rol Empleado
                     $user->roles()->sync(3);
+
+                    $user->notify(new NuevoUsuarioNotification($randomPassword));
         
                 }else{
                     ++$this->rowsDuplicados;

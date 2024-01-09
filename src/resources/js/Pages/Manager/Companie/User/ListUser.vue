@@ -26,6 +26,9 @@
                                 <!-- <a :href="route('companie.edit', u.id)" title="Editar Usuario">
                                     <Icons class="w-5 h-5 inline" name="edit" />
                                 </a> -->
+                                <button class="ml-2" @click="resetPassword(u.email)" title="Recuperar Contraseña">
+                                    <Icons class="w-5 h-5" name="envelope" />
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -109,6 +112,26 @@
                 var get = `${link}`;
                 const response = await fetch(get,{method: 'GET'})
                 this.users = await response.json()  
+            },
+            async resetPassword($email) {
+                try {
+                    let rt = route('user.sendResetLink');
+                    this.labelType = "info";
+                    this.message = 'Se esta procesando el reseteo de contraseña. Por favor aguarde!';
+                    const response = await axios.post(rt, { email: $email });
+                    if (response.status === 200) {
+                        this.labelType = "success";
+                        this.message = response.data.message;
+                    } else {
+                        this.labelType = "danger";
+                        this.message = response.data.message;
+                    }
+
+                    this.open = false;
+                    this.getUser();
+                } catch (error) {
+                    console.error(error);
+                }
             },
         },
         created(){

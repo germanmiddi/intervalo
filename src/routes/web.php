@@ -104,6 +104,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/downloadTemplate', [UserController::class, 'donwloadTemplate'])->name('user.donwloadTemplate');
 
     Route::post('/user/sendResetLink', [UserController::class, 'sendResetLink'])->name('user.sendResetLink');
+    Route::get('/user/dataUser', [UserController::class, 'dataUser'])->name('user.dataUser');
+    
 
     // COMPANIES
     Route::get('/companie', [CompanieController::class, 'index'])->name('companie');

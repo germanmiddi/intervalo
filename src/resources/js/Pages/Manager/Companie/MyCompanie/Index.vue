@@ -44,7 +44,7 @@
                 <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
                    <div class="card-body">
                        <h2 class="card-title">Competencias Relacionadas</h2>
-                       <div class="w-full mx-auto flex justify-between items-center">
+                       <!-- <div class="w-full mx-auto flex justify-between items-center">
                             <div class="mt-4">
                                 <label for="category" class="block text-sm font-semibold text-gray-700">Competencia</label>
                                 <select class="select w-full mt-1 input-bordered" v-model="this.competencia_select" name="competencia_select" id="competencia_select">
@@ -57,13 +57,13 @@
                             </div>
                         </div> 
 
-                        <hr>
+                        <hr> -->
                         <div>
                             <label for="time"
                             class="block text-xl font-medium text-gray-800">Detalle de Competencias</label>
                         </div>
                         <div class="space-y-2 pt-2 pb-5">
-                            <div v-for="cs in this.competencias_select" :key="cs.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
+                            <div v-for="cs in this.competencias_select" :key="cs.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-md font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
                                 {{ cs.competencia}}
                             </div>
                         </div>

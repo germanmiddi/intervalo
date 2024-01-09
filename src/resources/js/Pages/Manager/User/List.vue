@@ -6,7 +6,7 @@
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-5 text-4xl font-bold">Usuarios</h1>
                 <div>
-                    <a class="btn btn-primary btn-sm" @click="this.user = {},openNuevo=true">Nuevo</a>
+                    <a class="btn btn-primary btn-sm" @click="this.user = {},editing=false, openNuevo=true">Nuevo</a>
                     <a class="btn btn-primary btn-sm ml-4" :href="route('user.importView')">Importar</a>
                 </div>
             </div>

@@ -7,13 +7,16 @@ use App\Imports\UserCompanieImport;
 use App\Models\Companie;
 use App\Models\Rol;
 use App\Models\User;
+use App\Notifications\NuevoUsuarioNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Response;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Chart\Chart;
 
 class UserController extends Controller
 {
@@ -24,11 +27,21 @@ class UserController extends Controller
      */
     public function index()
     {
-        return  Inertia::render('Manager/User/List',
-        [
-            'roles' => Rol::all(),
-            'empresas' => Companie::active()->get()
-        ]);
+        if(Auth::user()->roles[0]->id == 1){
+            return  Inertia::render('Manager/User/List',
+            [
+                'roles' => Rol::all(),
+                'empresas' => Companie::active()->get()
+            ]);
+        }elseif(Auth::user()->roles[0]->id == 2){
+            return  Inertia::render('Manager/User/List',
+            [
+                'roles' => Rol::where('id','>=',2)->get(),
+                'empresas' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+            ]);
+        }else{
+            abort(403, 'Unauthorized access');
+        }
     }
 
     /**
@@ -64,7 +77,8 @@ class UserController extends Controller
 
             // Asignar Rol
             $user->roles()->sync($request->rol_id);
-
+            
+            $user->notify(new NuevoUsuarioNotification($randomPassword));
             //$user->sendEmailVerificationNotification();
             DB::commit();
             return response()->json(['message'=>'Se ha almacenado correctamente el usuario'], 200);    
@@ -122,7 +136,7 @@ class UserController extends Controller
 
             // Asignar Rol
             $user->roles()->sync($request->rol_id);
-
+            
             //$user->sendEmailVerificationNotification();
             DB::commit();
             return response()->json(['message'=>'Se ha actualizado correctamente el usuario'], 200);    
@@ -150,12 +164,12 @@ class UserController extends Controller
         $result = User::query();
 
         if(request('name')){
-            $name = json_decode(request('name'));
+            $name = request('name');
             $result->where('name', 'LIKE', '%'.$name.'%');
         }
 
         if(request('email')){
-            $email = json_decode(request('email'));
+            $email = request('email');
             $result->where('email', 'LIKE', '%'.$email.'%');
         }
 
@@ -169,19 +183,6 @@ class UserController extends Controller
                             'empresa'   => $u->companies->first(),
                             'rol'       => $u->roles->first()    
                         ]);
-
-
-        /* return  User::orderBy("created_at", 'DESC')
-                        ->paginate(999)
-                        ->withQueryString()
-                        ->through(fn ($u) => [
-                            'id'        => $u->id,
-                            'name'      => $u->name,
-                            'email'     => $u->email,
-                            'empresa'   => $u->companies->first(),
-                            'rol'       => $u->roles->first()    
-                        ]); */
-
     } 
 
     public function sendResetLink(Request $request)
@@ -208,11 +209,19 @@ class UserController extends Controller
 
     public function importView()
     {
-        return  Inertia::render('Manager/User/Import',
-        [
-            //'roles' => Rol::all(),
-            'companies' => Companie::active()->get()
-        ]);
+        if(Auth::user()->roles[0]->id == 1){
+            return  Inertia::render('Manager/User/Import',
+            [
+                'companies' => Companie::active()->get()
+            ]);
+        }elseif(Auth::user()->roles[0]->id == 2){
+            return  Inertia::render('Manager/User/Import',
+            [
+                'companies' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+            ]);
+        }else{
+            abort(403, 'Unauthorized access');
+        }
     }
 
     public function import(Request $request)
@@ -237,5 +246,9 @@ class UserController extends Controller
     public function donwloadTemplate(){
         $url = public_path('templates/templateImportUserMasivo.xlsx');
         return Response::download($url);
+    }
+
+    public function dataUser() {
+        return Auth::user()->roles[0]->id;
     }
 }

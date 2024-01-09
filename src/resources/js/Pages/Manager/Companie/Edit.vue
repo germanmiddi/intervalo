@@ -70,8 +70,8 @@
                             class="block text-xl font-medium text-gray-800">Detalle de Competencias</label>
                         </div>
                         <div class="space-y-2 pt-2 pb-5">
-                            <div v-for="cs in this.competencias_select" :key="cs.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
-                                {{ cs.competencia}}
+                            <div v-for="cs in this.competencias_select" :key="cs.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-md font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
+                                {{ cs.competencia}} <button @click="remove_competencia_relaciona(cs.id)"><Icons name="trash" class="h-6 w-6 ml-2 text-red-500" /></button>
                             </div>
                         </div>
                    </div>
@@ -87,7 +87,6 @@
                                 <a class="btn btn-primary btn-sm" :href="route('user')">Agregar Usuario</a>
                             </div>
                         </div> 
-                       
                        <ListUser :idCompany=companie.id></ListUser>
                    </div>
                </div>
@@ -161,6 +160,10 @@
                     this.message = 'No se ha detectado una competencia valida'
                 }
             },
+            remove_competencia_relaciona(id){
+                const index = this.competencias_select.findIndex(item => item.id === id);
+                this.competencias_select.splice(index, 1);
+            }
         },
         created(){
         },
