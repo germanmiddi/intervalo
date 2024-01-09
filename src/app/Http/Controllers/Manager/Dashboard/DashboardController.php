@@ -23,8 +23,13 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        if(isset(Auth::user()->roles[0])){
+            $rol = Auth::user()->roles[0];
+        }else{
+            $rol = '';
+        }
         return  Inertia::render('Manager/Dashboard/Index', [
-            'rol' => Auth::user()->roles[0]
+            'rol' => $rol,
         ]);
     }
 
@@ -96,7 +101,11 @@ class DashboardController extends Controller
 
     public function details() 
     {
-        $rol_id = Auth::user()->roles[0]->id;
+        if(isset(Auth::user()->roles[0]->id)){
+            $rol_id = Auth::user()->roles[0]->id;
+        }else{
+            $rol_id = '';
+        }
         switch ($rol_id) {
             case 1: // Administrador
                 return  [
@@ -129,7 +138,7 @@ class DashboardController extends Controller
                         ];
                 break;
             default:
-                # code...
+                return null;
                 break;
         }
         $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();

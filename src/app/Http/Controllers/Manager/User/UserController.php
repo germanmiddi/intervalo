@@ -27,20 +27,27 @@ class UserController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->roles[0]->id == 1){
-            return  Inertia::render('Manager/User/List',
-            [
-                'roles' => Rol::all(),
-                'empresas' => Companie::active()->get()
-            ]);
-        }elseif(Auth::user()->roles[0]->id == 2){
-            return  Inertia::render('Manager/User/List',
-            [
-                'roles' => Rol::where('id','>=',2)->get(),
-                'empresas' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
-            ]);
+        if(isset(Auth::user()->roles[0]->id)){
+            if(Auth::user()->roles[0]->id == 1){
+                return  Inertia::render('Manager/User/List',
+                [
+                    'roles' => Rol::all(),
+                    'empresas' => Companie::active()->get()
+                ]);
+            }elseif(Auth::user()->roles[0]->id == 2){
+                if(isset(Auth::user()->roles[0]->id)){
+                    return  Inertia::render('Manager/User/Import',
+                    [
+                        'companies' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+                    ]);
+                }else{
+                    abort(403, 'Acceso No autorizado | No posee empresa asignada');
+                }
+            }else{
+                abort(403, 'Acceso No autorizado');
+            }
         }else{
-            abort(403, 'Unauthorized access');
+            abort(403, 'Acceso No autorizado | No posee roles validos');
         }
     }
 
@@ -209,19 +216,28 @@ class UserController extends Controller
 
     public function importView()
     {
-        if(Auth::user()->roles[0]->id == 1){
-            return  Inertia::render('Manager/User/Import',
-            [
-                'companies' => Companie::active()->get()
-            ]);
-        }elseif(Auth::user()->roles[0]->id == 2){
-            return  Inertia::render('Manager/User/Import',
-            [
-                'companies' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
-            ]);
+        if(isset(Auth::user()->roles[0]->id)){
+            if(Auth::user()->roles[0]->id == 1){
+                return  Inertia::render('Manager/User/Import',
+                [
+                    'companies' => Companie::active()->get()
+                ]);
+            }elseif(Auth::user()->roles[0]->id == 2){
+                if(isset(Auth::user()->roles[0]->id)){
+                    return  Inertia::render('Manager/User/Import',
+                    [
+                        'companies' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+                    ]);
+                }else{
+                    abort(403, 'Acceso No autorizado | No posee empresa asignada');
+                }
+            }else{
+                abort(403, 'Acceso No autorizado');
+            }
         }else{
-            abort(403, 'Unauthorized access');
+            abort(403, 'Acceso No autorizado | No posee roles validos');
         }
+        
     }
 
     public function import(Request $request)
@@ -249,6 +265,10 @@ class UserController extends Controller
     }
 
     public function dataUser() {
-        return Auth::user()->roles[0]->id;
+        if(isset(Auth::user()->roles[0]->id)){
+            return Auth::user()->roles[0]->id;
+        }else{
+            return;
+        }
     }
 }
