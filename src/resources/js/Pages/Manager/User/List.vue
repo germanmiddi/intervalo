@@ -80,11 +80,11 @@
                                 {{u.empresa ? u.empresa.description : '-'}}
                             </td>
                             <td class="w-2/12 text-center">
-                               {{u.rol.name ?? '-'}}
+                               {{u.rol ? u.rol.name : '-'}}
                             </td>
                             <td class="w-2/12 text-center">
                                 <button class="ml-2" @click="this.openNuevo = true,this.editing = true, this.user.id = u.id, 
-                                        this.user.name = u.name, this.user.email = u.email, this.user.empresa_id = u.empresa.id, this.user.rol_id = u.rol.id">
+                                        this.user.name = u.name, this.user.email = u.email, u.empresa ? this.user.empresa_id = u.empresa.id : this.user.empresa_id = '', u.rol ? this.user.rol_id = u.rol.id : this.user.rol_id = ''">
                                     <Icons class="w-5 h-5" name="edit" />
                                 </button>
                                 <button class="ml-2" @click="resetPassword(u.email)" title="Recuperar Contraseña">

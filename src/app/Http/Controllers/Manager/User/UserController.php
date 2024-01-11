@@ -181,7 +181,12 @@ class UserController extends Controller
             $result->where('email', 'LIKE', '%'.$email.'%');
         }
 
-        return  $result->orderBy("created_at", 'DESC')
+        if(Auth::user()->roles[0]->id == 2){
+            $result->join('companies_users as cu','users.id', '=', 'cu.user_id')
+                    ->where('cu.companie_id',  Auth::user()->companies[0]->id);
+        }
+
+        return  $result->orderBy("users.created_at", 'DESC')
                         ->paginate($length)
                         ->withQueryString()
                         ->through(fn ($u)   => [

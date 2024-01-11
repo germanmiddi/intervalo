@@ -81,11 +81,11 @@
                                             <a href="#" class="text-gray-900 font-medium hover:text-gray-600">
                                                 <b>EXAMENES FINALIZADOS (%)</b>
                                             </a>
-                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{((test_details.finish/test_details.total)*100).toFixed(2)}}%</p>
+                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{validarNumero(((test_details.finish/test_details.total)*100).toFixed(2))}}%</p>
                                             <a :href="route('test')" class="mt-1 text-gray-500 hover:underline hover:text-gray-700">Ver Examenes</a>
                                         </div>
                                         <div class="stat-figure m-2">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.finish/test_details.total)*100}">{{((test_details.finish/test_details.total)*100).toFixed(2)}}%</div>
+                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':validarNumero((test_details.finish/test_details.total)*100)}">{{validarNumero(((test_details.finish/test_details.total)*100).toFixed(2))}}%</div>
                                         </div>
                                     </div>
                                 </li>
@@ -98,49 +98,17 @@
                                             <a href="#" class="text-gray-900 font-medium hover:text-gray-600">
                                                 <b>EXAMENES INCOMPLETOS (%)</b>
                                             </a>
-                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{((test_details.abandoned/test_details.total)*100).toFixed(2)}}%</p>
+                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{validarNumero(((test_details.abandoned/test_details.total)*100).toFixed(2))}}%</p>
                                             <a :href="route('test')" class="mt-1 text-gray-500 hover:underline hover:text-gray-700">Ver Examenes</a>
                                         </div>
                                         <div class="stat-figure m-2">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.abandoned/test_details.total)*100}">{{((test_details.abandoned/test_details.total)*100).toFixed(2)}}%</div>
+                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':validarNumero((test_details.abandoned/test_details.total)*100)}">{{validarNumero(((test_details.abandoned/test_details.total)*100).toFixed(2))}}%</div>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
                         </div>
-                          <!-- <div class="mt-6 border-t border-gray-100">
-                          <dl class="divide-y divide-gray-100">
-                                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Empresas</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"><p><b>Total Empresas Activas:</b> {{data.total_companie}}</p>
-                                        <a class="btn btn-primary btn-sm" :href="route('companie')">Ver Empresas</a>
-                                    </dd>
-                                </div>
-                                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Empleados</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"><p><b>Total Empleados Activos:</b> {{data.total_user}}</p>
-                                        <a class="btn btn-primary btn-sm" :href="route('user')">Ver Usuarios</a>
-                                    </dd>
-                                </div>
-                                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Competencias</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <p><b>Competencias Activas:</b> {{data.total_competencias}} </p>
-                                        <a class="btn btn-primary btn-sm" :href="route('competencia')">Ver Competencias</a>
-                                    </dd>
-                                </div>
-                                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Evaluaciones</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    <p><b>Evaluaciones Iniciadas (Q):</b> {{test_details.total}}</p>
-                                    <li class="text-gray-500 ml-4"><b>Ultima Evaluación realizada:</b> {{data.date_last_test}}</li>
-                                    <hr>
-                                    <li class="text-gray-500 ml-4"><b>Evaluaciones Finalizadas (%):</b> {{((test_details.finish/test_details.total)*100).toFixed(2)}}%</li>
-                                    <li class="text-gray-500 ml-4"><b>Evaluaciones Incompletas (%):</b> {{((test_details.abandoned/test_details.total)*100).toFixed(2)}}%</li>
-                                </dd>
-                              </div>
-                          </dl>
-                          </div> -->
+
                       </div>
                       <hr class="mt-4">
                       <h3 class="text-base font-semibold leading-7 text-gray-900">Resumen General</h3>    
@@ -170,11 +138,11 @@
                                             <a href="#" class="text-gray-900 font-medium hover:text-gray-600">
                                                 <b>EXAMENES APROBADOS (%)</b>
                                             </a>
-                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{((test_details.approbe/test_details.total_test_score)*100).toFixed(2)}}%</p>
+                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{validarNumero(((test_details.approbe/test_details.total_test_score)*100).toFixed(2))}}%</p>
                                             <a :href="route('test')" class="mt-1 text-gray-500 hover:underline hover:text-gray-700">Ver Examenes</a>
                                         </div>
                                         <div class="stat-figure m-2">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.approbe/test_details.total_test_score)*100}">{{((test_details.approbe/test_details.total_test_score)*100).toFixed(2)}}%</div>
+                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':validarNumero((test_details.approbe/test_details.total_test_score)*100)}">{{validarNumero(((test_details.approbe/test_details.total_test_score)*100).toFixed(2))}}%</div>
                                         </div>
                                     </div>
                                 </li>
@@ -187,42 +155,16 @@
                                             <a href="#" class="text-gray-900 font-medium hover:text-gray-600">
                                                 <b>EXAMENES DESAPROBADOS (%)</b>
                                             </a>
-                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2)}}%</p>
+                                            <p class="text-gray-400 mt-1 text-gray-700 text-lg">{{validarNumero(((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2))}}%</p>
                                             <a :href="route('test')" class="mt-1 text-gray-500 hover:underline hover:text-gray-700">Ver Examenes</a>
                                         </div>
                                         <div class="stat-figure m-2">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.disapprobe/test_details.total_test_score)*100}">{{((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2)}}%</div>
+                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':validarNumero((test_details.disapprobe/test_details.total_test_score)*100)}">{{validarNumero(((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2))}}%</div>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
 
-                      <!-- <div class="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-2">   
-                          <div>
-                              <div class="stats shadow w-full h-full border-solid border-2 border-gray-400">
-                                  <div class="stat bg-gray-300  ">
-                                      <div class="stat-figure ">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.approbe/test_details.total_test_score)*100}">{{((test_details.approbe/test_details.total_test_score)*100).toFixed(2)}}%</div>
-                                      </div>
-                                      <div class="stat-title">Evaluaciones por competencias Aprobadas.</div>
-                                      <div class="stat-value text-primary">{{test_details.approbe}}</div>
-                                      <div class="stat-desc text-lg"><b>{{((test_details.approbe/test_details.total_test_score)*100).toFixed(2)}}%</b></div>
-                                  </div>
-                              </div>  
-                          </div>
-                          <div>
-                              <div class="stats shadow w-full h-full border-solid border-2 border-gray-400">
-                                  <div class="stat bg-gray-300  ">
-                                      <div class="stat-figure ">
-                                          <div class="radial-progress bg-white text-green-700 border-4 border-gray-100" :style="{'--value':(test_details.disapprobe/test_details.total_test_score)*100}">{{((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2)}}%</div>
-                                      </div>
-                                      <div class="stat-title">Evaluaciones por competencias Desaprobadas.</div>
-                                      <div class="stat-value text-primary">{{test_details.disapprobe}}</div>
-                                      <div class="stat-desc text-lg"><b>{{((test_details.disapprobe/test_details.total_test_score)*100).toFixed(2)}}%</b></div>
-                                  </div>
-                              </div>  
-                          </div>
-                      </div> -->
                   </div>
               </div>
           </div>
@@ -277,6 +219,13 @@ methods: {
       this.test_details.total_test_score = approbe + disapprobe;
 
       
+  },
+  validarNumero(valor){
+    if (isNaN(valor)) {
+        return 0;
+      } else {
+        return valor;
+      }
   }
 },
 mounted(){
