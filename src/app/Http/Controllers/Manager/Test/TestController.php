@@ -40,13 +40,15 @@ class TestController extends Controller
 
         $result->join('test as t', 'test_detail.test_id', '=', 't.id');
         $result->join('test_status as ts', 't.status_id', '=', 'ts.id');
-        $result->join('persons as p', 't.person_id', '=', 'p.id');
+        $result->leftjoin('persons as p', 't.person_id', '=', 'p.id');
+        $result->leftjoin('users as u', 't.user_id', '=', 'u.id');
        
         
         if(request('search')){
             $result->where('p.name','LIKE', '%' . request('search') . '%' );
             $result->orWhere('p.lastname','LIKE', '%' . request('search') . '%' );
             $result->orWhere('ts.description','LIKE', '%' . request('search') . '%' );
+            $result->orWhere('u.name','LIKE', '%' . request('search') . '%' );
         }
 
         if(request('competencia')){
@@ -57,7 +59,8 @@ class TestController extends Controller
                         ->paginate($length)
                         ->withQueryString()
                         ->through(fn ($t) => [
-                                'person'          => $t->test->person,
+                                'person'          => $t->test->person ?? '',
+                                'user'            => $t->test->user ?? '',
                                 'competencia'     => $t->competencia_related->competencia->competencia,
                                 'fecha'           => Carbon::parse($t->test->fecha)->format("d-m-Y"),
                                 'status'          => $t->test->status->description,

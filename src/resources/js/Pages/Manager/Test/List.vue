@@ -40,19 +40,28 @@
                     <!-- head -->
                     <thead>
                         <tr>
-                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
-                                @click="sort_by = 'p.name', sortTest()">
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-center justify-center">
-                                    Persona
-                                    <Icons v-if="sort_by == 'p.name' && sort_order == 'ASC'" name="bars-up"
+                                    Nombre
+                                    <!-- <Icons v-if="sort_by == 'p.name' && sort_order == 'ASC'" name="bars-up"
                                         class="h-4 w-4 ml-2" />
                                     <Icons v-else-if="sort_by == 'p.name' && sort_order == 'DESC'"
                                         name="bars-down" class="h-4 w-4 ml-2" />
-                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" /> -->
+                                </div>
+                            </th>
+                            <th class="w-1/11 px-6 py-4 text-center hover:bg-blue-100">
+                                <div class="flex items-center justify-center">
+                                    Tipo Usuario
+                                    <!-- <Icons v-if="sort_by == 'p.name' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'p.name' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" /> -->
                                 </div>
                             </th>
 
-                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
                                 @click="sort_by = 'test_detail.competencia_related_id', sortTest()">
                                 <div class="flex items-center justify-center">
                                     Competencia
@@ -64,7 +73,7 @@
                                 </div>
                             </th>
 
-                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
                                 @click="sort_by = 't.fecha', sortTest()">
                                 <div class="flex items-center justify-center">
                                     Fecha
@@ -76,7 +85,7 @@
                                 </div>
                             </th>
 
-                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
                                 @click="sort_by = 'ts.description', sortTest()">
                                 <div class="flex items-center justify-center">
                                     Estado
@@ -88,7 +97,7 @@
                                 </div>
                             </th>
                             
-                            <th class="w-3/10 px-6 py-4 text-center hover:bg-blue-100"
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
                                 @click="sort_by = 'test_detail.score', sortTest()">
                                 <div class="flex items-center justify-center">
                                     Resultado
@@ -99,20 +108,26 @@
                                     <Icons v-else name="bars" class="h-4 w-4 ml-2" />
                                 </div>
                             </th>
-                            <th class="w-1/10 px-6 py-4 text-center">Acciones</th>
+                            <th class="w-1/11 px-6 py-4 text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- row 1 -->
                         <tr v-for="t in tests.data" :key="t.id" class="hover">
-                            <td class="text-center">{{ t.person.name }} - {{ t.person.lastname }} <br> {{t.person.email}} </td>
+                            <td class="text-center" v-if="t.person">
+                                {{ t.person.name }} - {{ t.person.lastname }} <br> {{t.person.email}} 
+                            </td>
+                            <td class="text-center" v-else>
+                                {{ t.user.name }}
+                            </td>
+                            <td class="text-center">{{ t.person ? 'Externo' : 'Usuario' }}</td>
                             <td class="text-center">{{ t.competencia }}</td>
                             <td class="text-center">{{ t.fecha }}</td>
                             <td class="text-center">{{ t.status }}</td>
                             <td class="text-center">{{ t.score }} %</td>
                             <td class="text-center">
-                                <a class="link" >
-                                Detalle</a>
+                                <!-- <a class="link">Detalle</a> -->
+                                -
                             </td>
                         </tr>
                     </tbody>
@@ -169,7 +184,7 @@ export default {
             afirmaciones: "",
             tests: "",
             sort_order: 'DESC',
-            sort_by: "p.name"
+            sort_by: "t.fecha"
         }
     },
     methods: {

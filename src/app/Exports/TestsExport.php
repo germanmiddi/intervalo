@@ -29,19 +29,16 @@ class TestsExport implements FromArray,WithHeadings,WithEvents
     public function array(): array
     {   
         $tests = Test::get(); 
-        //$tags = Tagskeysvalues::all();
-        
-        //$tags = $this->tags_list();
-
         $resultado = [];
 
         foreach($tests as $row){            
             $result = [];
             
             $r['id']                = $row['id'];
-            $r['name']              = $row->person->name;
-            $r['lastname']          = $row->person->lastname;
-            $r['email']              = $row->person->email;
+            $r['name']              = $row->person ? $row->person->name : $row->user->name;
+            $r['lastname']          = $row->person->lastname ?? '-';
+            $r['email']             = $row->person ? $row->person->email : $row->user->email;
+            $r['tipo_user']         = $row->person ? 'EXTERNO' : 'USUARIO';
             $r['fecha']             = Carbon::create($row['fecha'])->format('d/m/Y');
             $r['status']            = $row->status->description;
             
@@ -69,6 +66,7 @@ class TestsExport implements FromArray,WithHeadings,WithEvents
                     'NOMBRE',
                     'APELLIDO',
                     'EMAIL',
+                    'TIPO USUARIO',
                     'FECHA',
                     'ESTADO',
                     'COMPETENCIA',

@@ -36,9 +36,10 @@ class UserController extends Controller
                 ]);
             }elseif(Auth::user()->roles[0]->id == 2){
                 if(isset(Auth::user()->roles[0]->id)){
-                    return  Inertia::render('Manager/User/Import',
+                    return  Inertia::render('Manager/User/List',
                     [
-                        'companies' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+                        'roles' => Rol::where('id','<>',1)->get(),
+                        'empresas' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
                     ]);
                 }else{
                     abort(403, 'Acceso No autorizado | No posee empresa asignada');
@@ -86,7 +87,7 @@ class UserController extends Controller
             $user->roles()->sync($request->rol_id);
             
             $user->notify(new NuevoUsuarioNotification($randomPassword));
-            //$user->sendEmailVerificationNotification();
+            
             DB::commit();
             return response()->json(['message'=>'Se ha almacenado correctamente el usuario'], 200);    
         } catch (\Throwable $th) {
@@ -251,7 +252,6 @@ class UserController extends Controller
                     $status = $import->getStatus();
                     return response()->json(['message' => 'Se ha finalizado el proceso de importacion de Entidades.', 'status' => $status], 200);
                 } catch (\Exception $e) {
-                    dd($e);
                     return response()->json(['message' => 'Error al procesar el archivo.'], 203);
                 }
         }else{

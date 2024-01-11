@@ -20,8 +20,12 @@ class HomeController extends Controller
     public function index()
     {
         if(Auth::user()){
-            $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
-            $competencias = Competencia::whereIn('id', $companie->competencias->pluck('id')->toArray())->get();
+            if(Auth::user()->roles[0]->id == 1){ // Si el usuario es administrador retorno todas las competencias. 
+                $competencias = Competencia::all();
+            }else{
+                $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
+                $competencias = Competencia::whereIn('id', $companie->competencias->pluck('id')->toArray())->get();
+            }
             return  Inertia::render('Web/Home',['competencias' => $competencias ]);
         }else{
             return  Inertia::render('Web/Home',['competencias' => Competencia::all() ]);

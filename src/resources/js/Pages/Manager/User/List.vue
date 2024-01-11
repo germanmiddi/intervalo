@@ -77,7 +77,7 @@
                                 {{u.email}}
                             </td>
                             <td class="w-2/12 text-center">
-                                {{u.empresa.description ?? '-'}}
+                                {{u.empresa ? u.empresa.description : '-'}}
                             </td>
                             <td class="w-2/12 text-center">
                                {{u.rol.name ?? '-'}}
@@ -376,7 +376,24 @@
                 }
             },
             guardarUser() {
-
+                // Verifico que el usuario posee un rol valido.
+                if(this.user.rol_id){
+                    if(this.user.rol_id == 1){ // Si es usuario Administrador, no requiere empresa.
+                        this.storeUser();
+                    }else{
+                        if(this.user.empresa_id){ // Si posee empresa almaceno el usuario.
+                            this.storeUser();
+                        }else{ // Si no posee empresa notifico la necesidad.
+                            this.labelType = "danger"
+                            this.message = 'Debe seleccionar una empresa para el usuario.'
+                        }
+                    }
+                }else{
+                    this.labelType = "danger"
+                    this.message = 'Debe seleccionar un rol para el usuario.'
+                }
+            },
+            storeUser(){
                 let rt = '';
                 if (this.editing) {
                     rt = route('user.update', this.user.id);
