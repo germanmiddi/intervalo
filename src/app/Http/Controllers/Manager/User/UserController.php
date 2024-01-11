@@ -182,8 +182,15 @@ class UserController extends Controller
         }
 
         if(Auth::user()->roles[0]->id == 2){
-            $result->join('companies_users as cu','users.id', '=', 'cu.user_id')
-                    ->where('cu.companie_id',  Auth::user()->companies[0]->id);
+            $idRol = 2;
+            $result->whereIn('id', function ($sub) use($idRol) {
+                $sub->selectRaw('users.id')
+                    ->from('users')
+                    ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
+                    ->where('companies_users.companie_id', $idRol);
+            });
+            /* $result->join('companies_users as cu','users.id', '=', 'cu.user_id')
+                    ->where('cu.companie_id',  $idRol); */
         }
 
         return  $result->orderBy("users.created_at", 'DESC')
@@ -269,11 +276,4 @@ class UserController extends Controller
         return Response::download($url);
     }
 
-    public function dataUser() {
-        if(isset(Auth::user()->roles[0]->id)){
-            return Auth::user()->roles[0]->id;
-        }else{
-            return;
-        }
-    }
 }
