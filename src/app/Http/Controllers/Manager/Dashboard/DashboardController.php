@@ -132,9 +132,10 @@ class DashboardController extends Controller
                 $test = Test::where('user_id', Auth::user()->id)->with('test_detail')->get();
                 $date = Test::select('fecha')->where('user_id', Auth::user()->id)->latest()->first();
                 
+                
                 return  [
                             'test' => $test,
-                            'date_last_test' =>  Carbon::parse($date->fecha)->format("d-m-Y"),
+                            'date_last_test' =>  $date ? Carbon::parse($date->fecha)->format("d-m-Y") : '-',
                         ];
                 break;
             default:

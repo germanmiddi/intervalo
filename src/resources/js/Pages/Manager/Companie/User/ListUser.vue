@@ -90,21 +90,11 @@
             async getUserCompanie(){
 
                 let filter = `&length=${this.length}` 
-                
-                /* if(this.filter.description){
-                    filter += `&description=${this.filter.description}`
-                }
-
-                if(this.filter.contact){
-                    filter += `&contact=${this.filter.contact}`
-                } */
 
                 const get = `${route('companie.listUserByCompanie', this.idCompany)}?${filter}` 
 
                 const response = await fetch(get, {method:'GET'})
                 this.users = await response.json() 
-
-                console.log('COMAPNIE: ', this.users.data)
             },
 
             async getUserCompaniePaginate(link){
@@ -128,7 +118,6 @@
                     }
 
                     this.open = false;
-                    this.getUser();
                 } catch (error) {
                     console.error(error);
                 }

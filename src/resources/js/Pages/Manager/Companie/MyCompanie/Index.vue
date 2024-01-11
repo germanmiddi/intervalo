@@ -77,7 +77,7 @@
                                 <h2 class="card-title">Usuarios Relacionados</h2>
                             </div>
                             <div>
-                                <a class="btn btn-primary btn-sm" :href="route('user')">Agregar Usuario</a>
+                                <a class="btn btn-primary btn-sm" :href="route('user')">Agregar/Editar Usuario</a>
                             </div>
                         </div> 
                        
