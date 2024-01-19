@@ -12,6 +12,7 @@ use App\Models\TestDetail;
 use App\Models\Competencia;
 
 use App\Exports\TestsExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TestController extends Controller
@@ -53,6 +54,17 @@ class TestController extends Controller
 
         if(request('competencia')){
             $result->where('cr.competencia_id',request('competencia'));
+        }
+
+        if(Auth::user()->roles[0]->id == 2){
+            $idCompany = Auth::user()->companies[0]->id;
+
+            $result->whereIn('t.user_id', function ($sub) use($idCompany) {
+                $sub->selectRaw('users.id')
+                    ->from('users')
+                    ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
+                    ->where('companies_users.companie_id', $idCompany);
+            });
         }
 
         return $result->orderBy($sort_by, $sort_order)

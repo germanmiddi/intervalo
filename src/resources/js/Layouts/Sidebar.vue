@@ -64,7 +64,7 @@
                 </nav-link>   
               </li>   
               
-              <li class="nav-item" v-if="$page.props.userRol.id === 1">
+              <li class="nav-item" v-if="($page.props.userRol.id === 1 || $page.props.userRol.id === 2)">
                 <nav-link :href="route('test')" 
                       :active="route().current('test')">
                       <Icons name="chart-pie" class="h-6 w-6 mr-5" />

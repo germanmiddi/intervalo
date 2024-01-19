@@ -182,12 +182,12 @@ class UserController extends Controller
         }
 
         if(Auth::user()->roles[0]->id == 2){
-            $idRol = 2;
-            $result->whereIn('id', function ($sub) use($idRol) {
+            $idCompany = Auth::user()->companies[0]->id;
+            $result->whereIn('id', function ($sub) use($idCompany) {
                 $sub->selectRaw('users.id')
                     ->from('users')
                     ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
-                    ->where('companies_users.companie_id', $idRol);
+                    ->where('companies_users.companie_id', $idCompany);
             });
             /* $result->join('companies_users as cu','users.id', '=', 'cu.user_id')
                     ->where('cu.companie_id',  $idRol); */

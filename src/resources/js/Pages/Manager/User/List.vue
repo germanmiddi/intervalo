@@ -404,7 +404,7 @@
                 axios.post(rt, this.user)
                     .then(response => {
                         this.openNuevo = false,
-                            this.getUser()
+                        this.getUser()
                         if (response.status == 200) {
                             this.labelType = "success"
                             this.message = response.data['message']
@@ -413,6 +413,11 @@
                             this.message = response.data['message']
                         }
                     })
+                    .catch(error => {
+                        this.openNuevo = false,
+                        this.labelType = "danger"
+                        this.message = 'Se ha producido un error, por favor comuniquese con el administrador.'
+                    });
                 this.user = {}
             },
             async getUser(){
