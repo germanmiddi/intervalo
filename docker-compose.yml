@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
- intervalo_app:
+ librosapi_app:
   env_file: .env
   build:
    args:
@@ -9,47 +9,47 @@ services:
     uid: ${UID}
    context: ./
    dockerfile: Dockerfile
-  image: intervalo
-  container_name: intervalo-app
+  image: librosapi
+  container_name: librosapi-app
   restart: unless-stopped
   working_dir: /usr/share/nginx/html
   volumes:
     - ${WORK_DIR_SRC}:/usr/share/nginx/html
   networks:
-    - intervalo
+    - lumen-api-network
 
- intervalo_db:
+ librosapi_db:
   image: mariadb
-  container_name: intervalo-db
+  container_name: librosapi-db
   restart: unless-stopped
   environment:
-    MYSQL_DATABASE: intervalodb
+    MYSQL_DATABASE: librosapidb
     MYSQL_ROOT_PASSWORD: 123123
     MYSQL_PASSWORD: 123123
     MYSQL_USER: root
   volumes:
-  - intervalodata:/var/lib/mysq
+  - lumen-api-data:/var/lib/mysq
   ports:
-  -  "3307:3306"
+  -  "3309:3306"
   networks:
-  - intervalo
+  - lumen-api-network
 
- nginx_intervalo:
+ nginx_librosapi:
   image: nginx
   env_file: .env
   volumes:
   - ${WORK_DIR_SRC}:/usr/share/nginx/html
   - ${WORK_DIR}:/etc/nginx/conf.d
   ports:
-  -  "8005:80"
+  -  "9002:80"
   networks:
-  - intervalo
+  - lumen-api-network
 
 networks:
-  intervalo:
+  lumen-api-network:
     driver: bridge
 
 volumes:
- intervalodata:
-   name: intervalodata
+ lumen-api-data:
+   name: lumen-api-data
    external: true
