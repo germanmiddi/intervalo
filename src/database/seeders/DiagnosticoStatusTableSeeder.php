@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\TestStatus;
+use App\Models\DiagnosticoStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 
-class TestStatusTableSeeder extends Seeder
+class DiagnosticoStatusTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,12 +18,14 @@ class TestStatusTableSeeder extends Seeder
     public function run()
     {
         $status = [
-            ['description' => 'ABANDONED'],
-            ['description' => 'FINISHED'],
+            ['description' => 'BORRADOR'],
+            ['description' => 'HABILITADO'],
+            ['description' => 'CANCELADO'],
+            ['description' => 'FINALIZADO'],
         ];
         
         foreach ($status as $statusItem) {
-            TestStatus::updateOrCreate(
+            DiagnosticoStatus::updateOrCreate(
                 ['description' => $statusItem['description']], // Condición para buscar el registro existente
                 $statusItem // Los valores a actualizar o crear
             );

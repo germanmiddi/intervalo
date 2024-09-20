@@ -30,6 +30,10 @@ class Companie extends Model
         return $this->belongsToMany(Competencia::class, 'companies_competencias');
     }
 
+    public function diagnosticos(){
+        return $this->belongsTo(Diagnostico::class);
+    }
+
     public function users(){
         return $this->belongsToMany(User::class, 'companies_users');
     }

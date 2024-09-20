@@ -8,8 +8,10 @@ use App\Http\Controllers\Manager\Competencia\CompetenciaController;
 use App\Http\Controllers\Manager\Afirmation\AfirmationController;
 use App\Http\Controllers\Manager\Afirmation\ImportController;
 use App\Http\Controllers\Manager\Capsule\CapsuleController;
+use App\Http\Controllers\Manager\Category\CategoryController;
 use App\Http\Controllers\Manager\Companie\CompanieController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
+use App\Http\Controllers\Manager\Diagnostico\DiagnosticoController;
 use App\Http\Controllers\Manager\Test\TestController as TestManagerController;
 use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
@@ -108,20 +110,40 @@ Route::middleware('auth')->group(function () {
     
 
     // COMPANIES
-    Route::get('/companie', [CompanieController::class, 'index'])->name('companie');
-    Route::get('/companie/list', [CompanieController::class, 'list'])->name('companie.list');
-    Route::get('/companie/create', [CompanieController::class, 'create'])->name('companie.create');
-    Route::post('/companie', [CompanieController::class, 'store'])->name('companie.store');    
+    Route::get('/company', [CompanieController::class, 'index'])->name('companie');
+    Route::get('/company/list', [CompanieController::class, 'list'])->name('companie.list');
+    Route::get('/company/create', [CompanieController::class, 'create'])->name('companie.create');
+    Route::post('/company', [CompanieController::class, 'store'])->name('companie.store');    
 
-    Route::get('/companie/{id}/edit', [CompanieController::class, 'edit'])->name('companie.edit');   
-    Route::post('/companie/{id}/update', [CompanieController::class, 'update'])->name('companie.update'); 
-    Route::get('/companie/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
-    Route::delete('/companie/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
-    Route::get('/companie/listUserByCompanie/{id}', [CompanieController::class, 'listUserByCompanie'])->name('companie.listUserByCompanie');
+    Route::get('/company/{id}/edit', [CompanieController::class, 'edit'])->name('companie.edit');   
+    Route::post('/company/{id}/update', [CompanieController::class, 'update'])->name('companie.update'); 
+    Route::get('/company/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
+    Route::delete('/company/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
+    Route::get('/company/{id}/users', [CompanieController::class, 'listUserByCompanie'])->name('companie.listUserByCompanie');
 
-    Route::get('/mycompanie', [CompanieController::class, 'myCompanie'])->name('mycompanie');
-    Route::get('/mycompanie/list', [CompanieController::class, 'mylist'])->name('mycompanie.list');
+    Route::get('/mycompany', [CompanieController::class, 'myCompanie'])->name('mycompanie');
+    Route::get('/mycompany/list', [CompanieController::class, 'mylist'])->name('mycompanie.list');
 
+    Route::get('/company/{id}/diagnosticos', [CompanieController::class, 'CompanyDiagnosticosById'])->name('company.diagnosticos');
+
+    // ROUTES CATEGORY
+    Route::prefix('category')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('category');
+        Route::get('/list', [CategoryController::class, 'list'])->name('category.list');
+        Route::get('/create', [CategoryController::class, 'create'])->name('category.create');
+        Route::post('/', [CategoryController::class, 'store'])->name('category.store');
+        Route::put('/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');   
+        Route::put('/{id}/active', [CategoryController::class, 'active'])->name('category.active');
+        Route::put('/{id}/update', [CategoryController::class, 'update'])->name('category.update');
+    });
+
+    // ROUTES DIAGNOSTICOS
+    Route::prefix('diagnosticos')->group(function () {
+        Route::get('/', [DiagnosticoController::class, 'index'])->name('diagnostico');
+        Route::post('/', [DiagnosticoController::class, 'store'])->name('diagnostico.store');
+        Route::put('/{diagnostico}/edit', [DiagnosticoController::class, 'edit'])->name('diagnostico.edit');
+        Route::put('/{diagnostico}/updateEstado', [DiagnosticoController::class, 'updateEstado'])->name('diagnostico.updateEstado');
+    });
 
 
 });

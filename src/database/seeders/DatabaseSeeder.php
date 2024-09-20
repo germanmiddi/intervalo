@@ -18,24 +18,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
-        User::create([
-            'name' => 'German Middi',
-            'email' => 'g@gmail.com',
-            'password' => bcrypt('Inicio123')
+        
+        $this->call([
+            CategoriesTableSeeder::class,
+            DiagnosticoStatusTableSeeder::class,
+            RolesTableSeeder::class,
+            TestStatusTableSeeder::class,
+            //...
         ]);
 
-        Category::create(['title'=> 'INNOVACIÓN']);
-        Category::create(['title' => 'LOGRO']);
-        Category::create(['title' => 'COLABORACIÓN']);
-        Category::create(['title' => 'LIDERAZGO']);
-
-        $status = [
-                    ['description' => 'ABANDONED'],
-                    ['description' => 'FINISHED']
-                ];
-
-        TestStatus::insert($status);
+        // Creación del usuario Principal.
+        User::updateOrCreate(
+            ['email' => 'g@gmail.com'], // Condición para buscar el registro existente
+            [
+                'name' => 'German Middi',
+                'password' => bcrypt('Inicio123')
+            ]
+        );
         
     }
 }

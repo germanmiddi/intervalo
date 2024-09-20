@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Rol;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 
 class RolesTableSeeder extends Seeder
@@ -17,14 +15,18 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        $status = [
-                ['name' => 'Administrador','description' => 'Administrador total del sistema.'],
-                ['name' => 'Manager','description' => 'Administrador total dentro de una empresa'],
-                ['name' => 'Empleado','description' => 'Usuario basico, perteneciente a una empresa'],
-                
+        $statuses = [
+            ['name' => 'Administrador', 'description' => 'Administrador total del sistema.'],
+            ['name' => 'Manager', 'description' => 'Administrador total dentro de una empresa'],
+            ['name' => 'Empleado', 'description' => 'Usuario básico, perteneciente a una empresa'],
         ];
-
-        Rol::insert($status);
+        
+        foreach ($statuses as $status) {
+            Rol::updateOrCreate(
+                ['name' => $status['name']], // Condición para buscar el registro existente
+                ['description' => $status['description']] // Valores a actualizar o crear
+            );
+        }
         
     }
 }

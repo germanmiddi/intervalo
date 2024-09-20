@@ -9,12 +9,13 @@ class Category extends Model
 {
     protected $fillable = [
         'title',
-        'description'
+        'description',
+        'active'
     ];   
    
-    public function Competencias()
+    public function competencias()
     {
-        return $this->belongsToMany(Competencia::class);
+        return $this->hasMany(Competencia::class);
     }
 
     use HasFactory;
