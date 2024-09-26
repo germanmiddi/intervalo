@@ -12,6 +12,7 @@ use App\Http\Controllers\Manager\Category\CategoryController;
 use App\Http\Controllers\Manager\Companie\CompanieController;
 use App\Http\Controllers\Manager\Dashboard\DashboardController;
 use App\Http\Controllers\Manager\Diagnostico\DiagnosticoController;
+use App\Http\Controllers\Manager\Sectores\SectorController;
 use App\Http\Controllers\Manager\Test\TestController as TestManagerController;
 use App\Http\Controllers\Manager\User\UserController;
 use App\Http\Controllers\Web\HomeController;
@@ -95,6 +96,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/test/list', [TestManagerController::class, 'list'])->name('test.list');
     Route::post('/testUser', [TestController::class, 'storeUser'])->name('test.storeUser');
 
+    // TEST - DIAGNOSTICOS
+    Route::post('/testDiagnostico', [TestController::class, 'storeUserDiagnostico'])->name('test.storeUserDiagnostico');
+
     // USERS
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/list', [UserController::class, 'list'])->name('user.list');
@@ -117,14 +121,20 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/company/{id}/edit', [CompanieController::class, 'edit'])->name('companie.edit');   
     Route::post('/company/{id}/update', [CompanieController::class, 'update'])->name('companie.update'); 
-    Route::get('/company/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
-    Route::delete('/company/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
+    //Route::get('/company/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
+    //Route::delete('/company/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
     Route::get('/company/{id}/users', [CompanieController::class, 'listUserByCompanie'])->name('companie.listUserByCompanie');
 
     Route::get('/mycompany', [CompanieController::class, 'myCompanie'])->name('mycompanie');
     Route::get('/mycompany/list', [CompanieController::class, 'mylist'])->name('mycompanie.list');
 
     Route::get('/company/{id}/diagnosticos', [CompanieController::class, 'CompanyDiagnosticosById'])->name('company.diagnosticos');
+    Route::get('/company/{id}/sectores', [CompanieController::class, 'CompanySectoresById'])->name('company.sectores');
+
+    Route::prefix('company')->group(function () {
+        Route::put('/{id}/active', [CompanieController::class, 'active'])->name('companie.active');
+        Route::delete('/{id}', [CompanieController::class, 'destroy'])->name('companie.destroy');
+    });
 
     // ROUTES CATEGORY
     Route::prefix('category')->group(function () {
@@ -135,14 +145,25 @@ Route::middleware('auth')->group(function () {
         Route::put('/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');   
         Route::put('/{id}/active', [CategoryController::class, 'active'])->name('category.active');
         Route::put('/{id}/update', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
     // ROUTES DIAGNOSTICOS
     Route::prefix('diagnosticos')->group(function () {
         Route::get('/', [DiagnosticoController::class, 'index'])->name('diagnostico');
         Route::post('/', [DiagnosticoController::class, 'store'])->name('diagnostico.store');
-        Route::put('/{diagnostico}/edit', [DiagnosticoController::class, 'edit'])->name('diagnostico.edit');
+        Route::put('/{diagnostico}', [DiagnosticoController::class, 'update'])->name('diagnostico.update');
         Route::put('/{diagnostico}/updateEstado', [DiagnosticoController::class, 'updateEstado'])->name('diagnostico.updateEstado');
+        Route::delete('/{id}', [DiagnosticoController::class, 'destroy'])->name('diagnostico.destroy');
+    });
+
+    // ROUTES SECTORES
+    Route::prefix('sectores')->group(function () {
+        Route::get('/', [SectorController::class, 'index'])->name('sector');
+        Route::post('/', [SectorController::class, 'store'])->name('sector.store');
+        Route::put('/{sector}', [SectorController::class, 'update'])->name('sector.update');
+        Route::put('/{sector}/active', [SectorController::class, 'active'])->name('sector.active');
+        Route::delete('/{id}', [SectorController::class, 'destroy'])->name('sector.destroy');
     });
 
 

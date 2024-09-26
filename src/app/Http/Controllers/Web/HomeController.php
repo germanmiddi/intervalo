@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 use App\Models\Companie;
 use App\Models\Competencia;
+use App\Models\Diagnostico;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -22,11 +25,35 @@ class HomeController extends Controller
         if(Auth::user()){
             if(Auth::user()->roles[0]->id == 1){ // Si el usuario es administrador retorno todas las competencias. 
                 $competencias = Competencia::all();
+                $diagnosticos =Diagnostico::where('status_id', 2)
+                        ->where('date_start', '<=', Carbon::now())
+                        ->where(function ($query) {
+                            $query->where('date_finish', null)
+                                ->orWhere('date_finish', '>=', Carbon::now());
+                        })->with('competencias')
+                    ->get();
+                $users = User::all();
             }else{
                 $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
                 $competencias = Competencia::whereIn('id', $companie->competencias->pluck('id')->toArray())->get();
+                $diagnosticos = Diagnostico::where('company_id', Auth::user()->companies[0]->id)
+                        ->where('status_id', 2)
+                        ->where('date_start', '<=', Carbon::now())
+                        ->where(function ($query) {
+                            $query->where('date_finish', null)
+                                ->orWhere('date_finish', '>=', Carbon::now());
+                        })->with('competencias')
+                    ->get(); //companies_users
+                    $companyId = Auth::user()->companies[0]->id;
+
+                    $users = User::whereIn('id', function ($query) use ($companyId) {
+                        $query->select('users.id')
+                              ->from('users')
+                              ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
+                              ->where('companies_users.companie_id', $companyId);
+                    })->get();
             }
-            return  Inertia::render('Web/Home',['competencias' => $competencias ]);
+            return  Inertia::render('Web/Home',['competencias' => $competencias, 'diagnosticos' => $diagnosticos, 'users' => $users ]);
         }else{
             return  Inertia::render('Web/Home',['competencias' => Competencia::all() ]);
         }

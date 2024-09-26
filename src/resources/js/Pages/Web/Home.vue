@@ -16,7 +16,16 @@
     </div>
     <Toast :toast="this.message" :type="this.labelType" @clear="clearMessage"></Toast>
     <div class="content">
-      <div v-if="start" class="flex justify-center">
+
+      <div v-if="start" class="flex flex-wrap justify-around">
+        <DiagnosticoItem @sendDiagnostico="sendDiagnostico" :users="users" :user_auth="$page.props.user" v-for="(d, idx) in diagnosticos"
+          class="lg:w-[97%] md:w-[97%] sm:w-[100%] my-5 h-80" :key="d.id" :item="d" :index="idx"
+          />
+      </div>
+
+      <hr>
+
+      <div v-if="start" class="flex justify-center mt-4">
         <div class="flex justify-end">
           <a @click="registerUser($page.props.user)" class="btn btn-primary space-x-2">
             <span>Comenzar</span>
@@ -51,6 +60,7 @@ import { Head } from "@inertiajs/inertia-vue3";
 import App from "@/Layouts/Web/App.vue";
 import Icons from "@/Layouts/Components/Icons.vue";
 import CompetenciaItem from "@/Layouts/Web/CompetenciaItem.vue";
+import DiagnosticoItem from "@/Layouts/Web/DiagnosticoItem.vue";
 import Modal from "@/Layouts/Web/Modal.vue";
 import RegisterItem from '@/Pages/Web/Register.vue';
 import QuizItem from '@/Pages/Web/Quiz.vue';
@@ -60,12 +70,15 @@ import Toast from '@/Layouts/Components/Toast.vue'
 export default {
   props: {
     competencias: Object,
+    diagnosticos: Object,
+    users: Object
   },
   components: {
     Head,
     App,
     Icons,
     CompetenciaItem,
+    DiagnosticoItem,
     Modal,
     RegisterItem,
     QuizItem,
@@ -101,7 +114,6 @@ export default {
     clearMessage() {
       this.message = ""
     },
-
     registerUser($user) {
       if (this.compselected == '') {
         this.labelType = "danger"
@@ -110,7 +122,6 @@ export default {
         if($user){
           this.storeUser($user);
         }else{
-          console.log('USER UNREGISTER');
           this.start = false, 
           this.register = true
         }
@@ -146,7 +157,6 @@ export default {
         }
       
     },
-
     async storeUser(data) {
         this.form_person = data
         let rt = route('test.storeUser');
@@ -177,7 +187,6 @@ export default {
         }
       
     },
-
     processQuiz(data) {
       let post = route('quiz.calculate')
       axios.post(post, {
@@ -211,6 +220,34 @@ export default {
     sendItem(val) {
       this.modalContent = val;
     },
+
+    // Funciones de Diagnosticos
+    async sendDiagnostico(data){
+      this.form_person = data
+      let rt = route('test.storeUserDiagnostico');
+      let formData = new FormData();
+      formData.append('user_id', data.user_id);        
+      formData.append('diagnostico_id', data.diagnostico_id);            
+
+      console.log(formData);
+      const response = await axios.post(rt, formData)
+      if(response.status == 200) {
+        this.afirmations    = response.data.data
+        this.form_person.id = response.data.person
+        this.form_test      = response.data.test
+        if (response.data.data.length == 0) {
+          this.labelType = "error"
+          this.message = 'No hay afirmaciones para este Diagnostico.'
+        }else{
+          this.start = false, 
+          this.quiz = true
+        }
+
+      } else {
+        this.labelType = "error"
+        this.message = response.data['message']
+      }
+    }
   },
 };
 </script>

@@ -14,7 +14,7 @@
                                 <div class="flex-1 h-0 overflow-y-auto">
                                     <div class="py-6 px-4 bg-gray-500 sm:px-6">
                                         <div class="flex items-center justify-between">
-                                            <DialogTitle class="text-lg font-medium text-white"> Nuevo Diagnóstico
+                                            <DialogTitle class="text-lg font-medium text-white"> Editar Diagnostico
                                             </DialogTitle>
                                             <div class="ml-3 h-7 flex items-center">
                                                 <button type="button"
@@ -28,6 +28,7 @@
                                     </div>
                                     <div class="flex-1 flex flex-col justify-between">
                                         <div class="px-4 divide-y divide-gray-200 sm:px-6">
+
                                             <div class="space-y-6 pt-6 pb-5">
                                                 <div>
                                                     <label for="fullname"
@@ -40,11 +41,8 @@
                                                             this.errors.name[0] ?? '' }}</span>
                                                     </div>
                                                 </div>
-
                                             </div>
-                                        </div>
 
-                                        <div class="px-4 divide-y divide-gray-200 sm:px-6">
                                             <div class="space-y-6 pb-5">
                                                 <div>
                                                     <label for="fullname"
@@ -62,9 +60,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="px-4 divide-y divide-gray-200 sm:px-6">
                                             <div class="space-y-6 pb-5">
                                                 <div>
                                                     <label for="fullname"
@@ -82,9 +77,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="px-4 divide-y divide-gray-200 sm:px-6">
                                             <div class="space-y-6 pb-5">
                                                 <div>
                                                     <label for="fullname"
@@ -101,7 +93,6 @@
                                                         </Switch>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
 
@@ -119,7 +110,8 @@
                                                         class="ml-2 px-3 py-1 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                                         Agregar
                                                         </button>
-                                                        <!-- <Icons class="w-5 h-5 ml-2 text-green-800 cursor-pointer"
+
+                                                       <!--  <Icons class="w-5 h-5 ml-2 text-green-800 cursor-pointer"
                                                             @click="add_competencia_for_category()" name="plus-circle"
                                                             title="Agregar Categoria" /> -->
                                                     </div>
@@ -150,7 +142,6 @@
                                                         class="ml-2 px-3 py-1 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                                         Agregar
                                                         </button>
-
                                                         <!-- <Icons class="w-5 h-5 ml-2 text-green-800 cursor-pointer"
                                                             @click="add_competencia_relacionada()" name="plus-circle"
                                                             title="Agregar Competencia" /> -->
@@ -185,13 +176,14 @@
                                                 </button>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0 px-4 py-4 flex justify-end">
                                     <button type="button"
                                         class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                                         @click="close()">Cancelar</button>
-                                    <button @click.prevent="store"
+                                    <button @click.prevent="update"
                                         class="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Guardar</button>
                                 </div>
                             </form>
@@ -215,9 +207,9 @@ export default {
     },
     props: {
         open: Boolean,
+        diagnostico: Object,
         competencias: Object,
         categorias: Object,
-        idCompany: Number
     },
     data() {
         return {
@@ -242,25 +234,17 @@ export default {
         };
     },
     methods: {
-        async store() {
+        async update() {
             let data = {}
             try {
-                const formData = new FormData();
                 let competencias_id = []
                 Object.entries(this.competencias_select).forEach(([clave, valor]) => {
                     competencias_id.push(valor.id);
                 });
                 this.form.competencias_id = competencias_id
 
-                for (var clave in this.form) {
-                    if (this.form.hasOwnProperty(clave)) {
-                        formData.append(clave, this.form[clave]);
-                    }
-                }
-
-                let rt = route('diagnostico.store');
-                this.form.company_id = this.idCompany
-                const response = await axios.post(rt, this.form);
+                let rt = route('diagnostico.update', this.form.id);
+                const response = await axios.put(rt, this.form);
                 if (response.status == 200) {
                     data.labelType = "success"
                     data.message = response.data.message
@@ -301,7 +285,6 @@ export default {
         add_competencia_for_category() {
             let data = {}
             let competencias_category = this.category_select.competencias
-            this.category_select = ''
 
             const compatenciasAsociadas = this.competencias.map(comp => comp.competencia);
 
@@ -328,6 +311,7 @@ export default {
                 data.labelType = "danger"
                 data.message = 'No se ha detectado una competencia valida'
             }
+            this.category_select = ''
             this.$emit('message', data)
         },
         remove_competencia_relaciona(id) {
@@ -335,8 +319,24 @@ export default {
             this.competencias_select.splice(index, 1);
         },
         close() {
-            this.$emit('closeCreateDiagnostico')
+            this.$emit('closeUpdate')
             this.form = {}
+        },
+    },
+    activated() {
+
+    },
+    watch: {
+        open(newVal) {
+            if (newVal) {
+                this.errors = {}
+                this.form = JSON.parse(JSON.stringify(this.diagnostico));
+                this.form.date_start = new Date(this.form.date_start + "T00:00:00.000-03:00")
+                console.log(this.form.date_finish)
+                this.form.date_finish = this.form.date_finish != null ? new Date(this.form.date_finish + "T00:00:00.000-03:00") : null
+
+                this.competencias_select = this.form.competencias
+            }
         }
     }
 }

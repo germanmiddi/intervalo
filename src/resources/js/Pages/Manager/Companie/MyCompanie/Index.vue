@@ -5,10 +5,6 @@
         <div class="flex-grow flex flex-col">
             <div class="w-11/12 mx-auto flex justify-between items-center">
                 <h1 class="my-5 text-4xl font-bold">Empresa | {{this.companie.description}}</h1>
-                <!-- <div>
-                    <button  button class="btn btn-primary btn-sm mr-2" @click.prevent="submit">Guardar</button>
-                    <a class="btn btn-primary btn-sm" :href="route('companie')">Volver</a>
-                </div> -->
             </div>
             <hr>
 
@@ -44,20 +40,6 @@
                 <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
                    <div class="card-body">
                        <h2 class="card-title">Competencias Relacionadas</h2>
-                       <!-- <div class="w-full mx-auto flex justify-between items-center">
-                            <div class="mt-4">
-                                <label for="category" class="block text-sm font-semibold text-gray-700">Competencia</label>
-                                <select class="select w-full mt-1 input-bordered" v-model="this.competencia_select" name="competencia_select" id="competencia_select">
-                                    <option value="" disabled selected>Seleccione una competencia</option>
-                                    <option v-for="com in competencias" :key="com.id" :value="com">{{com.competencia}}</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button class="btn btn-primary btn-sm" @click.prevent="add_competencias_relacionadas">Agregar</button>
-                            </div>
-                        </div> 
-
-                        <hr> -->
                         <div>
                             <label for="time"
                             class="block text-xl font-medium text-gray-800">Detalle de Competencias</label>
@@ -69,6 +51,26 @@
                         </div>
                    </div>
                </div>
+
+               <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
+                    <div class="card-body">
+                        <div class="w-full mx-auto flex justify-between items-center">
+                            <div class="mt-4">
+                                <h2 class="card-title">Diagnósticos</h2>
+                            </div>
+                            <div>
+                                <a class="btn btn-primary btn-sm" @click="showCreateDiagnostico = true">Agregar</a>
+                            </div>
+                        </div>
+                        <ListDiagnosticoComponent :diagnosticos=diagnosticos 
+                            :competencias="this.competencias_asociadas"
+                            :categorias="categorias"
+                            @message="messageToast"
+                            @refreshData="getDiagnosticosCompany()"
+                            @getDiagnosticosCompanyPaginate="getDiagnosticosCompanyPaginate" />
+                    </div>
+                </div>
+
 
                <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
                    <div class="card-body">
@@ -84,11 +86,40 @@
                        <ListUser :idCompany=companie.id></ListUser>
                    </div>
                </div>
+
+               <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
+                    <div class="card-body">
+                        <div class="w-full mx-auto flex justify-between items-center">
+                            <div class="mt-4">
+                                <h2 class="card-title">Sectores</h2>
+                            </div>
+                            <div>
+                                <a class="btn btn-primary btn-sm" @click="showCreateSector = true">Agregar</a>
+                            </div>
+                        </div>
+                        <ListSectoresComponent :sectores=sectores 
+                            @message="messageToast"
+                            @refreshData="getSectoresCompany()"
+                            @getSectoresCompanyPaginate="getSectoresCompanyPaginate()" />
+                    </div>
+                </div>
             </div>  
         </div>
 
-
         <!-- / CONTENT -->
+
+        <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
+            :competencias="this.competencias_asociadas"
+            :categorias="categorias"
+            @message="messageToast"
+            @refreshData="getDiagnosticosCompany()" 
+            @closeCreateDiagnostico="closeCreateDiagnostico()" />
+
+        <CreateSectorComponent :open="showCreateSector" :idCompany=companie.id 
+            @message="messageToast"
+            @refreshData="getSectoresCompany()" 
+            @closeCreateSector="closeCreateSector()" />
+
    </App>
   
 </template>
@@ -101,17 +132,28 @@
     import Toast from '@/Layouts/Components/Toast.vue'
     import ListUser from '../User/ListUser.vue'
 
+    import CreateDiagnosticoComponent from '../Diagnostico/Create.vue';
+    import ListDiagnosticoComponent from '../Diagnostico/ListDiagnostico.vue'
+
+    import CreateSectorComponent from '../Sectores/Create.vue';
+    import ListSectoresComponent from '../Sectores/List.vue'
+
     export default {
         props:{
              competencias: Object,
              companie: Object,
-             competencias_asociadas: Object
+             competencias_asociadas: Object,
+             categorias: Object
         },
         components: {
             App,
             Icons,
             Toast,
-            ListUser
+            ListUser,
+            CreateDiagnosticoComponent,
+            ListDiagnosticoComponent,
+            CreateSectorComponent,
+            ListSectoresComponent
         },
 
         data(){
@@ -120,12 +162,22 @@
                 competencias_select: [],
                 showToast: false,
                 message: "",
-                labelType: "success"
+                labelType: "success",
+                showCreateDiagnostico: false,
+                showCreateSector: false,
+                diagnosticos: {},
+                sectores: {}
             }
         },
         methods:{
             clearMessage() {
                 this.message = ""
+            },
+            closeCreateDiagnostico() {
+                this.showCreateDiagnostico = false
+            },
+            closeCreateSector() {
+                this.showCreateSector = false
             },
             submit(){
                 this.form.competencias_select = this.competencias_select
@@ -154,11 +206,37 @@
                     this.message = 'No se ha detectado una competencia valida'
                 }
             },
+            async getDiagnosticosCompany() {
+
+                const get = `${route('company.diagnosticos', this.companie.id)}`
+
+                const response = await fetch(get, { method: 'GET' })
+                this.diagnosticos = await response.json()
+            },
+            async getDiagnosticosCompanyPaginate(data) {
+                var get = `${data}`;
+                const response = await fetch(get, { method: 'GET' })
+                this.diagnosticos = await response.json()
+            },
+            async getSectoresCompany() {
+
+                const get = `${route('company.sectores', this.companie.id)}`
+
+                const response = await fetch(get, { method: 'GET' })
+                this.sectores = await response.json()
+            },
+            async getSectoresCompanyPaginate(data) {
+                var get = `${data}`;
+                const response = await fetch(get, { method: 'GET' })
+                this.sectores = await response.json()
+            }
         },
         created(){
+            this.getDiagnosticosCompany(),
+            this.getSectoresCompany()
         },
         mounted(){
-            this.competencias_select = this.competencias_asociadas
+            this.competencias_select = JSON.parse(JSON.stringify(this.competencias_asociadas));
             this.form.id = this.companie.id
             this.form.description = this.companie.description
             this.form.address = this.companie.address

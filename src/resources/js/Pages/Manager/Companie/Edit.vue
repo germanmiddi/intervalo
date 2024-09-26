@@ -103,7 +103,10 @@
                                 <a class="btn btn-primary btn-sm" @click="showCreateDiagnostico = true">Agregar</a>
                             </div>
                         </div>
-                        <ListDiagnosticoComponent :diagnosticos=diagnosticos @message="messageToast"
+                        <ListDiagnosticoComponent :diagnosticos=diagnosticos 
+                            :competencias="this.competencias_asociadas"
+                            :categorias="categorias"
+                            @message="messageToast"
                             @refreshData="getDiagnosticosCompany()"
                             @getDiagnosticosCompanyPaginate="getDiagnosticosCompanyPaginate" />
                     </div>
@@ -122,6 +125,23 @@
                         <ListUser :idCompany=companie.id></ListUser>
                     </div>
                 </div>
+
+                <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
+                    <div class="card-body">
+                        <div class="w-full mx-auto flex justify-between items-center">
+                            <div class="mt-4">
+                                <h2 class="card-title">Sectores</h2>
+                            </div>
+                            <div>
+                                <a class="btn btn-primary btn-sm" @click="showCreateSector = true">Agregar</a>
+                            </div>
+                        </div>
+                        <ListSectoresComponent :sectores=this.sectores 
+                            @message="messageToast"
+                            @refreshData="getSectoresCompany()"
+                            @getSectoresCompanyPaginate="getSectoresCompanyPaginate()" />
+                    </div>
+                </div>
             </div>
         </div>
         <!-- / CONTENT -->
@@ -131,6 +151,18 @@
             @message="messageToast"
             @refreshData="getDiagnosticosCompany()" 
             @closeCreateDiagnostico="closeCreateDiagnostico()" />
+
+        <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
+            :competencias="this.competencias_asociadas"
+            :categorias="categorias"
+            @message="messageToast"
+            @refreshData="getDiagnosticosCompany()" 
+            @closeCreateDiagnostico="closeCreateDiagnostico()" />
+
+        <CreateSectorComponent :open="showCreateSector" :idCompany=companie.id
+            @message="messageToast"
+            @refreshData="getSectoresCompany()" 
+            @closeCreateSector="closeCreateSector()" />
 
     </App>
 
@@ -143,13 +175,15 @@ import Toast from '@/Layouts/Components/Toast.vue'
 import ListUser from './User/ListUser.vue'
 import ListDiagnosticoComponent from './Diagnostico/ListDiagnostico.vue'
 import CreateDiagnosticoComponent from './Diagnostico/Create.vue';
+import CreateSectorComponent from './Sectores/Create.vue';
+import ListSectoresComponent from './Sectores/List.vue'
 
 export default {
     props: {
         competencias: Object,
         companie: Object,
         competencias_asociadas: Object,
-        categorias: Object
+        categorias: Object,
     },
     components: {
         App,
@@ -157,7 +191,9 @@ export default {
         Toast,
         ListUser,
         ListDiagnosticoComponent,
-        CreateDiagnosticoComponent
+        CreateDiagnosticoComponent,
+        CreateSectorComponent,
+        ListSectoresComponent
     },
 
     data() {
@@ -168,9 +204,10 @@ export default {
             message: "",
             labelType: "success",
             showCreateDiagnostico: false,
-
             // Diagnosticos
-            diagnosticos: {}
+            diagnosticos: {},
+            showCreateSector: false,
+            sectores: {}
         }
     },
     methods: {
@@ -184,9 +221,24 @@ export default {
         closeCreateDiagnostico() {
             this.showCreateDiagnostico = false
         },
+        closeCreateSector() {
+            this.showCreateSector = false
+        },
         submit() {
             this.form.competencias_select = this.competencias_select
             this.$inertia.post(route('companie.update', this.form.id), this.form)
+        },
+        async getSectoresCompany() {
+
+            const get = `${route('company.sectores', this.companie.id)}`
+
+            const response = await fetch(get, { method: 'GET' })
+            this.sectores = await response.json()
+        },
+        async getSectoresCompanyPaginate(data) {
+            var get = `${data}`;
+            const response = await fetch(get, { method: 'GET' })
+            this.sectores = await response.json()
         },
         add_competencias_relacionadas() {
             let resultado = this.competencias.find(competencia => competencia.id === this.competencia_select.id);
@@ -219,8 +271,6 @@ export default {
         // DIAGNOSTICOS
         async getDiagnosticosCompany() {
 
-            //let filter = `&length=${this.length}`
-
             const get = `${route('company.diagnosticos', this.companie.id)}`
 
             const response = await fetch(get, { method: 'GET' })
@@ -234,6 +284,7 @@ export default {
     },
     created() {
         this.getDiagnosticosCompany();
+        this.getSectoresCompany()
     },
     mounted() {
         this.competencias_select = JSON.parse(JSON.stringify(this.competencias_asociadas));

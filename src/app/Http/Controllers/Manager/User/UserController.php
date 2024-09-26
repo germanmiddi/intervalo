@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\UserCompanieImport;
 use App\Models\Companie;
 use App\Models\Rol;
+use App\Models\Sector;
 use App\Models\User;
 use App\Notifications\NuevoUsuarioNotification;
 use Illuminate\Http\Request;
@@ -32,14 +33,16 @@ class UserController extends Controller
                 return  Inertia::render('Manager/User/List',
                 [
                     'roles' => Rol::all(),
-                    'empresas' => Companie::active()->get()
+                    'empresas' => Companie::active()->get(),
+                    'sectores' => Sector::active()->get()
                 ]);
             }elseif(Auth::user()->roles[0]->id == 2){
                 if(isset(Auth::user()->roles[0]->id)){
                     return  Inertia::render('Manager/User/List',
                     [
                         'roles' => Rol::where('id','<>',1)->get(),
-                        'empresas' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get()
+                        'empresas' => Companie::where('id',Auth::user()->companies[0]->id)->active()->get(),
+                        'sectores' => Sector::where('company_id',Auth::user()->companies[0]->id)->active()->get()
                     ]);
                 }else{
                     abort(403, 'Acceso No autorizado | No posee empresa asignada');
@@ -134,6 +137,7 @@ class UserController extends Controller
             User::where('id', $id)->update([
                 'name' => $request->name,
                 'email' => $request->email,
+                'sector_id' => $request->sector_id,
                 'password' => bcrypt($randomPassword) 
             ]);
             
@@ -201,7 +205,8 @@ class UserController extends Controller
                             'name'      => $u->name,
                             'email'     => $u->email,
                             'empresa'   => $u->companies->first(),
-                            'rol'       => $u->roles->first()    
+                            'rol'       => $u->roles->first(),
+                            'sector'    => $u->sector    
                         ]);
     } 
 

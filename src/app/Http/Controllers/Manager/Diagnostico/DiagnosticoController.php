@@ -36,6 +36,7 @@ class DiagnosticoController extends Controller
      */
     public function store(Request $request)
     {
+        //$request = $request->request;
         $request->validate([
             'name' => 'required',
             'date_start' => 'required|date',
@@ -50,7 +51,9 @@ class DiagnosticoController extends Controller
         ]);
 
         try {
-            Diagnostico::create($request->only(['name', 'date_start','date_finish','company_id']));
+            $diagnostico = Diagnostico::create($request->only(['name', 'date_start','date_finish','company_id','diagnostico_360']));
+            $diagnostico->competencias()->sync($request->competencias_id);
+
             return response()->json(['message' => 'Diagnostico creado correctamente'], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Error al crear el Diagnostico', 'error' => $th->getMessage()], 500);
@@ -88,24 +91,29 @@ class DiagnosticoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        /* $request->validate([
-            'title' => 'required|unique:categories,title,' . $id, // Excluye el ID actual
-            'description' => 'nullable|string|max:255', // La descripción puede ser nula
+        $request->validate([
+            'name' => 'required',
+            'date_start' => 'required|date',
+            'date_finish' => 'nullable|date|after_or_equal:date_start',
         ], [
-            'title.required' => 'El título es obligatorio.',
-            'title.unique' => 'El título ya ha sido utilizado.',
-            'description.string' => 'La descripción debe ser una cadena de texto.',
-            'description.max' => 'La descripción no puede tener más de 255 caracteres.',
+            'name.required' => 'El Nombre es obligatorio.',
+            'date_start.required' => 'La fecha de inicio es obligatoria.',
+            'date_start.date' => 'La fecha de inicio debe ser una fecha válida.',
+            'date_finish.nullable' => 'La fecha de fin puede ser nula.',
+            'date_finish.date' => 'La fecha de fin debe ser una fecha válida.',
+            'date_finish.after_or_equal' => 'La fecha de finalización debe ser igual o posterior a la fecha de inicio.',
         ]);
 
         try {
-            $category = Category::findOrFail($id);
+            $diagnostico = Diagnostico::findOrFail($id);
             
-            $category->update($request->only(['title', 'description']));
-            return response()->json(['message' => 'Categoria actualizada correctamente'], 200);
+            $diagnostico->update($request->only(['name', 'date_start', 'date_finish', 'diagnostico_360']));
+            $diagnostico->competencias()->sync($request->competencias_id);
+
+            return response()->json(['message' => 'Diagnostico actualizado correctamente'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'Error al actualizar la Categoria', 'error' => $th->getMessage()], 500);
-        } */
+            return response()->json(['message' => 'Error al actualizar el Diagnostico', 'error' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -116,7 +124,14 @@ class DiagnosticoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $diagnostico = Diagnostico::where('id', $id)->first();
+            // TODO: Cual seria los parametros de control?
+            $diagnostico->delete();
+            return response()->json(['message' => 'Diagnostico eliminado correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error al eliminar el Diagnostico', 'error' => $th->getMessage()], 500);
+        }
     }
 
     /**

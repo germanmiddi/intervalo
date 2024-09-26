@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'sector_id',
         'password',
     ];
 
@@ -63,9 +64,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Companie::class, 'companies_users');
     }
+
     public function roles()
     {
         return $this->belongsToMany(Rol::class, 'roles_users');
     }
 
+    public function sector(){
+
+        return $this->belongsTo(Sector::class, 'sector_id');
+    }
 }

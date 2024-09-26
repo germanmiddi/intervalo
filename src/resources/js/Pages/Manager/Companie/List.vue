@@ -63,7 +63,7 @@
                 <table class="table w-full">
                     <thead>
                         <tr>
-                            <th class="px-6 py-4 text-center z-0">Empresa</th>
+                            <th class="px-6 py-4 text-center" style="z-index: 0;">Empresa</th>
                             <th class="px-6 py-4 text-center">Contacto</th>
                             <th class="px-6 py-4 text-center">Email</th>
                             <th class="px-6 py-4 text-center">Telefono</th>
@@ -101,12 +101,18 @@
                                 <a class="ml-2" @click="this.form = c, this.editing = true, this.open = true" title="Detalle Empresa">
                                     <Icons class="w-5 h-5 inline" name="details" />
                                 </a>
-                                <a class="ml-2" v-if="c.active == 1" @click="this.companie = c, this.openDelete = true" title="Deshabilitar Empresa" >
-                                    <Icons class="w-5 h-5 inline text-red-500" name="circle-down" />
+
+                                <a class="ml-2 cursor-pointer" v-if="c.active == 1" @click="this.companie = c, this.showConfirmed = true, title='¿Desea deshabilitar la Empresa?'" title="Deshabilitar Empresa" >
+                                    <Icons class="w-6 h-6 inline text-green-500 hover:text-green-800" name="badge-check" />
                                 </a>
-                                <a class="ml-2" v-else @click="this.companie = c, this.openDelete = true" title="Habilitar Empresa">
-                                    <Icons class="w-5 h-5 inline text-green-500" name="circle-up" />
+                                <a class="ml-2 cursor-pointer" v-else @click="this.companie = c, this.showConfirmed = true, title='¿Desea habilitar la Empresa?'" title="Habilitar Empresa">
+                                    <Icons class="w-6 h-6 inline text-gray-500 hover:text-gray-800" name="badge-check" />
                                 </a>
+
+                                <a class="ml-2 cursor-pointer" @click="this.companie = c, this.showDelete = true, title='¿Desea eliminar la Empresa?'" title="Eliminar Empresa">
+                                    <Icons class="w-6 h-6 inline text-red-500 hover:text-red-800" name="trash" />
+                                </a>
+
                             </td>
                         </tr>
                     </tbody>
@@ -127,7 +133,8 @@
                             v-html="link.label"> </div>
                     </div> 
                 </div>   
-            </div>      
+            </div>  
+                
         </div>
 
         <!-- / CONTENT -->
@@ -226,7 +233,7 @@
             </Dialog>
         </TransitionRoot>
 
-        <TransitionRoot as="template" :show="openDelete">
+        <!-- <TransitionRoot as="template" :show="openDelete">
             <Dialog as="div" class="relative z-20" @close="openDelete = false">
                 <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0"
                     enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100"
@@ -285,7 +292,15 @@
                     </div>
                 </div>
             </Dialog>
-        </TransitionRoot>
+        </TransitionRoot> -->
+
+        <ConfirmModal :show="showConfirmed" :id="companie.id"
+        :title="this.title" @viewConfirmed="fnShowConfirmed"
+        @responseConfirmed="fnConfirmed" />
+
+        <DestroyModal :show="showDelete" :id="companie.id"
+        :title="this.title" @viewDestroy="fnShowDestroy"
+        @responseDestroy="fnDestroy" />
    </App>
   
 </template>
@@ -298,6 +313,9 @@
     import Icons from '@/Layouts/Components/Icons.vue'    
     import Toast from '@/Layouts/Components/Toast.vue'
     import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+
+    import ConfirmModal from '@/Layouts/Components/Modals/ConfirmModal.vue';
+    import DestroyModal from '@/Layouts/Components/Modals/DestroyModal.vue';
 
     export default {
         props:{
@@ -314,6 +332,8 @@
             TransitionChild,
             TransitionRoot,
             Toast,
+            ConfirmModal,
+            DestroyModal
         },
 
         data(){
@@ -331,12 +351,21 @@
                 form: {},
                 showToast: false,
                 message: "",
-                labelType: "success"               
+                labelType: "success",     
+                
+                showConfirmed:false, // Modal Confirm
+                showDelete:false, // Modal Confirm Destroy
             }
         },
         methods:{
             clearMessage() {
                 this.message = ""
+            },
+            fnShowConfirmed(){
+                this.showConfirmed = false
+            },
+            fnShowDestroy(){
+                this.showDelete = false
             },
             clearFilter(){
                 this.filter = {}
@@ -397,22 +426,41 @@
                     })
                     this.vaciarForm();
             },
-            deshabilitar() {
-                axios.delete(`/companie/${this.companie.id}`
-                ).then(response => {
-                    this.getCompanie()
-                    if (response.status == 200) {
+            async fnConfirmed() {
+                try {
+                    let rt = route('companie.active', this.companie.id);
+                    const response = await axios.put(rt);
+                    if (response.status === 200) {
                         this.labelType = "success"
-                        this.message = response.data['message']
+                        this.message = response.data.message
+                        this.getCompanie()
                     } else {
                         this.labelType = "danger"
-                        this.message = response.data['message']
+                        this.message = response.data.message
                     }
-                }).catch(error => {
+                } catch (error) {
                     this.labelType = "danger"
-                    this.message = 'Comuniquese con el administrador'
-                })
-            this.openDelete=false;
+                    this.message = error.response.data.message
+                }
+                this.fnShowConfirmed()
+            },
+            async fnDestroy() {
+                try {
+                    let rt = route('companie.destroy', this.companie.id);
+                    const response = await axios.delete(rt);
+                    if (response.status === 200) {
+                        this.labelType = "success"
+                        this.message = response.data.message
+                        this.getCompanie()
+                    } else {
+                        this.labelType = "danger"
+                        this.message = response.data.message
+                    }
+                } catch (error) {
+                    this.labelType = "danger"
+                    this.message = error.response.data.message
+                }
+                this.fnShowDestroy()
             }
         },
         created(){

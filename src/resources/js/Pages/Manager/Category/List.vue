@@ -88,10 +88,13 @@
                                     <Icons class="w-5 h-5 inline" name="details" />
                                 </a>
                                 <a class="ml-2 cursor-pointer" v-if="c.active == 1" @click="this.category = c, this.showConfirmed = true, title='¿Desea deshabilitar la categoria?'" title="Deshabilitar Categoria" >
-                                    <Icons class="w-5 h-5 inline text-red-500 hover:text-red-800" name="circle-down" />
+                                    <Icons class="w-6 h-6 inline text-green-500 hover:text-green-800" name="badge-check" />
                                 </a>
                                 <a class="ml-2 cursor-pointer" v-else @click="this.category = c, this.showConfirmed = true, title='¿Desea habilitar la categoria?'" title="Habilitar Categoria">
-                                    <Icons class="w-5 h-5 inline text-green-500 hover:text-green-800" name="circle-up" />
+                                    <Icons class="w-6 h-6 inline text-gray-500 hover:text-gray-800" name="badge-check" />
+                                </a>
+                                <a class="ml-2 cursor-pointer" @click="this.category = c, this.showDeleteConfirmed = true, title='¿Desea eliminar la categoria?'" title="Eliminar Categoria">
+                                    <Icons class="w-6 h-6 inline text-red-500 hover:text-red-800" name="trash" />
                                 </a>
                             </td>
                         </tr>
@@ -117,14 +120,20 @@
         </div>
 
         <CreateComponent :open="showCreate" @message="messageToast" @refreshData="getCategory()" @closeCreate="closeCreate"/>
+
         <keep-alive>
             <EditComponent :open="showUpdate" :category="this.category" @message="messageToast" @refreshData="getCategory()" @closeUpdate="closeUpdate"/>
         </keep-alive>
+        
         <DetailComponent :open="showDetail" :data="this.category" @closeDetail="closeDetail"/>
 
-        <ConfirmModal :show="showConfirmed" :id="this.form.assigned_id"
+        <ConfirmModal :show="showConfirmed" :id="category.id"
         :title="this.title" @viewConfirmed="fnShowConfirmed"
         @responseConfirmed="fnConfirmed" />
+
+        <DestroyModal :show="showDeleteConfirmed" :id="category.id"
+        :title="this.title" @viewDestroy="fnShowDestroy"
+        @responseDestroy="fnDestroy" />
 
    </App>
    
@@ -143,6 +152,7 @@
     import EditComponent from './Components/Edit.vue'
     import DetailComponent from './Components/Detail.vue'
     import ConfirmModal from '@/Layouts/Components/Modals/ConfirmModal.vue';
+    import DestroyModal from '@/Layouts/Components/Modals/DestroyModal.vue';
 
     export default {
         props:{
@@ -162,7 +172,8 @@
             CreateComponent,
             EditComponent,
             DetailComponent,
-            ConfirmModal
+            ConfirmModal,
+            DestroyModal
         },
 
         data(){
@@ -186,6 +197,7 @@
                 showUpdate: false, // Update
                 showDetail: false, // Detalle Categoria
                 showConfirmed:false, // Modal Confirm
+                showDeleteConfirmed:false, // Modal Confirm Destroy
                 message: "",
                 labelType: "info",
                 titleConfirmed: '',
@@ -218,6 +230,9 @@
             },
             fnShowConfirmed() {
                 this.showConfirmed = false
+            },
+            fnShowDestroy() {
+                this.showDeleteConfirmed = false
             },
             async getCategory(){
 
@@ -254,6 +269,25 @@
                     this.message = error.response.data.message
                 }
                 this.fnShowConfirmed()
+            },
+
+            async fnDestroy() {
+                try {
+                    let rt = route('category.destroy', this.category.id);
+                    const response = await axios.delete(rt);
+                    if (response.status === 200) {
+                        this.labelType = "success"
+                        this.message = response.data.message
+                        this.getCategory()
+                    } else {
+                        this.labelType = "danger"
+                        this.message = response.data.message
+                    }
+                } catch (error) {
+                    this.labelType = "danger"
+                    this.message = error.response.data.message
+                }
+                this.fnShowDestroy()
             },
 
             async getCategoryPaginate(link){

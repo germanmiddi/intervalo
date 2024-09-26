@@ -14,7 +14,7 @@
             <div v-for="item in quests" :key="item.id" class="mx-auto border-b border-gray-200 ">
                 <div class="flex p-8 rounded-xl my-4" :class="{ 'bg-red-100': item.empty == 'true' }">
                     <div class="w-3/5">
-                        {{ item.text }} <!-- {{ item.id_competencia }} -->
+                        {{ item.text }}
                     </div>
 
 

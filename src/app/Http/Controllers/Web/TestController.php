@@ -9,8 +9,7 @@ use App\Models\Test;
 use App\Models\TestDetail;
 use App\Models\TestStatus;
 use App\Models\CompetenciaRelated;
-
-
+use App\Models\Diagnostico;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -81,12 +80,11 @@ class TestController extends Controller
                 ]);
                 
                 $form_competencias = explode(',', $request->form_competencias);
-
                 foreach ($form_competencias as $competencia) {
                     $id_competencia_related = CompetenciaRelated::select('id')
-                                                                ->where('competencia_id', $competencia)
-                                                                ->where('relate_id', $competencia)
-                                                                ->first();
+                                                    ->where('competencia_id', $competencia)
+                                                    ->where('relate_id', $competencia)
+                                                    ->first();
                                                                 
                     if ($id_competencia_related) {
                         $id = $id_competencia_related->id;
@@ -110,7 +108,55 @@ class TestController extends Controller
             
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
+            return response()->json(['message'=>'Se ha producido un error'],500);
+        }
+    }
+
+    public function storeUserDiagnostico(Request $request)
+    {   
+        
+        try {
+            DB::beginTransaction();
+                $test = Test::create([
+                    'user_id' => $request->user_id,
+                    'fecha' => Carbon::now(),
+                    'status_id' => TestStatus::select('id')->where('description', 'ABANDONED')->first()->id,
+                ]);
+                $diagnostico = Diagnostico::where('id', $request->diagnostico_id)->first();
+
+                if ($diagnostico) {
+                    $form_competencias = $diagnostico->competencias->pluck('id')->toArray();
+                } else {
+                    $form_competencias = []; // En caso de que no se encuentre el diagnóstico
+                }
+                foreach ($form_competencias as $competencia) {
+                    $id_competencia_related = CompetenciaRelated::select('id')
+                                                    ->where('competencia_id', $competencia)
+                                                    ->where('relate_id', $competencia)
+                                                    ->first();
+                                                                
+                    if ($id_competencia_related) {
+                        $id = $id_competencia_related->id;
+                    
+                        TestDetail::create([
+                            'test_id' => $test->id,
+                            'competencia_related_id' =>  $id,
+                            'score' => 0,
+                        ]);
+                    }
+                }
+
+                $controllerAfirmation = New AfirmationController();
+
+                $afirmations = $controllerAfirmation->get_afirmations($form_competencias);
+                DB::commit();
+                return response()->json(['message'=>'Se registrado correctamente', 
+                                         'data'   => $afirmations, 
+                                         'person' => $request->id, 
+                                         'test'   => $test], 200);
+            
+        } catch (\Throwable $th) {
+            DB::rollBack();
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
     }

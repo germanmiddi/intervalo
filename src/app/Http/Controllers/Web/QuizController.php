@@ -28,7 +28,6 @@ class QuizController extends Controller
         $input = $request->afirmations;
         $person = $request->form_person;
         $test = $request->form_test;
-
         //Agrupo las respuestas segun las competencias.
         $competencias = $this->group_by("id_competencia", $input);
         $comp_rel = [];
@@ -42,18 +41,18 @@ class QuizController extends Controller
             $result[$details_competencia->competencia]['suma'] = 0;
             $result[$details_competencia->competencia]['cantidad'] = count($respuestas);
             $result[$details_competencia->competencia]['tipo'] = 'main';
-
+            
             foreach($respuestas as $r){
                 $result[$details_competencia->competencia]['suma'] += $r['value'];
                 // Busqueda de las competencias relacionadas a la afirmacion.
                 $id = $r['id'];
                 $competencias = Competencia::select('id')
-                                    ->wherehas('afirmations', function($query) use ($id){
+                ->wherehas('afirmations', function($query) use ($id){
                                                                 $query = $query->where('afirmation_id', $id);
                                                             })
                                     ->where('id', '!=', $key) //Levanto solo las competencias distintas a la q estoy sumando
                                     ->get()->toArray();
-
+                                    
                 // Se Analisis las competencias relacionadas. 
                 foreach ($competencias as $c) {
                     $competencia_relate = Competencia::where('id',$c['id'])->first();
@@ -79,25 +78,23 @@ class QuizController extends Controller
                         //$result[$details_competencia->competencia]['competencia_relacionada'][$competencia_relate->competencia]['texto'] = $competencia_relate->feedback_approve;
                     }
                 }
-
+                
             }
             
             // Se cargan los feedback y las capsulas..
             foreach ($result as $r) {
                 $result[$r['competencia']]['promedio'] = round(($r['suma']/$r['cantidad'])/5) * 5;
-
+                
                 $feedback = CompetenciaRelated::where('competencia_id', $details_competencia->id)
-                                              ->where('relate_id', $r['competencia_id'])
-                                              ->first();
-
+                ->where('relate_id', $r['competencia_id'])
+                ->first();
                 if(!$feedback){continue;}
-
+                
                 if(($r['suma']/$r['cantidad']) >= 50){
                     $result[$r['competencia']]['texto'] = $feedback->feedback_approve ?? '';
                 }else{
                     $result[$r['competencia']]['texto'] = $feedback->feedback_disapprove ?? '';
                 }
-            
 
                 TestDetail::updateOrCreate(
                     [

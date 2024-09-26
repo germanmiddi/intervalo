@@ -118,7 +118,17 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $category = Category::where('id', $id)->first();
+            if($category->competencias()->count() > 0 ){
+                return response()->json(['message' => 'No se puede eliminar la categoría porque tiene competencias asociadas.'], 403);
+            }
+
+            $category->delete();
+            return response()->json(['message' => 'Categoria eliminada correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error al eliminar la Categoria', 'error' => $th->getMessage()], 500);
+        }
     }
 
     /**

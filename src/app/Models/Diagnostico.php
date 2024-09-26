@@ -38,12 +38,16 @@ class Diagnostico extends Model
 
     public function setDateStartAttribute($value)
     {
-        $this->attributes['date_start'] = \Carbon\Carbon::parse($value);
+        if ($value !== null) {
+            $this->attributes['date_start'] = \Carbon\Carbon::parse($value);
+        }
     }
 
     public function setDateFinishAttribute($value)
     {
-        $this->attributes['date_finish'] = \Carbon\Carbon::parse($value);
+        if ($value !== null) {
+            $this->attributes['date_finish'] = \Carbon\Carbon::parse($value);
+        }
     }
 
 
@@ -54,6 +58,10 @@ class Diagnostico extends Model
 
     public function Company(){
         return $this->belongsTo(Companie::class, 'companies', 'company_id');
+    }
+
+    public function competencias(){
+        return $this->belongsToMany(Competencia::class, 'competencia_diagnostico');
     }
 
 }

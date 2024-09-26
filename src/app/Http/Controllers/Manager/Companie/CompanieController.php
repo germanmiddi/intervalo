@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Companie;
 use App\Models\Competencia;
 use App\Models\Diagnostico;
+use App\Models\Sector;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -95,7 +96,7 @@ class CompanieController extends Controller
             'competencias'  => Competencia::all(),
             'companie'      => $companie,
             'competencias_asociadas' => $companie->competencias,
-            'categorias' => Category::with('competencias')->get(),
+            'categorias' => Category::with('competencias')->get()
         ]);
     }
 
@@ -140,11 +141,34 @@ class CompanieController extends Controller
     {
         try {
             $companie = Companie::where('id', $id)->first();
+
+            $companie->delete();
+            return response()->json(['message' => 'Empresa eliminada correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error al eliminar la Empresa', 'error' => $th->getMessage()], 500);
+        }
+        /* try {
+            $companie = Companie::where('id', $id)->first();
             $companie->active = $companie->active == 1 ? 0 : 1;
             $companie->save();
             return response()->json(['message' => 'Se actualizado correctamente la Empresa.'], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Se ha producido un error al momento de actualizar la Empresa'], 500);
+        } */
+    }
+
+    public function active($id){
+        try {
+            $company = Companie::where('id', $id)->first();
+            /* if($category->competencias()->count() > 0 ){
+                return response()->json(['message' => 'No se puede eliminar la categoría porque tiene competencias asociadas.'], 403);
+            } */
+
+            $company->active = !$company->active;
+            $company->save();
+            return response()->json(['message' => 'Empresa actualizada correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error al actualizar la Empresa', 'error' => $th->getMessage()], 500);
         }
     }
 
@@ -217,7 +241,8 @@ class CompanieController extends Controller
         return  Inertia::render('Manager/Companie/MyCompanie/Index', [
             'toast' => FacadesSession::get('toast'),
             'companie' => $companie,
-            'competencias_asociadas' => $companie->competencias
+            'competencias_asociadas' => $companie->competencias,
+            'categorias' =>  Category::with('competencias')->get(),
         ]);
     }
 
@@ -230,8 +255,23 @@ class CompanieController extends Controller
 
         $result->where('company_id', $id);
 
-        return  $result->with('status')
-            ->orderBy("created_at", 'DESC')
+        return  $result->with('status', 'competencias')
+            ->orderBy("date_start", 'DESC')
+            ->paginate($length)
+            ->withQueryString();
+    }
+
+    // Manejo de Diagnosticos
+    public function CompanySectoresById($id)
+    {
+        $length = request('length') ?? 5;
+
+        $result = Sector::query();
+
+        $result->where('company_id', $id);
+
+        return  $result->with('users')
+            ->orderBy("name", 'ASC')
             ->paginate($length)
             ->withQueryString();
     }
