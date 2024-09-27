@@ -10,6 +10,7 @@ use App\Models\TestDetail;
 use App\Models\TestStatus;
 use App\Models\CompetenciaRelated;
 use App\Models\Diagnostico;
+use App\Models\TestType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -121,6 +122,8 @@ class TestController extends Controller
                     'user_id' => $request->user_id,
                     'fecha' => Carbon::now(),
                     'status_id' => TestStatus::select('id')->where('description', 'ABANDONED')->first()->id,
+                    'type_id' => TestType::select('id')->where('description', 'Diagnostico')->first()->id,
+                    'diagnostico_id' => $request->diagnostico_id
                 ]);
                 $diagnostico = Diagnostico::where('id', $request->diagnostico_id)->first();
 

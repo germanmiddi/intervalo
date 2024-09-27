@@ -76,7 +76,8 @@ class TestController extends Controller
                                 'competencia'     => $t->competencia_related->competencia->competencia,
                                 'fecha'           => Carbon::parse($t->test->fecha)->format("d-m-Y"),
                                 'status'          => $t->test->status->description,
-                                'score'           => $t->score 
+                                'score'           => $t->score,
+                                'type'            => $t->test->type->description,
                         ]);
 
         

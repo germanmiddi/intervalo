@@ -96,6 +96,18 @@
                                     <Icons v-else name="bars" class="h-4 w-4 ml-2" />
                                 </div>
                             </th>
+
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 't.type_id', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Tipo
+                                    <Icons v-if="sort_by == 't.type_id' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 't.type_id' && sort_order == 'DESC'"
+                                        name="bars-down" class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
                             
                             <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
                                 @click="sort_by = 'test_detail.score', sortTest()">
@@ -124,6 +136,7 @@
                             <td class="text-center">{{ t.competencia }}</td>
                             <td class="text-center">{{ t.fecha }}</td>
                             <td class="text-center">{{ t.status }}</td>
+                            <td class="text-center">{{ t.type ?? '-' }}</td>
                             <td class="text-center">{{ t.score }} %</td>
                             <td class="text-center">
                                 <!-- <a class="link">Detalle</a> -->
