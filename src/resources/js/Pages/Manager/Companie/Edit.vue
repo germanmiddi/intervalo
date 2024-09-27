@@ -152,12 +152,12 @@
             @refreshData="getDiagnosticosCompany()" 
             @closeCreateDiagnostico="closeCreateDiagnostico()" />
 
-        <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
+        <!-- <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
             :competencias="this.competencias_asociadas"
             :categorias="categorias"
             @message="messageToast"
             @refreshData="getDiagnosticosCompany()" 
-            @closeCreateDiagnostico="closeCreateDiagnostico()" />
+            @closeCreateDiagnostico="closeCreateDiagnostico()" /> -->
 
         <CreateSectorComponent :open="showCreateSector" :idCompany=companie.id
             @message="messageToast"
