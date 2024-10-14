@@ -25,7 +25,7 @@ class HomeController extends Controller
         if(Auth::user()){
             if(Auth::user()->roles[0]->id == 1){ // Si el usuario es administrador retorno todas las competencias. 
                 $competencias = Competencia::all();
-                $diagnosticos =Diagnostico::where('status_id', 2)
+                $diagnosticos = Diagnostico::where('status_id', 2)
                         ->where('date_start', '<=', Carbon::now())
                         ->where(function ($query) {
                             $query->where('date_finish', null)
@@ -36,7 +36,8 @@ class HomeController extends Controller
             }else{
                 $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
                 $competencias = Competencia::whereIn('id', $companie->competencias->pluck('id')->toArray())->get();
-                $diagnosticos = Diagnostico::where('company_id', Auth::user()->companies[0]->id)
+                if(Auth::user()->roles[0]->id == 2){
+                    $diagnosticos = Diagnostico::where('company_id', Auth::user()->companies[0]->id)
                         ->where('status_id', 2)
                         ->where('date_start', '<=', Carbon::now())
                         ->where(function ($query) {
@@ -52,6 +53,31 @@ class HomeController extends Controller
                               ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
                               ->where('companies_users.companie_id', $companyId);
                     })->get();
+                }else{
+                    $sector_id = Auth::user()->sector_id;
+                    $diagnosticos = Diagnostico::where('company_id', Auth::user()->companies[0]->id)
+                        ->whereIn('id', function ($sub) use($sector_id ) {
+                            $sub->selectRaw('diagnosticos.id')
+                                ->from('diagnosticos')
+                                ->join('diagnostico_sector', 'diagnosticos.id', '=', 'diagnostico_sector.diagnostico_id')
+                                ->where('diagnostico_sector.sector_id', $sector_id);
+                        })
+                        ->where('status_id', 2)
+                        ->where('date_start', '<=', Carbon::now())
+                        ->where(function ($query) {
+                            $query->where('date_finish', null)
+                                ->orWhere('date_finish', '>=', Carbon::now());
+                        })->with('competencias')
+                    ->get(); //companies_users
+                    $companyId = Auth::user()->companies[0]->id;
+
+                    $users = User::whereIn('id', function ($query) use ($companyId) {
+                        $query->select('users.id')
+                              ->from('users')
+                              ->join('companies_users', 'users.id', '=', 'companies_users.user_id')
+                              ->where('companies_users.companie_id', $companyId);
+                    })->get();
+                }
             }
             return  Inertia::render('Web/Home',['competencias' => $competencias, 'diagnosticos' => $diagnosticos, 'users' => $users ]);
         }else{

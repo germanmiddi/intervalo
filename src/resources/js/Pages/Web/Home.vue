@@ -15,15 +15,14 @@
       </div>
     </div>
     <Toast :toast="this.message" :type="this.labelType" @clear="clearMessage"></Toast>
-    <div class="content">
+    <div class="content w-full">
 
       <div v-if="start" class="flex flex-wrap justify-around">
-        <DiagnosticoItem @sendDiagnostico="sendDiagnostico" :users="users" :user_auth="$page.props.user" v-for="(d, idx) in diagnosticos"
-          class="lg:w-[97%] md:w-[97%] sm:w-[100%] my-5 h-80" :key="d.id" :item="d" :index="idx"
-          />
+        <DiagnosticoItem @sendDiagnostico="sendDiagnostico" v-for="(d, idx) in diagnosticos"
+          class="lg:w-[97%] md:w-[97%] sm:w-[100%] my-5 h-80" :key="d.id" :item="d" :index="idx" />
+          <hr>
       </div>
 
-      <hr>
 
       <div v-if="start" class="flex justify-center mt-4">
         <div class="flex justify-end">
@@ -43,15 +42,19 @@
           @click="selectCompetencia(c.id)" />
       </div>
 
-      <RegisterItem v-if="register" @register="storePerson" @return_start="register = !register, start = !start, this.compselected = []">
+      <RegisterItem v-if="register" @register="storePerson"
+        @return_start="register = !register, start = !start, this.compselected = []">
       </RegisterItem>
+
+      <Register360Item v-if="register360" :diagnostico="this.diagnostico" :users="users" @storeDiagnostico360="storeDiagnostico">
+      </Register360Item>
 
       <QuizItem v-if="quiz" :afirmations="afirmations" @processQuiz="processQuiz"
         @return_start="(quiz = !quiz, start = !start, this.compselected = [])"></QuizItem>
 
-      <ResultItem v-if="result" :resultado="resultado" @return_start="result = !result, start = !start, this.compselected = []"></ResultItem>
+      <ResultItem v-if="result" :resultado="resultado"
+        @return_start="result = !result, start = !start, this.compselected = []"></ResultItem>
     </div>
-    
   </App>
 </template>
 
@@ -63,6 +66,7 @@ import CompetenciaItem from "@/Layouts/Web/CompetenciaItem.vue";
 import DiagnosticoItem from "@/Layouts/Web/DiagnosticoItem.vue";
 import Modal from "@/Layouts/Web/Modal.vue";
 import RegisterItem from '@/Pages/Web/Register.vue';
+import Register360Item from '@/Pages/Web/Register360.vue';
 import QuizItem from '@/Pages/Web/Quiz.vue';
 import ResultItem from '@/Pages/Web/Result.vue';
 import Toast from '@/Layouts/Components/Toast.vue'
@@ -81,6 +85,7 @@ export default {
     DiagnosticoItem,
     Modal,
     RegisterItem,
+    Register360Item,
     QuizItem,
     ResultItem,
     Toast,
@@ -91,6 +96,7 @@ export default {
       competencies: null,
       start: true,
       register: false,
+      register360: false,
       quiz: false,
       result: false,
       compselected: [],
@@ -100,7 +106,8 @@ export default {
       form_test: '',
       showToast: false,
       message: "",
-      labelType: "success"
+      labelType: "success",
+      diagnostico: {}
     };
   },
   created() {
@@ -118,74 +125,74 @@ export default {
       if (this.compselected == '') {
         this.labelType = "danger"
         this.message = 'Debe seleccionar una competencia.'
-      }else{
-        if($user){
+      } else {
+        if ($user) {
           this.storeUser($user);
-        }else{
-          this.start = false, 
-          this.register = true
+        } else {
+          this.start = false,
+            this.register = true
         }
       }
     },
     async storePerson(data) {
-        this.form_person = data
-        let rt = route('test.store');
-        let formData = new FormData();
-        formData.append('name', this.form_person.name);        
-        formData.append('lastname', this.form_person.lastname);        
-        formData.append('email', this.form_person.email);        
-        formData.append('form_competencias', this.compselected);
+      this.form_person = data
+      let rt = route('test.store');
+      let formData = new FormData();
+      formData.append('name', this.form_person.name);
+      formData.append('lastname', this.form_person.lastname);
+      formData.append('email', this.form_person.email);
+      formData.append('form_competencias', this.compselected);
 
-        console.log(formData);
-        const response = await axios.post(rt, formData)
+      console.log(formData);
+      const response = await axios.post(rt, formData)
 
-        if(response.status == 200) {
-          this.afirmations    = response.data.data
-          this.form_person.id = response.data.person.data.id
-          this.form_test      = response.data.test
-          if (response.data.data.length == 0) {
-            this.labelType = "error"
-            this.message = 'No hay afirmaciones para esta competencia.'
-          }else{
-            this.register       = false
-            this.quiz           = true
-          }
-
-        } else {
+      if (response.status == 200) {
+        this.afirmations = response.data.data
+        this.form_person.id = response.data.person.data.id
+        this.form_test = response.data.test
+        if (response.data.data.length == 0) {
           this.labelType = "error"
-          this.message = response.data['message']
+          this.message = 'No hay afirmaciones para esta competencia.'
+        } else {
+          this.register = false
+          this.quiz = true
         }
-      
+
+      } else {
+        this.labelType = "error"
+        this.message = response.data['message']
+      }
+
     },
     async storeUser(data) {
-        this.form_person = data
-        let rt = route('test.storeUser');
-        let formData = new FormData();
-        formData.append('id', data.id);        
-        formData.append('name', data.name);            
-        formData.append('email', data.email);      
-        formData.append('form_competencias', this.compselected);
+      this.form_person = data
+      let rt = route('test.storeUser');
+      let formData = new FormData();
+      formData.append('id', data.id);
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      formData.append('form_competencias', this.compselected);
 
-        console.log(formData);
-        const response = await axios.post(rt, formData)
+      console.log(formData);
+      const response = await axios.post(rt, formData)
 
-        if(response.status == 200) {
-          this.afirmations    = response.data.data
-          this.form_person.id = response.data.person
-          this.form_test      = response.data.test
-          if (response.data.data.length == 0) {
-            this.labelType = "error"
-            this.message = 'No hay afirmaciones para esta competencia.'
-          }else{
-            this.start = false, 
-            this.quiz = true
-          }
-
-        } else {
+      if (response.status == 200) {
+        this.afirmations = response.data.data
+        this.form_person.id = response.data.person
+        this.form_test = response.data.test
+        if (response.data.data.length == 0) {
           this.labelType = "error"
-          this.message = response.data['message']
+          this.message = 'No hay afirmaciones para esta competencia.'
+        } else {
+          this.start = false,
+            this.quiz = true
         }
-      
+
+      } else {
+        this.labelType = "error"
+        this.message = response.data['message']
+      }
+
     },
     processQuiz(data) {
       let post = route('quiz.calculate')
@@ -220,32 +227,68 @@ export default {
     sendItem(val) {
       this.modalContent = val;
     },
-
     // Funciones de Diagnosticos
-    async sendDiagnostico(data){
+    sendDiagnostico(data) {
+      this.diagnostico = data
+      if (data.diagnostico_360) {
+        this.switchView('register360')
+      } else {
+        let form = {}
+        form.diagnostico_id = data.id
+        form.user_id = null
+        this.storeDiagnostico(form)
+      }
+    },
+    async storeDiagnostico(data) {
+      console.log(data)
       this.form_person = data
       let rt = route('test.storeUserDiagnostico');
       let formData = new FormData();
-      formData.append('user_id', data.user_id);        
-      formData.append('diagnostico_id', data.diagnostico_id);            
+      formData.append('user_id', data.user_id);
+      formData.append('diagnostico_id', data.diagnostico_id);
 
-      console.log(formData);
       const response = await axios.post(rt, formData)
-      if(response.status == 200) {
-        this.afirmations    = response.data.data
+      if (response.status == 200) {
+        this.afirmations = response.data.data
         this.form_person.id = response.data.person
-        this.form_test      = response.data.test
+        this.form_test = response.data.test
         if (response.data.data.length == 0) {
           this.labelType = "error"
           this.message = 'No hay afirmaciones para este Diagnostico.'
-        }else{
-          this.start = false, 
-          this.quiz = true
+        } else {
+          this.switchView('quiz')
         }
 
       } else {
         this.labelType = "error"
         this.message = response.data['message']
+      }
+    },
+    switchView(view = '') {
+      switch (view) {
+        case 'register360':
+          this.start = false
+          this.register = false
+          this.register360 = true
+          this.quiz = false
+          this.result = false
+          break;
+        
+        case 'quiz':
+          this.start = false
+          this.register = false
+          this.register360 = false
+          this.quiz = true
+          this.result = false
+          break;
+
+        default:
+          this.start = true
+          this.register = false
+          this.register360 = false
+          this.quiz = false
+          this.result = false
+          break;
       }
     }
   },

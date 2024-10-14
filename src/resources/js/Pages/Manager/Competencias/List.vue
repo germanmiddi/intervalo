@@ -39,158 +39,146 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <!-- row 1 -->
-                        <tr v-for="a in competencias.data" :key="a.id" class="bg-white hover:bg-gray-50 border-b border-gray-100 ">
+                        <!-- row 1 -->
+                        <tr v-for="a in competencias.data" :key="a.id"
+                            class="bg-white hover:bg-gray-50 border-b border-gray-100 ">
                             <td class="whitespace-normal p-3">
-                                <!-- {{a.competencia}}{{ a.related }} -->
-                                <p class="mb-2 pl-1 font-semibold "> {{ a.competencia }} - <span class="text-xs font-normal"> Afirmaciones: {{a.afirmations}}</span></p>
+                                
+                                <div class="flex">
+                                    <Icons v-if="a.has_self_relation" name="badge-check" class="w-6 h-6 text-green-700" />
+                                    <Icons v-else name="x" class="w-6 h-6 text-red-700" />
+                                    <p class="mb-2 pl-1 font-semibold" :class="a.has_self_relation ? 'text-green-700' : 'text-red-700'"> {{ a.competencia }} - <span
+                                        class="text-xs font-normal"> Afirmaciones: {{ a.afirmations }}</span></p>
+                                </div>
                                 <div class="flex flex-wrap items-center">
-                                    <span v-for="rel in a.related" :key="rel" class="mr-2 bg-indigo-100 border-white rounded-md text-sm flex item-center py-1 px-2 mb-2">
+                                    <span v-for="rel in a.related" :key="rel"
+                                        class="mr-2 bg-indigo-100 border-white rounded-md text-sm flex item-center py-1 px-2 mb-2">
                                         <label class="mr-2 inline-block">{{ rel.competencia }}</label>
-                                        <i :class="{ 'text-green-400': rel.feedback_approve, 'text-gray-400': !rel.feedback_approve } ">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <i
+                                            :class="{ 'text-green-400': rel.feedback_approve, 'text-gray-400': !rel.feedback_approve }">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </i>
-                                        <i :class="{ 'text-green-400': rel.feedback_disapprove, 'text-gray-400': !rel.feedback_disapprove } ">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <i
+                                            :class="{ 'text-green-400': rel.feedback_disapprove, 'text-gray-400': !rel.feedback_disapprove }">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </i>
                                     </span>
                                 </div>
                             </td>
                             <td class="w-1/6 text-center">
-                                <a :href="route('competencia.edit', a.id)" 
-                                class="bg-blue-600 border text-blue-50 border-gray-100 px-3 py-3 rounded-lg text-sm hover:bg-blue-700 hover:text-gray-200 hover:border-transparent font-medium ">Detalle </a>
+                                <a :href="route('competencia.edit', a.id)"
+                                    class="bg-blue-600 border text-blue-50 border-gray-100 px-3 py-3 rounded-lg text-sm hover:bg-blue-700 hover:text-gray-200 hover:border-transparent font-medium ">Detalle
+                                </a>
                             </td>
                         </tr>
-                    
-                    <!-- <tr v-for="a in competencias.data" :key="a.id" class="hover">
-                        <td class="whitespace-normal" >
-                         
-                             <p class="mb-1 pl-1"> {{ a.competencia }}</p>
-                             <span v-for="rel in a.related" :key="rel"
-                                   class="mr-2 bg-indigo-200 px-2 py-1 text-xs border border-white rounded-md flex items-center" >
-                                   
-                                    <label class="mr-2">{{ rel.competencia }}</label>
-                                    <i :class="{ 'text-green-400'  : rel.feedback_approve,
-                                                                 'text-gray-400' : !rel.feedback_approve } ">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg></i>
-                                    <i :class="{ 'text-green-400'  : rel.feedback_disapprove,
-                                                                 'text-gray-400' : !rel.feedback_disapprove } ">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg></i> 
-                                </span>
-
-                        </td>
-                        <td class="w-1/6 text-center">
-                            <a :href="route('competencia.edit', a.id)" class="border border-gray-100 px-2 py-1 rounded-lg text-sm hover:bg-blue-200 hover:text-gray-600 hover:border-transparent font-medium ">Detalle </a>
-                            
-                        </td>
-                    </tr> -->
                     </tbody>
                 </table>
             </div>
 
-           <div class="w-11/12 mx-auto my-5 flex justify-between items-center">
+            <div class="w-11/12 mx-auto my-5 flex justify-between items-center">
                 <div>
-                    Mostrando: {{this.competencias.from}} a {{this.competencias.to}} - Entradas encontradas: {{this.competencias.total}}
+                    Mostrando: {{ this.competencias.from }} a {{ this.competencias.to }} - Entradas encontradas:
+                    {{ this.competencias.total }}
                 </div>
                 <div class="flex flex-wrap -mb-1">
                     <div v-for="link in competencias.links" :key="link.id">
-                        <div v-if="link.url === null" class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md" v-html="link.label"> </div>
-                        <div v-else 
-                            class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer" 
-                            :class="{ 'bg-blue-500': link.active },{ 'text-white': link.active }" 
-                            @click="getCompetenciasPaginate(link.url)"
+                        <div v-if="link.url === null"
+                            class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
                             v-html="link.label"> </div>
-                    </div>      
-                </div>   
-            </div>      
+                        <div v-else
+                            class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
+                            :class="{ 'bg-blue-500': link.active }, { 'text-white': link.active }"
+                            @click="getCompetenciasPaginate(link.url)" v-html="link.label"> </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- / CONTENT -->
-   </App>
-  
+    </App>
+
 </template>
 
 <script>
-    import { Head, Link } from '@inertiajs/inertia-vue3';
-    import App from '@/Layouts/App.vue'
-    import Pageheader from '@/Layouts/Pageheader.vue'
-    import Pagination from '@/Layouts/Pagination'
-    import Icons from '@/Layouts/Components/Icons.vue'    
+import { Head, Link } from '@inertiajs/inertia-vue3';
+import App from '@/Layouts/App.vue'
+import Pageheader from '@/Layouts/Pageheader.vue'
+import Pagination from '@/Layouts/Pagination'
+import Icons from '@/Layouts/Components/Icons.vue'
 
-    export default {
-        // props:{
-        //     afirmaciones: Object
-        // },
-        components: {
-            App,
-            Icons,
-            Link,
-            Pagination
-        },
+export default {
+    // props:{
+    //     afirmaciones: Object
+    // },
+    components: {
+        App,
+        Icons,
+        Link,
+        Pagination
+    },
 
-        data(){
-            return{
-                loading: true,
-                length:   "10",
-                search: "",
-                competencias:"",
-                // nextpage: "",
-                // prevpage: "",                
-                
+    data() {
+        return {
+            loading: true,
+            length: "10",
+            search: "",
+            competencias: "",
+            // nextpage: "",
+            // prevpage: "",                
+
+        }
+    },
+    methods: {
+        async getCompetencias() {
+
+            let filter = `&length=${this.length}`
+
+            if (this.search) {
+                filter += `&search=${this.search}`
             }
+
+            const get = `${route('competencia.list')}?${filter}`
+
+            const response = await fetch(get, { method: 'GET' })
+            this.competencias = await response.json()
         },
-        methods:{
-            async getCompetencias(){
 
-                let filter = `&length=${this.length}` 
-                
-                if(this.search){
-                    filter += `&search=${this.search}`
-                }
+        async getCompetenciasPaginate(link) {
 
-                const get = `${route('competencia.list')}?${filter}` 
+            var get = `${link}`;
+            const response = await fetch(get, { method: 'GET' })
 
-                const response = await fetch(get, {method:'GET'})
-                this.competencias = await response.json() 
-            },
-
-            async getCompetenciasPaginate(link){
-
-                var get = `${link}`;
-                const response = await fetch(get,{method: 'GET'})
-
-                this.competencias = await response.json()
-                // this.nextpage = this.afirmaciones.next_page_url
-                // this.prevpage = this.afirmaciones.prev_page_url
-                console.log(this.competencias)   
-
-            },            
+            this.competencias = await response.json()
+            // this.nextpage = this.afirmaciones.next_page_url
+            // this.prevpage = this.afirmaciones.prev_page_url
+            console.log(this.competencias)
 
         },
-        created(){
-            this.getCompetencias()
 
-        }        
+    },
+    created() {
+        this.getCompetencias()
+
     }
+}
 
 </script>
 
 <style>
-    .dropdown:hover .dropdown-menu {
-        display: block;
-        z-index: 999;
-    }
+.dropdown:hover .dropdown-menu {
+    display: block;
+    z-index: 999;
+}
 
-    ul.dropdown-menu {
-        right: 0px;
-    }
-
+ul.dropdown-menu {
+    right: 0px;
+}
 </style>

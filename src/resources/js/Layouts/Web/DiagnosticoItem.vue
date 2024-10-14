@@ -10,12 +10,7 @@
           {{ item.name }}
         </h2>
         <div v-if="item.diagnostico_360">
-          <label class="mr-2 text-sm font-bold text-gray-700">Usuario 360:</label>
-          <select class="select input-bordered" v-model="this.user_id"
-            name="competencia_select" id="competencia_select">
-            <option value="" disabled>Seleccione un usuario</option>
-            <option v-for="item in users" :key="item.id" :value="item.id">{{ item.name }}</option>
-          </select>
+          <Icons v-if="item.diagnostico_360" name="globe-alt" class="h-8 w-8 text-gray-800 mr-2 cursor-pointer" title="Diagnóstico 360"/>
         </div>
       </div>
       <p v-if="!item.name" class="h-24 w-auto text-justify ">{{ item.name.slice(0, 150) }}...</p>
@@ -34,7 +29,7 @@
         </button>
 
         <div class="card-actions justify-end ">
-          <button @click="send(item.id)" class="btn btn-primary space-x-2">
+          <button @click="send(item)" class="btn btn-primary space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 stroke-current">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -53,29 +48,20 @@ export default {
 
   props: {
     item: Object,
-    index: [String, Number],
-    users: Object,
-    user_auth: Object
+    index: [String, Number]
   },
   components: {
     Icons
   },
   data() {
     return {
-      expand: false,
-      user_id: ''
+      expand: false
     };
   },
   methods: {
-    send(id) {
-      let data = {}
-      data.diagnostico_id = id
-      data.user_id = this.user_id
-      this.$emit("sendDiagnostico", data);
+    send(item) {
+      this.$emit("sendDiagnostico", item);
     },
-  },
-  created() {
-    this.user_id = JSON.parse(JSON.stringify(this.user_auth.id));
   }
 };
 </script>

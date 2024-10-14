@@ -65,6 +65,7 @@
                         <ListDiagnosticoComponent :diagnosticos=diagnosticos 
                             :competencias="this.competencias_asociadas"
                             :categorias="categorias"
+                            :sectores="sectores.data"
                             @message="messageToast"
                             @refreshData="getDiagnosticosCompany()"
                             @getDiagnosticosCompanyPaginate="getDiagnosticosCompanyPaginate" />
@@ -97,10 +98,10 @@
                                 <a class="btn btn-primary btn-sm" @click="showCreateSector = true">Agregar</a>
                             </div>
                         </div>
-                        <ListSectoresComponent :sectores=sectores 
+                        <ListSectoresComponent :sectores=sectores
                             @message="messageToast"
                             @refreshData="getSectoresCompany()"
-                            @getSectoresCompanyPaginate="getSectoresCompanyPaginate()" />
+                            @getSectoresCompanyPaginate="getSectoresCompanyPaginate()"/>
                     </div>
                 </div>
             </div>  
@@ -111,6 +112,7 @@
         <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
             :competencias="this.competencias_asociadas"
             :categorias="categorias"
+            :sectores="sectores.data"
             @message="messageToast"
             @refreshData="getDiagnosticosCompany()" 
             @closeCreateDiagnostico="closeCreateDiagnostico()" />
@@ -243,7 +245,6 @@
             this.form.contact_name = this.companie.contact_name
             this.form.contact_email = this.companie.contact_email
             this.form.contact_phone = this.companie.contact_phone
-            
         }     
     }
 

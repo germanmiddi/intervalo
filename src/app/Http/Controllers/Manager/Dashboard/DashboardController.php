@@ -113,28 +113,33 @@ class DashboardController extends Controller
                             'total_user' => User::all()->count(), 
                             'competencias'  => Competencia::all(), 
                             'total_competencias' => Competencia::all()->count(),
-                            'test' => Test::with('test_detail')->get(),
+                            'test' => Test::where('type_id',1)->with('test_detail')->get(),
+                            'test_diagnosticos' => Test::where('type_id',2)->with('test_detail')->get(),
                         ];
                 break;
             case 2: // Manager
                 $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
-                $test = Test::whereIn('user_id', $companie->users->pluck('id')->toArray())->with('test_detail')->get();
+                $test = Test::whereIn('user_id', $companie->users->pluck('id')->toArray())->where('type_id',1)->with('test_detail')->get();
+                $test_diagnosticos = Test::whereIn('user_id', $companie->users->pluck('id')->toArray())->where('type_id',2)->with('test_detail')->get();
                 $date = Test::select('fecha')->where('user_id', Auth::user()->id)->latest()->first();
                 
                 return  [
                             'total_user' => $companie->users->count(),
                             'competencias'  => $companie->competencias,
                             'total_competencias' => $companie->competencias->count(),
-                            'test' => $test
+                            'test' => $test,
+                            'test_diagnosticos' => $test_diagnosticos,
                         ];
                 break;
             case 3: // Empleado
-                $test = Test::where('user_id', Auth::user()->id)->with('test_detail')->get();
+                $test = Test::where('user_id', Auth::user()->id)->where('type_id',1)->with('test_detail')->get();
+                $test_diagnosticos = Test::where('user_id', Auth::user()->id)->where('type_id',2)->with('test_detail')->get();
                 $date = Test::select('fecha')->where('user_id', Auth::user()->id)->latest()->first();
                 
                 
                 return  [
                             'test' => $test,
+                            'test_diagnosticos' => $test_diagnosticos,
                             'date_last_test' =>  $date ? Carbon::parse($date->fecha)->format("d-m-Y") : '-',
                         ];
                 break;

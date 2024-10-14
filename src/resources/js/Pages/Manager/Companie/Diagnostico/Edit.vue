@@ -98,6 +98,39 @@
 
                                         <hr>
 
+                                        <div class="px-4 divide-y divide-gray-200 sm:px-6 mt-2">
+                                            <div class="space-y-6 pb-5">
+                                                <div>
+                                                    <div class="flex items-center">
+                                                        <label for="fullname"
+                                                            class="block text-sm font-medium text-gray-900">
+                                                            Sectores
+                                                        </label>
+                                                        <button type="button" @click="add_sector_relacionado()" 
+                                                        class="ml-2 px-3 py-1 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-green-800 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                                        Agregar
+                                                        </button>
+
+                                                        <!-- <Icons class="w-5 h-5 ml-2 text-green-800 cursor-pointer"
+                                                            @click="add_competencia_relacionada()" name="plus-circle"
+                                                            title="Agregar Competencia" /> -->
+                                                    </div>
+                                                    <div class="mt-1">
+                                                        <select
+                                                            class="block w-full shadow-sm sm:text-sm rounded-md focus:border-indigo-500 border-gray-300 focus:ring-indigo-50"
+                                                            v-model="this.sector_select" name="competencia"
+                                                            id="competencia">
+                                                            <option value="" disabled selected>Seleccione un Sector</option>
+                                                            <option v-for="item in sectores" :key="item.id" :value="item">
+                                                                {{ item.name }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
                                         <div class="px-4 divide-y divide-gray-200 sm:px-6">
                                             <div class="space-y-6 pb-5">
                                                 <div>
@@ -167,11 +200,28 @@
                                                 Seleccionadas</label>
                                         </div>
 
-                                        <div class="px-4 divide-y divide-gray-200 sm:px-6 mt-1">
+                                        <div class="px-4 divide-y divide-gray-200 sm:px-6 mt-1 mb-2">
                                             <div v-for="cs in this.competencias_select" :key="cs.id"
                                                 class="mt-1 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
                                                 {{ cs.competencia }} <button
                                                     @click="remove_competencia_relaciona(cs.id)">
+                                                    <Icons name="trash" class="h-6 w-6 ml-2 text-red-500" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <div class="px-4 divide-y divide-gray-200 sm:px-6 mt-2">
+                                            <label for="fullname"
+                                                class="block text-sm font-medium text-gray-900">Sectores
+                                                Seleccionados</label>
+                                        </div>
+
+                                        <div class="px-4 divide-y divide-gray-200 sm:px-6 mt-1">
+                                            <div v-for="item in this.sectores_select" :key="item.id"
+                                                class="mt-1 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-700/10 mr-2">
+                                                {{ item.name }} <button
+                                                    @click="remove_sector_relacionado(item.id)">
                                                     <Icons name="trash" class="h-6 w-6 ml-2 text-red-500" />
                                                 </button>
                                             </div>
@@ -210,6 +260,7 @@ export default {
         diagnostico: Object,
         competencias: Object,
         categorias: Object,
+        sectores: Object
     },
     data() {
         return {
@@ -218,7 +269,9 @@ export default {
             category: {},
             competencia_select: '',
             competencias_select: [],
-            category_select: ''
+            category_select: '',
+            sectores_select: '',
+            sector_select: [],
         }
     },
     setup() {
@@ -242,6 +295,12 @@ export default {
                     competencias_id.push(valor.id);
                 });
                 this.form.competencias_id = competencias_id
+
+                let sectores_id = []
+                Object.entries(this.sectores_select).forEach(([clave, valor]) => {
+                    sectores_id.push(valor.id);
+                });
+                this.form.sectores_id = sectores_id
 
                 let rt = route('diagnostico.update', this.form.id);
                 const response = await axios.put(rt, this.form);
@@ -318,6 +377,32 @@ export default {
             const index = this.competencias_select.findIndex(item => item.id === id);
             this.competencias_select.splice(index, 1);
         },
+
+        add_sector_relacionado() {
+            let data = {}
+            let resultado = this.sectores.find(sector => sector.id === this.sector_select.id);
+            //Verificar que competencia no se encuentre incluida previamente.
+            if (resultado) {
+                let existe_sector = this.sectores_select.find(sector => sector.id === this.sector_select.id);
+                if (!existe_sector) {
+                    let comp = {
+                        'name': this.sector_select.name,
+                        'id': this.sector_select.id,
+                    }
+                    this.sectores_select.push(comp)
+                }
+            } else {
+                data.labelType = "danger"
+                data.message = 'No se ha detectado un sector valido'
+            }
+            this.sector_select = ''
+            this.$emit('message', data)
+        },
+        remove_sector_relacionado(id) {
+            const index = this.sectores_select.findIndex(item => item.id === id);
+            this.sectores_select.splice(index, 1);
+        },
+
         close() {
             this.$emit('closeUpdate')
             this.form = {}
@@ -336,6 +421,7 @@ export default {
                 this.form.date_finish = this.form.date_finish != null ? new Date(this.form.date_finish + "T00:00:00.000-03:00") : null
 
                 this.competencias_select = this.form.competencias
+                this.sectores_select = this.form.sectores
             }
         }
     }

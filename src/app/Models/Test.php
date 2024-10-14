@@ -18,7 +18,6 @@ class Test extends Model
         'fecha',
         'status_id',
         'type_id',
-        'diagnostico_id'
     ];
 
     // Valor por defecto.
@@ -62,6 +61,6 @@ class Test extends Model
 
     public function diagnostico()
     {
-        return $this->BelongsTo(Diagnostico::class, 'diagnostico_id');
+        return $this->hasOne(DiagnosticoTest::class);
     }
 }

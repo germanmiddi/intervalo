@@ -93,7 +93,7 @@ class CompetenciaController extends Controller
 
             foreach ($relatedCompetencias as $relatedCompetencia) {
                 $relatedData[] = [
-                    'competencia' => $relatedCompetencia['competencia_relate']['competencia'],
+                    'competencia' => $relatedCompetencia['competencia_relate']['competencia'] ?? 0,
                     'feedback_approve' => $relatedCompetencia['feedback_approve'] ? true : false ,
                     'feedback_disapprove' => $relatedCompetencia['feedback_disapprove'] ? true : false 
                 ];
@@ -104,6 +104,7 @@ class CompetenciaController extends Controller
                 'competencia' => $c->competencia,
                 'afirmations' => $c->afirmations->count(),
                 'related' => $relatedData,
+                'has_self_relation' => $c->has_self_relation
             ];
         });
     }

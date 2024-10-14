@@ -36,7 +36,6 @@ class DiagnosticoController extends Controller
      */
     public function store(Request $request)
     {
-        //$request = $request->request;
         $request->validate([
             'name' => 'required',
             'date_start' => 'required|date',
@@ -51,8 +50,10 @@ class DiagnosticoController extends Controller
         ]);
 
         try {
-            $diagnostico = Diagnostico::create($request->only(['name', 'date_start','date_finish','company_id','diagnostico_360']));
+            $diagnostico = Diagnostico::create($request->only(['name', 'date_start','date_finish','company_id','diagnostico_360', 'sector_id']));
             $diagnostico->competencias()->sync($request->competencias_id);
+            $diagnostico->sectores()->sync($request->sectores_id);
+            
 
             return response()->json(['message' => 'Diagnostico creado correctamente'], 200);
         } catch (\Throwable $th) {
@@ -107,8 +108,9 @@ class DiagnosticoController extends Controller
         try {
             $diagnostico = Diagnostico::findOrFail($id);
             
-            $diagnostico->update($request->only(['name', 'date_start', 'date_finish', 'diagnostico_360']));
+            $diagnostico->update($request->only(['name', 'date_start', 'date_finish', 'diagnostico_360', 'sector_id']));
             $diagnostico->competencias()->sync($request->competencias_id);
+            $diagnostico->sectores()->sync($request->sectores_id);
 
             return response()->json(['message' => 'Diagnostico actualizado correctamente'], 200);
         } catch (\Throwable $th) {

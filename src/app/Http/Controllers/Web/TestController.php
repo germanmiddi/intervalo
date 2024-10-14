@@ -10,15 +10,26 @@ use App\Models\TestDetail;
 use App\Models\TestStatus;
 use App\Models\CompetenciaRelated;
 use App\Models\Diagnostico;
+use App\Models\DiagnosticoTest;
 use App\Models\TestType;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
+
+    /**
+     * Crea una nueva Persona (Usuario no registrado en el sistema).
+     * Se crea un Test relacionado a la persona.
+     * 
+     * @param  int  $Request
+     *
+     * @return \Illuminate\Http\JsonResponse 
+     *
+     */
     public function store(Request $request)
     {   
-
         try {
             DB::beginTransaction();
             $controllerPerson = New PersonController();
@@ -39,9 +50,9 @@ class TestController extends Controller
 
                 foreach ($form_competencias as $competencia) {
                     $id_competencia_related = CompetenciaRelated::select('id')
-                                                                ->where('competencia_id', $competencia)
-                                                                ->where('relate_id', $competencia)
-                                                                ->first();
+                                                ->where('competencia_id', $competencia)
+                                                ->where('relate_id', $competencia)
+                                                ->first();
                                                                 
                     if ($id_competencia_related) {
                         $id = $id_competencia_related->id;
@@ -65,11 +76,18 @@ class TestController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
     }
 
+    /**
+     * Almacena/Crea el Test relacionado a un usuario registrado en el sistema.
+     * 
+     * @param  int  $Request
+     *
+     * @return \Illuminate\Http\JsonResponse 
+     *
+     */
     public function storeUser(Request $request)
     {   
         try {
@@ -113,19 +131,39 @@ class TestController extends Controller
         }
     }
 
+    /**
+     * Almacena/Crea el Test relacionado a un diagnostico un usuario registrado en el sistema.
+     * Registra el diagnostico-test puede existir un Diagnostico 360
+     * 
+     * @param  int  $Request
+     *
+     * @return \Illuminate\Http\JsonResponse 
+     *
+     */
     public function storeUserDiagnostico(Request $request)
     {   
-        
         try {
             DB::beginTransaction();
+                if($request->user_id != "null"){
+                    $user_id = $request->user_id;
+                }else{
+                    $user_id = Auth::user()->id;
+                }
                 $test = Test::create([
-                    'user_id' => $request->user_id,
+                    'user_id' => Auth::user()->id, // Usuario logueado en el sistema. 
                     'fecha' => Carbon::now(),
                     'status_id' => TestStatus::select('id')->where('description', 'ABANDONED')->first()->id,
                     'type_id' => TestType::select('id')->where('description', 'Diagnostico')->first()->id,
-                    'diagnostico_id' => $request->diagnostico_id
+                    //'diagnostico_id' => $request->diagnostico_id
                 ]);
                 $diagnostico = Diagnostico::where('id', $request->diagnostico_id)->first();
+
+                // Almaceno Diagnostico - Test
+                DiagnosticoTest::create([
+                    'user_id' => $user_id,
+                    'diagnostico_id' => $diagnostico->id,
+                    'test_id' => $test->id
+                ]);
 
                 if ($diagnostico) {
                     $form_competencias = $diagnostico->competencias->pluck('id')->toArray();
@@ -163,4 +201,5 @@ class TestController extends Controller
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
     }
+
 }

@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <div class="w-full mx-auto mt-4">
             <table class="table w-full">
                 <thead>
@@ -9,49 +10,45 @@
                         <th class="px-6 py-4 text-center">Fecha Fin</th>
                         <th class="px-6 py-4 text-center">Diagnostico 360</th>
                         <th class="px-6 py-4 text-center">Estado</th>
+                        <th class="px-6 py-4 text-center">Sectores / Competencias</th>
+                        <th class="px-6 py-4 text-center">Avance (%)</th>
                         <th class="px-6 py-4 text-center">Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     <!-- row 1 -->
                     <tr v-for="d in diagnosticos.data" :key="d.id"
-                        class="bg-white hover:bg-gray-50 border-b border-gray-100 ">
-                        <td class="w-3/12 text-center">
-                            {{ d.name }}
-                        </td>
-                        <td class="w-2/12 text-center">
-                            {{ d.date_start ?? '-' }}
-                        </td>
-                        <td class="w-2/12 text-center">
-                            {{ d.date_finish ?? '-' }}
-                        </td>
-                        <td class="w-1/12 text-center">
-                            {{ d.diagnostico_360 ? 'SI' : 'NO' }}
-                        </td>
+                        class="bg-white hover:bg-gray-50 border-b border-gray-100">
+                        <td class="w-3/12 text-center">{{ d.name }}</td>
+                        <td class="w-2/12 text-center">{{ d.date_start ?? '-' }}</td>
+                        <td class="w-2/12 text-center">{{ d.date_finish ?? '-' }}</td>
+                        <td class="w-1/12 text-center">{{ d.diagnostico_360 ? 'SI' : 'NO' }}</td>
                         <td class="w-2/12 text-center">
                             <div v-if="d.status?.id === 1"
                                 class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">
-                                {{ d.status?.description ?? '-' }}
-                            </div>
+                                {{ d.status?.description ?? '-' }}</div>
                             <div v-else-if="d.status?.id === 2"
                                 class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                {{ d.status?.description ?? '-' }}
-                            </div>
+                                {{ d.status?.description ?? '-' }}</div>
                             <div v-else-if="d.status?.id === 3"
                                 class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
-                                {{ d.status?.description ?? '-' }}
-                            </div>
+                                {{ d.status?.description ?? '-' }}</div>
                             <div v-else
                                 class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-                                {{ d.status?.description ?? '-' }}
-                            </div>
+                                {{ d.status?.description ?? '-' }}</div>
+                        </td>
+                        <td class="w-1/12 text-center font-bold">{{ d.sectores.length }} / {{ d.competencias.length }}
+                        </td>
+                        <td class="w-1/12 text-center font-bold">{{ d.users_for_diagnostico !== 0 ? ((d.users_have_test / d.users_for_diagnostico) * 100) + '%' : 'N/A' }}
+
                         </td>
                         <td class="w-2/12 text-center">
                             <Menu as="div" class="inline-node">
                                 <div>
                                     <MenuButton class="btn-blue h-7">
                                         <Icons name="ellipsis-vertical"
-                                            class="w-7 h-7 inline-flex items-center bg-blue-100 p-1 rounded-full shadow-sm text-gray-600  hover:bg-blue-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" />
+                                            class="w-7 h-7 inline-flex items-center bg-blue-100 p-1 rounded-full shadow-sm text-gray-600 hover:bg-blue-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition ease-out duration-100"
@@ -64,33 +61,31 @@
                                         class="origin-top-left absolute z-50 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
                                         <div class="px-1 py-1 text-left">
                                             <MenuItem v-slot="{ active }">
-                                            <a @click="this.diagnostico = d, this.showDetail = true" class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Ver Detalle</a>
+                                            <a @click="this.diagnostico = d, this.showDetail = true"
+                                                class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Ver
+                                                Detalle</a>
                                             </MenuItem>
                                             <MenuItem v-slot="{ active }">
-                                            <a @click="this.diagnostico = d, this.showUpdate = true" class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Editar</a>
+                                            <a @click="this.diagnostico = d, this.showUpdate = true"
+                                                class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Editar</a>
                                             </MenuItem>
                                             <MenuItem v-slot="{ active }">
-                                            <a @click="this.diagnostico = d, this.showDelete = true, title='¿Desea eliminar el Diagnóstico?'" class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Eliminar</a>
+                                            <a @click="this.diagnostico = d, this.showDelete = true, title = '¿Desea eliminar el Diagnóstico?'"
+                                                class="block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Eliminar</a>
                                             </MenuItem>
                                         </div>
                                         <div class="px-1 py-1 text-left">
                                             <MenuItem v-slot="{ active }" v-if="d.status_id != 1">
                                             <a @click="updateEstado(d.id, 1)"
-                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Borrador</a>
+                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Borrador</a>
                                             </MenuItem>
-                                            <MenuItem v-slot="{ active }"  v-if="d.status_id != 2">
+                                            <MenuItem v-slot="{ active }" v-if="d.status_id != 2">
                                             <a @click="updateEstado(d.id, 2)"
-                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Habilitar</a>
+                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Habilitar</a>
                                             </MenuItem>
-                                            <MenuItem v-slot="{ active }"  v-if="d.status_id != 3">
+                                            <MenuItem v-slot="{ active }" v-if="d.status_id != 3">
                                             <a @click="updateEstado(d.id, 3)"
-                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
-                                                Cancelar</a>
+                                                class="cursor-pointer block px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">Cancelar</a>
                                             </MenuItem>
                                         </div>
                                     </MenuItems>
@@ -101,6 +96,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <div class="w-11/12 mx-auto my-5 flex justify-between items-center">
             <div>
@@ -121,19 +117,15 @@
         </div>
     </div>
 
-    <DetailComponent :open="showDetail" :data="this.diagnostico" @closeDetail="closeDetail"/>
+    <DetailComponent :open="showDetail" :data="this.diagnostico" @closeDetail="closeDetail" />
 
     <keep-alive>
-        <EditComponent 
-            :open="showUpdate" 
-            :diagnostico="this.diagnostico" 
-            :competencias="competencias"
-            :categorias="categorias"
-            @message="messageToast" @refreshData="getDiagnosticos()" @closeUpdate="closeUpdate"/>
+        <EditComponent :open="showUpdate" :diagnostico="this.diagnostico" :competencias="competencias"
+            :categorias="categorias" :sectores="sectores" @message="messageToast" @refreshData="getDiagnosticos()"
+            @closeUpdate="closeUpdate" />
     </keep-alive>
 
-    <DestroyModal :show="showDelete" :id="diagnostico.id"
-        :title="this.title" @viewDestroy="fnShowDestroy"
+    <DestroyModal :show="showDelete" :id="diagnostico.id" :title="this.title" @viewDestroy="fnShowDestroy"
         @responseDestroy="fnDestroy" />
 
 </template>
@@ -154,6 +146,7 @@ export default {
         diagnosticos: Object,
         competencias: Object,
         categorias: Object,
+        sectores: Object
     },
     components: {
         App,
@@ -181,14 +174,14 @@ export default {
         closeUpdate() {
             this.showUpdate = false
         },
-        fnShowDestroy(){
+        fnShowDestroy() {
             this.showDelete = false
         },
         getDiagnosticosCompanyPaginate(link) {
             console.log(link)
             this.$emit('getDiagnosticosCompanyPaginate', link)
         },
-        getDiagnosticos(){
+        getDiagnosticos() {
             this.$emit('refreshData')
         },
         async updateEstado(id, status_id) {

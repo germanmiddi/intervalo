@@ -34,6 +34,10 @@ class Companie extends Model
         return $this->belongsTo(Diagnostico::class);
     }
 
+    public function sectores(){
+        return $this->belongsTo(Sector::class);
+    }
+
     public function users(){
         return $this->belongsToMany(User::class, 'companies_users');
     }

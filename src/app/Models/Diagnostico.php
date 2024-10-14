@@ -21,6 +21,8 @@ class Diagnostico extends Model
         'company_id'
     ];
 
+   
+
     // Valor por defecto estado al momento de crear un nuevo diagnostico.
     protected static function boot()
     {
@@ -50,6 +52,29 @@ class Diagnostico extends Model
         }
     }
 
+    public function getUsersForDiagnosticoAttribute()
+    {
+        return User::whereIn('id', function($query) {
+            $query->select('users.id')
+                  ->from('diagnosticos')
+                  ->join('diagnostico_sector', 'diagnostico_sector.diagnostico_id', '=', 'diagnosticos.id')
+                  ->join('sectores', 'diagnostico_sector.sector_id', '=', 'sectores.id')
+                  ->join('users', 'users.sector_id', '=', 'sectores.id')
+                  ->where('diagnosticos.id', $this->id);
+        })->distinct()->count();
+    }
+
+    public function getUsersHaveTestAttribute()
+    {
+        return User::whereIn('id', function($query) {
+            $query->select('users.id')
+                  ->from('test')
+                  ->join('diagnostico_test', 'diagnostico_test.test_id', '=', 'test.id')
+                  ->join('diagnosticos', 'diagnostico_test.diagnostico_id', '=', 'diagnosticos.id')
+                  ->join('users', 'users.id', '=', 'test.user_id')
+                  ->where('diagnosticos.id', $this->id);
+        })->distinct()->count();
+    }
 
     // RELACIONES
     public function status(){
@@ -63,5 +88,17 @@ class Diagnostico extends Model
     public function competencias(){
         return $this->belongsToMany(Competencia::class, 'competencia_diagnostico');
     }
+
+    public function sectores()
+    {
+        return $this->belongsToMany(Sector::class, 'diagnostico_sector');
+    }
+
+    public function tests()
+    {
+        return $this->hasMany(DiagnosticoTest::class);
+    }
+
+    
 
 }

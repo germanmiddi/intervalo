@@ -96,7 +96,7 @@ class CompanieController extends Controller
             'competencias'  => Competencia::all(),
             'companie'      => $companie,
             'competencias_asociadas' => $companie->competencias,
-            'categorias' => Category::with('competencias')->get()
+            //'sectores' => Sector::where('company_id', $companie->id)->get()
         ]);
     }
 
@@ -147,14 +147,6 @@ class CompanieController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Error al eliminar la Empresa', 'error' => $th->getMessage()], 500);
         }
-        /* try {
-            $companie = Companie::where('id', $id)->first();
-            $companie->active = $companie->active == 1 ? 0 : 1;
-            $companie->save();
-            return response()->json(['message' => 'Se actualizado correctamente la Empresa.'], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => 'Se ha producido un error al momento de actualizar la Empresa'], 500);
-        } */
     }
 
     public function active($id){
@@ -251,14 +243,21 @@ class CompanieController extends Controller
     {
         $length = request('length') ?? 5;
 
-        $result = Diagnostico::query();
+        // Obtener los diagnósticos relacionados con la compañía
+        $result = Diagnostico::with('status', 'competencias', 'sectores') // Cargar relaciones aquí
+            ->where('company_id', $id)
+            ->orderBy('date_start', 'DESC') // Ordenar por fecha de inicio
+            ->paginate($length) // Paginación
+            ->withQueryString(); // Mantener los parámetros de la consulta
 
-        $result->where('company_id', $id);
+            // Asegúrate de que cada diagnóstico tenga el getter en la colección
+        $result->getCollection()->transform(function ($diagnostico) {
+            $diagnostico->setAttribute('users_for_diagnostico', $diagnostico->users_for_diagnostico);
+            $diagnostico->setAttribute('users_have_test', $diagnostico->users_have_test);
+            return $diagnostico;
+        });
 
-        return  $result->with('status', 'competencias')
-            ->orderBy("date_start", 'DESC')
-            ->paginate($length)
-            ->withQueryString();
+        return $result; // Devolver el resultado
     }
 
     // Manejo de Diagnosticos

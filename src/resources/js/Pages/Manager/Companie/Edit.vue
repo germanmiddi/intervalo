@@ -103,11 +103,8 @@
                                 <a class="btn btn-primary btn-sm" @click="showCreateDiagnostico = true">Agregar</a>
                             </div>
                         </div>
-                        <ListDiagnosticoComponent :diagnosticos=diagnosticos 
-                            :competencias="this.competencias_asociadas"
-                            :categorias="categorias"
-                            @message="messageToast"
-                            @refreshData="getDiagnosticosCompany()"
+                        <ListDiagnosticoComponent :diagnosticos=diagnosticos :competencias="this.competencias_asociadas"
+                            :categorias="categorias" :sectores="this.sectores.data" @message="messageToast" @refreshData="getDiagnosticosCompany()"
                             @getDiagnosticosCompanyPaginate="getDiagnosticosCompanyPaginate" />
                     </div>
                 </div>
@@ -136,8 +133,7 @@
                                 <a class="btn btn-primary btn-sm" @click="showCreateSector = true">Agregar</a>
                             </div>
                         </div>
-                        <ListSectoresComponent :sectores=this.sectores 
-                            @message="messageToast"
+                        <ListSectoresComponent :sectores=this.sectores @message="messageToast"
                             @refreshData="getSectoresCompany()"
                             @getSectoresCompanyPaginate="getSectoresCompanyPaginate()" />
                     </div>
@@ -145,24 +141,13 @@
             </div>
         </div>
         <!-- / CONTENT -->
-        <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
-            :competencias="this.competencias_asociadas"
-            :categorias="categorias"
-            @message="messageToast"
-            @refreshData="getDiagnosticosCompany()" 
-            @closeCreateDiagnostico="closeCreateDiagnostico()" />
+        <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id
+            :competencias="this.competencias_asociadas" :categorias="categorias" 
+            :sectores="this.sectores.data" @message="messageToast"
+            @refreshData="getDiagnosticosCompany()" @closeCreateDiagnostico="closeCreateDiagnostico()"/>
 
-        <!-- <CreateDiagnosticoComponent :open="showCreateDiagnostico" :idCompany=companie.id 
-            :competencias="this.competencias_asociadas"
-            :categorias="categorias"
-            @message="messageToast"
-            @refreshData="getDiagnosticosCompany()" 
-            @closeCreateDiagnostico="closeCreateDiagnostico()" /> -->
-
-        <CreateSectorComponent :open="showCreateSector" :idCompany=companie.id
-            @message="messageToast"
-            @refreshData="getSectoresCompany()" 
-            @closeCreateSector="closeCreateSector()" />
+        <CreateSectorComponent :open="showCreateSector" :idCompany=companie.id @message="messageToast"
+            @refreshData="getSectoresCompany()" @closeCreateSector="closeCreateSector()" />
 
     </App>
 
@@ -183,7 +168,7 @@ export default {
         competencias: Object,
         companie: Object,
         competencias_asociadas: Object,
-        categorias: Object,
+        categorias: Object
     },
     components: {
         App,
@@ -200,6 +185,7 @@ export default {
         return {
             form: {},
             competencias_select: [],
+            sectores_select: [],
             showToast: false,
             message: "",
             labelType: "success",

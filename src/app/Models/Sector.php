@@ -32,4 +32,8 @@ class Sector extends Model
         return $this->hasMany(User::class);
     }
 
+    public function diagnosticos(){
+        return $this->belongsToMany(Diagnostico::class);
+    }
+
 }

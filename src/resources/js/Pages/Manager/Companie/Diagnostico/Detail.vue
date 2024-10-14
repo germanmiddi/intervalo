@@ -98,6 +98,20 @@
                                                     }}
                                                 </div>
 
+                                                <hr>
+                                                <div>
+                                                    <label for="time"
+                                                        class="block text-xl font-medium text-gray-800">Sectores
+                                                        Relacionados</label>
+                                                </div>
+                                                <hr>
+
+                                                <div v-for="item in data.sectores" :key="item.id"
+                                                    class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-700/10 mr-2">
+                                                    <Icons class="h-5 w-5 mr-1" name="badge-check" /> {{ item.name
+                                                    }}
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
