@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/competencia/import', [CompetenciaController::class, 'import'])->name('competencia.import');
     Route::post('/competencia/importfile', [CompetenciaController::class, 'importfile'])->name('competencia.importfile');   
     Route::post('/competencia/importfilerelated', [CompetenciaController::class, 'importfilerelated'])->name('competencia.importfilerelated'); 
+    Route::get('/competencia/autorelacionar', [CompetenciaController::class, 'autorelacionar'])->name('competencia.autorelacionar');   
     
     //Afirmaciones
     Route::get('/afirmation', [AfirmationController::class, 'index'])->name('afirmation');

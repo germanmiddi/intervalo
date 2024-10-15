@@ -48,7 +48,7 @@
                                     <Icons v-if="a.has_self_relation" name="badge-check" class="w-6 h-6 text-green-700" />
                                     <Icons v-else name="x" class="w-6 h-6 text-red-700" />
                                     <p class="mb-2 pl-1 font-semibold" :class="a.has_self_relation ? 'text-green-700' : 'text-red-700'"> {{ a.competencia }} - <span
-                                        class="text-xs font-normal"> Afirmaciones: {{ a.afirmations }}</span></p>
+                                        class="text-xs font-normal"> Afirmaciones: {{ a.afirmations }} - <strong>"la compentecia no se encuentra autorelacionada"</strong></span></p>
                                 </div>
                                 <div class="flex flex-wrap items-center">
                                     <span v-for="rel in a.related" :key="rel"
@@ -161,7 +161,7 @@ export default {
             // this.prevpage = this.afirmaciones.prev_page_url
             console.log(this.competencias)
 
-        },
+        }
 
     },
     created() {

@@ -199,10 +199,10 @@
                         <tr v-for="item in tests.data" :key="item.id" class="hover">
 
                             <td class="text-center" v-if="item.person">
-                                {{ item.test.person.name }} - {{ item.test.person.lastname }} <br> {{ item.test.person.email }}
+                                {{ item.test?.person?.name ?? '' }} - {{ item.test?.person?.lastname ?? '' }} <br> {{ item.test?.person?.email  ?? ''}}
                             </td>
                             <td class="text-center" v-else>
-                                {{ item.test.user.name }}
+                                {{ item.test?.user?.name ?? '-' }}
                             </td>
                             <td class="text-center">{{ item.test.person ? 'Externo' : 'Usuario' }}</td>
                             <td class="text-center">{{ item.competencia_related?.competencia?.competencia }}</td>

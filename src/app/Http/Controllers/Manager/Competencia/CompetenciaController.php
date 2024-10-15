@@ -25,56 +25,6 @@ class CompetenciaController extends Controller
 
     }
 
-    // public function list()
-    // {
-    //     $length = request('length');
-    //     $result = Competencia::query()->with('competencias_relate');
-        
-    //     if(request('search')){
-    //         $result->where('competencia','LIKE', '%' . request('search') . '%' );
-    //     }
-
-    //     $result->load('competencias_relate.competencia');
-
-    //     return $result->paginate($length)
-    //                     ->withQueryString()
-    //                     ->through(function ($c) {
-    //                         $competenciasRelacionadas = $c->competencias_relate->pluck('competencia.competencia')->unique()->toArray();
-
-    //                         return [
-    //                             'id' => $c->id,
-    //                             'competencia' => $c->competencia,
-    //                             'definicion' => substr($c->definicion, 0, 50) . '...',
-    //                             'comportamiento' => $c->comportamiento,
-    //                             'related' => $competenciasRelacionadas,
-    //                         ];
-    //                     });                        
-    // }
-
-    // public function list()
-    // {
-    //     $length = request('length');
-        
-    //     $result = Competencia::query()->with('competencias_relate')->with(['competencias_relate.competencia_relate']);
-        
-    //     if (request('search')) {
-    //         $result->where('competencia', 'LIKE', '%' . request('search') . '%');
-    //     }
-    
-    //     return $result->paginate($length)
-    //         ->withQueryString()
-    //         ->through(function ($c) {
-    //             $competenciasRelacionadas = $c->competencias_relate->pluck('competencia_relate.competencia')->unique()->toArray();
-
-    //             return [
-    //                 'id' => $c->id,
-    //                 'competencia' => $c->competencia,
-    //                 'related' => $competenciasRelacionadas,
-    //             ];
-    //         });
-    // }
-    
-
     public function list()
     {
     $length = request('length');
@@ -303,6 +253,28 @@ class CompetenciaController extends Controller
             return Redirect::back()->with(['toast' => ['message' => 'Debe cargar un archivo', 'status' => '203']]);
         }
         
+    }
+
+    public function autorelacionar()
+    {
+        try {
+            $competencias = Competencia::all();
+            foreach ($competencias as $competencia) {
+                if (!CompetenciaRelated::where('competencia_id', $competencia->id)->where('relate_id', $competencia->id)->exists()) {
+                    CompetenciaRelated::create(
+                        [
+                            'competencia_id' => $competencia->id,
+                            'relate_id' => $competencia->id,
+                            'feedback_approve' => '',
+                            'feedback_disapprove' => ''
+                        ] 
+                    );
+                }
+            }
+            return response()->json(['message' => 'Competencias autorelacionadas correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error al momento de autorelacionar las competencias', 'error' => $th->getMessage()], 500);
+        }
     }
 
 }
