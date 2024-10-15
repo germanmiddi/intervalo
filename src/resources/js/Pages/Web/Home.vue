@@ -215,7 +215,6 @@ export default {
       this.showResult = true
     },
     selectCompetencia(id) {
-      console.log(id);
       if (!this.compselected.includes(id)) {
         this.compselected.push(id);
         console.log(this.compselected);

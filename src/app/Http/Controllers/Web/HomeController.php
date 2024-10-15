@@ -69,6 +69,7 @@ class HomeController extends Controller
                                 ->orWhere('date_finish', '>=', Carbon::now());
                         })->with('competencias')
                     ->get(); //companies_users
+
                     $companyId = Auth::user()->companies[0]->id;
 
                     $users = User::whereIn('id', function ($query) use ($companyId) {

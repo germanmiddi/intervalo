@@ -82,22 +82,33 @@
 <script>
 export default {
     props: {
-        diagnostico: Object,
-        users: Object
+        diagnostico: Object
     },
     data() {
         return {
-            form: {}
+            form: {},
+            users: {}
         };
     },
     methods: {
         storeDiagnostico() {
             this.$emit("storeDiagnostico360", this.form)
+        },
+        async getUsers(){
+            let rt = route('diagnostico.users',  this.diagnostico.id);
+            await axios.get(rt)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.users = response.data.data
+                    }
+                })
         }
     },
     created(){
         this.form.diagnostico_id = this.diagnostico.id
         this.form.user_id = null
+
+        this.getUsers()
     }
 };
 </script>

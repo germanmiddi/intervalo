@@ -12,6 +12,7 @@ use App\Models\CompetenciaRelated;
 use App\Models\Diagnostico;
 use App\Models\DiagnosticoTest;
 use App\Models\TestType;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -200,6 +201,19 @@ class TestController extends Controller
             DB::rollBack();
             return response()->json(['message'=>'Se ha producido un error'],500);
         }
+    }
+
+    public function usersByDiagnostico($id){
+        $users =  User::whereIn('id', function($query) use($id){
+            $query->select('users.id')
+                  ->from('diagnosticos')
+                  ->join('diagnostico_sector', 'diagnostico_sector.diagnostico_id', '=', 'diagnosticos.id')
+                  ->join('sectores', 'sectores.id', '=', 'diagnostico_sector.sector_id')
+                  ->join('users', 'users.sector_id', '=', 'sectores.id')
+                  ->where('diagnosticos.id', $id);
+        })->distinct()->get();
+
+        return response()->json(['message'=>'Se han obtenido los usuarios', 'data' => $users],200);
     }
 
 }

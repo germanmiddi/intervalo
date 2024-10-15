@@ -44,6 +44,7 @@ use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 
 Route::get('/test/downloadexcel', [TestManagerController::class, 'download_excel'])->name('test.downloadexcel');
 Route::post('/test', [TestController::class, 'store'])->name('test.store');
+Route::get('/diagnostico/{id}/users', [TestController::class, 'usersByDiagnostico'])->name('diagnostico.users');
 
     //Web
 Route::get('/', [HomeController::class, 'index'])->name('home');    

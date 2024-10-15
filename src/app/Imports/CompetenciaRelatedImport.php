@@ -25,9 +25,11 @@ class CompetenciaRelatedImport implements ToModel,WithHeadingRow
     public function model(array $row)
     {      
         ++$this->rows;
-        //$id = Competencia::where('competencia', $row['competencia'])->first()->id;
         $id_competencia = $this->comparar_competencia($row['competencia']);
         $id_competencia_relacionada = $this->comparar_competencia($row['competencia_relacionada']);
+
+        // Crea una relacion consigo misma en caso de no existir.
+        $this->competencia_autorelacionada($row);
 
         if ($id_competencia != 0 && $id_competencia_relacionada != 0) {
             try {
@@ -44,8 +46,7 @@ class CompetenciaRelatedImport implements ToModel,WithHeadingRow
                     $data
                 );
             } catch (\Throwable $th) {
-                //throw $th;
-                dd($th);
+                throw $th;
             }
                 
 
@@ -96,6 +97,20 @@ class CompetenciaRelatedImport implements ToModel,WithHeadingRow
         }
         return 0;
     }
+
+    function competencia_autorelacionada($competencia){
+        CompetenciaRelated::firstOrCreate(
+            [
+                'competencia_id' => $competencia['id_competencia'] , 
+                'relate_id' => $competencia['id_competencia']
+            ],
+            [
+                'feedback_approve' => '',
+                'feedback_disapprove' => ''
+            ]
+        );
+    }
+    
 
     function elimina_acentos($text)
     {
