@@ -42,7 +42,7 @@
                             </div>
                         </div>
                         <div class="grid grid-cols-12 gap-6">
-                            <div class="col-span-12 sm:col-span-2 ">
+                            <div class="col-span-12 sm:col-span-3 ">
                                 <label for="name" class="block text-sm font-medium text-gray-700">Busqueda</label>
                                 <input v-model="filter.search" type="text" name="search" id="search" autocomplete="off"
                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
@@ -68,16 +68,6 @@
                                 </select>
                             </div>
                             <div class="col-span-12 sm:col-span-2 ">
-                                <label for="name" class="block text-sm font-medium text-gray-700">Sector</label>
-                                <select
-                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                    v-model="filter.sector_id">
-                                    <option value="" disabled selected>Seleccione un sector</option>
-                                    <option v-for="item in sectores" :key="item.id" :value="item.id">
-                                        {{ item.name }}</option>
-                                </select>
-                            </div>
-                            <div class="col-span-12 sm:col-span-2 ">
                                 <label for="name" class="block text-sm font-medium text-gray-700">Tipo
                                     Evaluación</label>
                                 <select
@@ -99,6 +89,32 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="grid grid-cols-12 gap-6">
+                            <div class="col-span-12 sm:col-span-2 ">
+                                <label for="name" class="block text-sm font-medium text-gray-700">Empresa</label>
+                                <select
+                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                    v-model="filter.company_id">
+                                    <option value="" disabled selected>Seleccione una empresa</option>
+                                    <option v-for="item in companies" :key="item.id" :value="item.id">
+                                        {{ item.description }}</option>
+                                </select>
+                            </div>
+                            <div class="col-span-12 sm:col-span-2 ">
+                                <label for="name" class="block text-sm font-medium text-gray-700">Sector</label>
+                                <select
+                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                    v-model="filter.sector_id">
+                                    <option value="" disabled selected>Seleccione un sector</option>
+                                    <option v-for="item in sectores" :key="item.id" :value="item.id">
+                                        {{ item.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
                     </div>
                 </div>
             </div>
@@ -291,6 +307,7 @@ export default {
         status: Object,
         test_types: Object,
         sectores: Object,
+        companies: Object,
     },
     components: {
         App,
@@ -345,6 +362,10 @@ export default {
 
             if (this.filter.status_id) {
                 filter += `&status_id=${this.filter.status_id}`
+            }
+
+            if (this.filter.company_id) {
+                filter += `&company_id=${this.filter.company_id}`
             }
 
             const get = `${route('test.listTest')}?${filter}`

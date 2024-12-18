@@ -113,6 +113,12 @@ class TestController extends Controller
             });
         }
 
+        if (request('company_id')) {
+            $result->whereHas('user.companies', function($query) {
+                $query->where('companie_id', request('company_id'));
+            });
+        }
+
         return $result->orderBy($sort_by, $sort_order)
                       ->paginate($length)
                       ->withQueryString();
