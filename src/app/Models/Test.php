@@ -20,6 +20,17 @@ class Test extends Model
         'type_id',
     ];
 
+
+    protected $with = ['person', 
+                       'user', 
+                       'status', 
+                       'type', 
+                       'test_detail', 
+                       'diagnostico', 
+                       'diagnostico.diagnostico', 
+                       'test_detail.competencia_related.competencia'];
+
+    protected $appends = ['avg_score'];
     // Valor por defecto.
     protected static function boot()
     {
@@ -63,4 +74,13 @@ class Test extends Model
     {
         return $this->hasOne(DiagnosticoTest::class);
     }
+
+    public function getAvgScoreAttribute(){
+        $totalScore = $this->test_detail->sum('score');
+        $count = $this->test_detail->count();
+
+        return $count > 0 ? round($totalScore / $count, 0) : 0;
+    }
+
+
 }

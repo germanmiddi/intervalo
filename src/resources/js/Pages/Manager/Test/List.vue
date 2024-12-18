@@ -1,16 +1,18 @@
 <template>
     <App>
         <!-- CONTENT -->
-        <div class="flex-grow flex flex-col">
-            <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-10 text-4xl font-bold">Resultados</h1>
-                <div>
-                    <a class="btn btn-primary btn-sm mr-2" href="test/downloadexcel" _blank>Descargar Excel</a>
+        <div class="flex-grow flex flex-col overflow-hidden">
+            <div class="w-full bg-white">
+                <div class="max-w-6xl mx-auto">
+                    <div class="flex justify-between items-center px-2">
+                        <h1 class="my-10 text-4xl font-bold">Resultados</h1>
+                        <a class="btn btn-primary btn-sm mr-2" href="test/downloadexcel" _blank>Descargar Excel</a>
+                    </div>
                 </div>
             </div>
 
             <hr>
-            <div class="w-11/12 mx-auto mt-4">
+            <div class="max-w-6xl mx-auto mt-4">
                 <div class="shadow sm:rounded-md sm:overflow-hidden">
                     <div class="bg-white py-6 px-4 space-y-6 sm:p-6">
                         <div class="flex items-center justify-between flex-wrap sm:flex-nowrap ">
@@ -43,7 +45,6 @@
                             <div class="col-span-12 sm:col-span-2 ">
                                 <label for="name" class="block text-sm font-medium text-gray-700">Busqueda</label>
                                 <input v-model="filter.search" type="text" name="search" id="search" autocomplete="off"
-                                    placeholder="Buscar."
                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                             </div>
                             <div class="col-span-12 sm:col-span-2 ">
@@ -102,24 +103,36 @@
                 </div>
             </div>
 
-            <div class="w-11/12 mx-auto mt-4">
-                <table class="table w-full">
+            <div class="max-w-6xl mx-auto mt-4 overflow-x-auto">
+                <table class="table w-full table-compact">
                     <!-- head -->
                     <thead>
                         <tr>
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
+                                @click="sort_by = 'test.fecha', sortTest()">
+                                <div class="flex items-center justify-center">
+                                    Fecha
+                                    <Icons v-if="sort_by == 'test.fecha' && sort_order == 'ASC'" name="bars-up"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else-if="sort_by == 'test.fecha' && sort_order == 'DESC'" name="bars-down"
+                                        class="h-4 w-4 ml-2" />
+                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
+                                </div>
+                            </th>
+
                             <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-center justify-center">
                                     Nombre
                                 </div>
                             </th>
+
                             <th class="w-1/11 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-center justify-center">
                                     Tipo Usuario
                                 </div>
                             </th>
 
-                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
-                                @click="sort_by = 'competencias.competencia', sortTest()">
+                            <th class="!w-1 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-center justify-center">
                                     Competencia
                                     <Icons v-if="sort_by == 'competencias.competencia' && sort_order == 'ASC'"
@@ -140,18 +153,6 @@
                                     <Icons
                                         v-else-if="sort_by == 'diagnosticos.name' && sort_order == 'DESC'"
                                         name="bars-down" class="h-4 w-4 ml-2" />
-                                    <Icons v-else name="bars" class="h-4 w-4 ml-2" />
-                                </div>
-                            </th>
-
-                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
-                                @click="sort_by = 'test.fecha', sortTest()">
-                                <div class="flex items-center justify-center">
-                                    Fecha
-                                    <Icons v-if="sort_by == 'test.fecha' && sort_order == 'ASC'" name="bars-up"
-                                        class="h-4 w-4 ml-2" />
-                                    <Icons v-else-if="sort_by == 'test.fecha' && sort_order == 'DESC'" name="bars-down"
-                                        class="h-4 w-4 ml-2" />
                                     <Icons v-else name="bars" class="h-4 w-4 ml-2" />
                                 </div>
                             </th>
@@ -191,49 +192,81 @@
                                     <Icons v-else name="bars" class="h-4 w-4 ml-2" />
                                 </div>
                             </th>
-                            <th class="w-1/11 px-6 py-4 text-center">Acciones</th>
+                            <!-- <th class="w-1/11 px-6 py-4 text-center">Acciones</th> -->
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-sm">
                         <!-- row 1 -->
                         <tr v-for="item in tests.data" :key="item.id" class="hover">
 
-                            <td class="text-center" v-if="item.person">
-                                {{ item.test?.person?.name ?? '' }} - {{ item.test?.person?.lastname ?? '' }} <br> {{ item.test?.person?.email  ?? ''}}
+                            <td class="text-center text-sm">{{ formatDate(item.fecha) ?? '-' }}</td>
+
+                            <td class="text-center text-sm" v-if="item.person">
+                                {{ item.person?.name ?? '' }} - {{ item.person?.lastname ?? '' }} <br> {{ item.person?.email  ?? ''}}
                             </td>
-                            <td class="text-center" v-else>
-                                {{ item.test?.user?.name ?? '-' }}
+
+                            <td class="text-center text-sm" v-else>
+                                {{ item.user?.name ?? '-' }}
                             </td>
-                            <td class="text-center">{{ item.test.person ? 'Externo' : 'Usuario' }}</td>
-                            <td class="text-center">{{ item.competencia_related?.competencia?.competencia }}</td>
-                            <td class="text-center">{{ item.test?.diagnostico?.diagnostico?.name ?? '-'}}</td>
-                            <td class="text-center">{{ item.test?.fecha ?? '-' }}</td>
-                            <td class="text-center">{{ item.test?.status?.description ?? '-' }}</td>
-                            <td class="text-center">{{ item.test?.type?.description ?? '-' }}</td>
-                            <td class="text-center">{{ item.score }} %</td>
-                            <td class="text-center">
-                                <!-- <a class="link">Detalle</a> -->
-                                -
+
+                            <td class="text-left text-sm">
+                                <span v-if="item.person">Externo</span>
+                                <div v-else>
+                                    <span class="font-bold">{{ item.user?.companies[0]?.description ?? '' }}</span>
+                                    <br>
+                                    <span class="text-gray-500">{{ item.user?.sector?.name ?? '' }}</span>
+                                </div>
+
                             </td>
+
+                            <td class="text-left break-words">
+                                <div v-for="item in item.test_detail" :key="item.id">
+                                    <span v-if="item.competencia_related?.competencia?.competencia && item.competencia_related?.competencia?.competencia.length > 20">
+                                        {{ item.competencia_related?.competencia?.competencia.substring(0, 20)}}...
+                                    </span>
+                                    <span v-else>
+                                        {{ item.competencia_related?.competencia?.competencia ?? '-' }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td class="text-center text-sm">{{ item.diagnostico?.diagnostico?.name ?? '-'}}</td>
+                            
+                            <td class="text-center text-sm">
+                                <span class="bg-green-200 text-green-800 px-2 py-1 rounded-md" v-if="item.status?.description == 'FINISHED'">FINALIZADO</span>
+                                <span class="bg-red-200 text-red-800 px-2 py-1 rounded-md" v-else-if="item.status?.description == 'ABANDONED'">ABANDONADO</span>
+                            </td>
+
+                            <td class="text-center text-sm">{{ item.type?.description ?? '-' }}</td>
+
+                            <td class="text-center text-sm">{{ item.avg_score }} %</td>
+
+                            <!-- <td class="text-center ">
+                                <a class="link">Detalle</a> -
+                            </td> -->
                         </tr>
                     </tbody>
                 </table>
             </div>
-
-            <div class="w-11/12 mx-auto my-5 flex justify-between items-center">
-                <div>
-                    Mostrando: {{ this.tests.from }} a {{ this.tests.to }} - Entradas encontradas:
-                    {{ this.tests.total }}
-                </div>
-                <div class="flex flex-wrap -mb-1">
-                    <div v-for="link in tests.links" :key="link.id">
-                        <div v-if="link.url === null"
-                            class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
-                            v-html="link.label"> </div>
-                        <div v-else
-                            class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
-                            :class="{ 'bg-blue-500': link.active }, { 'text-white': link.active }"
-                            @click="getTestsPaginate(link.url)" v-html="link.label"> </div>
+            <div class="w-full text-sm mb-20">
+                <div class="max-w-6xl mx-auto bg-white px-2 pt-20 pb-10">
+                    <div class="flex justify-between items-center">
+                    <div>
+                        Mostrando: {{ this.tests.from }} a {{ this.tests.to }} - Entradas encontradas:
+                        {{ this.tests.total }}
+                    </div>
+                    <div class="flex flex-wrap -mb-1">
+                        <div v-for="link in tests.links" :key="link.id">
+                            <div v-if="link.url === null"
+                                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 rounded-md"
+                                v-html="link.label"> </div>
+                            <div v-else
+                                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
+                                :class="{ 'border border-blue-500': link.active }, 
+                                        { 'text-blue-800': link.active }"
+                                @click="getTestsPaginate(link.url)" v-html="link.label"> </div>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -278,6 +311,12 @@ export default {
         }
     },
     methods: {
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;              date.getMonth() + 1
+
+            return formattedDate;
+        },
         async getTests() {
 
             let filter = `&length=${this.length}`
@@ -308,7 +347,7 @@ export default {
                 filter += `&status_id=${this.filter.status_id}`
             }
 
-            const get = `${route('test.list')}?${filter}`
+            const get = `${route('test.listTest')}?${filter}`
 
             const response = await fetch(get, { method: 'GET' })
             this.tests = {}

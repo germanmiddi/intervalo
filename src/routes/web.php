@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     // TEST
     Route::get('/test', [TestManagerController::class, 'index'])->name('test');
     Route::get('/test/list', [TestManagerController::class, 'list'])->name('test.list');
+    Route::get('/test/listTest', [TestManagerController::class, 'listTest'])->name('test.listTest');
     Route::post('/testUser', [TestController::class, 'storeUser'])->name('test.storeUser');
 
     // TEST - DIAGNOSTICOS

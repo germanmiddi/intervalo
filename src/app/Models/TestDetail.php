@@ -28,4 +28,8 @@ class TestDetail extends Model
 
         return $this->belongsTo(CompetenciaRelated::class, 'competencia_related_id');
     }
+
+    public function getAvgScoreAttribute(){
+        return $this->score / $this->test->test_detail->count();
+    }
 }

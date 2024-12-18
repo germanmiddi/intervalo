@@ -2,6 +2,7 @@
     <div>
         <div class="w-5/5 mx-auto mt-10 mb-20">
             <div class="my-10 text-4xl">Diagnostico de Competencias</div>
+            <button @click="fillQuests" class="btn btn-primary">Randomizar</button>
             <div class="flex px-6">
                 <div class="w-3/5"></div>
                 <div class="w-2/5 flex justify-between">
@@ -70,6 +71,12 @@ export default {
         }
     },
     methods: {
+        fillQuests() {
+            this.quests = this.afirmations.map(function (ele) {
+                let value = [10, 25, 50, 75, 100]
+                return { ...ele, value: value[Math.floor(Math.random() * value.length)], empty: 'false' };
+            })
+        },
         processQuiz() {
             // Formateo los datos antes de enviar..
             this.quests = this.quests.map(function (ele) {

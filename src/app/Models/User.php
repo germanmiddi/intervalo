@@ -60,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    protected $with = ['companies','roles','sector'];
     public function companies()
     {
         return $this->belongsToMany(Companie::class, 'companies_users');

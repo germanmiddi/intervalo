@@ -90,7 +90,13 @@
                       <span class="nav-label font-medium text-sm pt-1">Ver Sitio</span>
                 </nav-link>   
               </li>  
-              
+              <hr>
+              <li class="nav-item">
+                <nav-link @click="logout" >
+                  <ArrowRightStartOnRectangleIcon class="w-6 h-6 text-red-400 mr-5" />
+                      <span class="nav-label font-medium text-sm pt-1">Cerrar Sesión</span>
+                </nav-link>   
+              </li>  
               <!-- <li class="nav-item">
                 <nav-link :href="route('order.list')" 
                       :active="route().current('libraries.list')">
@@ -126,6 +132,7 @@
 import { Link } from '@inertiajs/inertia-vue3';
 import NavLink from '@/Layouts/Sidebar/NavLink.vue'
 import Icons from '@/Layouts/Components/Icons.vue'
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/solid'
 
 
 export default {
@@ -134,14 +141,18 @@ export default {
     components: {
         NavLink,
         Link,
-        Icons
+        Icons,
+        ArrowRightStartOnRectangleIcon
+
     },
     data(){
       return{
       }
     },
     methods: {
-      
+      logout() {
+        this.$inertia.post(route('logout'));
+      },
     },
     mounted(){
     }

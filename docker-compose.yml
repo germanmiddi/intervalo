@@ -41,7 +41,7 @@ services:
   - ${WORK_DIR_SRC}:/usr/share/nginx/html
   - ${WORK_DIR}:/etc/nginx/conf.d
   ports:
-  -  "8005:80"
+  -  "8085:80"
   networks:
   - intervalo
 
