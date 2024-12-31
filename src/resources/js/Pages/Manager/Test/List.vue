@@ -23,7 +23,7 @@
 
                                 <div>
                                     <button v-if="Object.keys(this.filter).length"
-                                        class="text-xs font-medium text-gray-500 hover:text-gray-700 mr-2"
+                                        class="btn  btn-outline btn-sm mr-4"
                                         @click="clearFilter">Limpiar Filtro</button>
                                     <button type="button" class="btn btn-primary btn-outline btn-sm mr-4"
                                         @click="getTests()">Aplicar Filtro</button>
@@ -111,12 +111,17 @@
                                 </select>
                             </div>
                         </div>
-
-
-
-
                     </div>
                 </div>
+                <h6 class="text-left text-sm text-gray-600 mt-6 px-4 flex items-center">
+                    Use el scroll horizontal para ver todas las columnas 
+                    <div class="w-4 text-gray-500 ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+
+                    </div>
+                </h6>
             </div>
 
             <div class="max-w-6xl mx-auto mt-4 overflow-x-auto">
@@ -125,26 +130,37 @@
                     <thead>
                         <tr>
                             <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100"
-                                @click="sort_by = 'test.fecha', sortTest()">
-                                <div class="flex items-center justify-center">
+                                @click="sort_by = 'test.fecha', sortTest()">Fecha
+                                <!-- <div class="flex items-center justify-center">
                                     Fecha
                                     <Icons v-if="sort_by == 'test.fecha' && sort_order == 'ASC'" name="bars-up"
                                         class="h-4 w-4 ml-2" />
                                     <Icons v-else-if="sort_by == 'test.fecha' && sort_order == 'DESC'" name="bars-down"
                                         class="h-4 w-4 ml-2" />
                                     <Icons v-else name="bars" class="h-4 w-4 ml-2" />
-                                </div>
+                                </div> -->
                             </th>
 
                             <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100">
-                                <div class="flex items-center justify-center">
-                                    Nombre
+                                <div class="flex items-left justify-left">
+                                    Autor
+                                </div>
+                            </th>
+                            <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100">
+                                <div class="flex items-left justify-left">
+                                    Evaluado
                                 </div>
                             </th>
 
                             <th class="w-1/11 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-center justify-center">
-                                    Tipo Usuario
+                                    Empresa
+                                </div>
+                            </th>
+
+                            <th class="w-1/11 px-6 py-4 text-center hover:bg-blue-100">
+                                <div class="flex items-center justify-center">
+                                    Sector
                                 </div>
                             </th>
 
@@ -211,7 +227,7 @@
                             <!-- <th class="w-1/11 px-6 py-4 text-center">Acciones</th> -->
                         </tr>
                     </thead>
-                    <tbody class="text-sm">
+                    <tbody class="text-small">
                         <!-- row 1 -->
                         <tr v-for="item in tests.data" :key="item.id" class="hover">
 
@@ -225,17 +241,18 @@
                                 {{ item.user?.name ?? '-' }}
                             </td>
 
-                            <td class="text-left text-sm">
-                                <span v-if="item.person">Externo</span>
-                                <div v-else>
-                                    <span class="font-bold">{{ item.user?.companies[0]?.description ?? '' }}</span>
-                                    <br>
-                                    <span class="text-gray-500">{{ item.user?.sector?.name ?? '' }}</span>
-                                </div>
-
+                            <td class="text-center text-sm">
+                                {{ item.user?.name ?? '-' }}
                             </td>
 
-                            <td class="text-left break-words">
+                            <td class="text-center text-sm">
+                                {{ item.user?.companies[0]?.description ?? '' }}</td>
+
+                            <td class="text-center text-sm">
+                                {{ item.user?.sector?.name ?? '' }}
+                            </td>
+
+                            <td class="text-left break-words pl-5">
                                 <div v-for="item in item.test_detail" :key="item.id">
                                     <span v-if="item.competencia_related?.competencia?.competencia && item.competencia_related?.competencia?.competencia.length > 20">
                                         {{ item.competencia_related?.competencia?.competencia.substring(0, 20)}}...
@@ -249,8 +266,8 @@
                             <td class="text-center text-sm">{{ item.diagnostico?.diagnostico?.name ?? '-'}}</td>
                             
                             <td class="text-center text-sm">
-                                <span class="bg-green-200 text-green-800 px-2 py-1 rounded-md" v-if="item.status?.description == 'FINISHED'">FINALIZADO</span>
-                                <span class="bg-red-200 text-red-800 px-2 py-1 rounded-md" v-else-if="item.status?.description == 'ABANDONED'">ABANDONADO</span>
+                                <span class="bg-green-200 text-green-800 px-2 py-1 rounded-md text-xs" v-if="item.status?.description == 'FINISHED'">FINALIZADO</span>
+                                <span class="bg-red-200 text-red-800 px-2 py-1 rounded-md text-xs" v-else-if="item.status?.description == 'ABANDONED'">ABANDONADO</span>
                             </td>
 
                             <td class="text-center text-sm">{{ item.type?.description ?? '-' }}</td>
@@ -403,6 +420,11 @@ export default {
 </script>
 
 <style>
+
+.text-small *{
+    font-size: 12px;
+}
+
 .dropdown:hover .dropdown-menu {
     display: block;
     z-index: 999;
@@ -410,5 +432,9 @@ export default {
 
 ul.dropdown-menu {
     right: 0px;
+}
+
+.table th:first-child {
+    position:relative;
 }
 </style>
