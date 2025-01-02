@@ -23,30 +23,35 @@
           <hr>
       </div>
 
-
-      <div v-if="start" class="flex justify-center mt-4">
-        <div class="flex justify-end">
-          <a @click="registerUser($page.props.user)" class="btn btn-primary space-x-2">
-            <span>Comenzar</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
+      <div v-if="show_competencias">
+        <div v-if="start" class="flex justify-center mt-4">
+          <div class="flex justify-end">
+            <a @click="registerUser($page.props.user)" class="btn btn-primary space-x-2">
+              <span>Comenzar</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
         </div>
-      </div>
-
-      <div v-if="start" class="flex flex-wrap justify-around">
-        <CompetenciaItem @sendItem="sendItem" v-for="(c, idx) in competencies"
+      
+        <div v-if="start" class="flex flex-wrap justify-around">
+          <CompetenciaItem @sendItem="sendItem" v-for="(c, idx) in competencies"
           class="lg:w-[30%] md:w-[48%] sm:w-[100%] my-5 h-80" :key="c.id" :item="c" :index="idx"
           @click="selectCompetencia(c.id)" />
+        </div>
       </div>
-
-      <RegisterItem v-if="register" @register="storePerson"
-        @return_start="register = !register, start = !start, this.compselected = []">
+      
+      <RegisterItem v-if="register" 
+                    @register="storePerson"
+                    @return_start="register = !register, start = !start, this.compselected = []">
       </RegisterItem>
 
-      <Register360Item v-if="register360" :diagnostico="this.diagnostico" :users="users" @storeDiagnostico360="storeDiagnostico">
+      <Register360Item v-if="register360" 
+                       :diagnostico="this.diagnostico" 
+                       :users="users" 
+                       @storeDiagnostico360="storeDiagnostico">
       </Register360Item>
 
       <QuizItem v-if="quiz" :afirmations="afirmations" @processQuiz="processQuiz"
@@ -75,7 +80,8 @@ export default {
   props: {
     competencias: Object,
     diagnosticos: Object,
-    users: Object
+    users: Object,
+    show_competencias: Boolean
   },
   components: {
     Head,

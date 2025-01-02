@@ -146,6 +146,7 @@
                                     Autor
                                 </div>
                             </th>
+
                             <th class="w-3/11 px-6 py-4 text-center hover:bg-blue-100">
                                 <div class="flex items-left justify-left">
                                     Evaluado
@@ -242,7 +243,7 @@
                             </td>
 
                             <td class="text-center text-sm">
-                                {{ item.user?.name ?? '-' }}
+                                {{ item.diagnostico?.user.name ?? '-' }}
                             </td>
 
                             <td class="text-center text-sm">

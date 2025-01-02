@@ -173,7 +173,7 @@
                                         <div class="flex-1 flex flex-col justify-between">
                                             <div class="px-4 divide-y divide-gray-200 sm:px-6">
 
-                                                <div class="space-y-2 pt-2 pb-5">
+                                                <div class="space-y-5 pt-2 pb-5">
                                                     <div>
                                                         <label for="time"
                                                             class="block text-xl font-medium text-gray-700 "><b>Empresa: {{ form.description }}</b></label>
@@ -186,8 +186,7 @@
                                                     
                                                     <hr>
                                                     <div>
-                                                        <label for="time"
-                                                            class="block text-xl font-medium text-gray-800">Datos de Contacto</label>
+                                                        <label class="block text-xl font-medium text-gray-800">Datos de Contacto</label>
                                                     </div>
 
                                                     <div class="flex text-sm text-gray-700">
@@ -201,16 +200,15 @@
                                                     </div>
 
                                                     <div class="flex text-sm text-gray-700">
-                                                        <label class="text-bold w-24 font-bold">Telefono:</label>
+                                                        <label class="text-bold w-24 font-bold">Teléfono:</label>
                                                         <span>{{  form.contact_phone ?? '-'  }}</span>
                                                     </div>
 
-                                                    <hr>
+                                                    <hr class="my-6">
                                                     <div>
-                                                        <label for="time"
-                                                            class="block text-xl font-medium text-gray-800">Competencias</label>
+                                                        <label class="block text-xl font-medium text-gray-800">Competencias</label>
                                                     </div>
-                                                    <hr>
+                                                    
 
                                                     <div v-for="c in this.form.competencias" :key="c.id" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
                                                         {{ c.competencia}}

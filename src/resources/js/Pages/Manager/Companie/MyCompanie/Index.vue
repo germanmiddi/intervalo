@@ -31,7 +31,7 @@
                                 <label for="time"
                                     class="block text-sm font-medium text-gray-700 "><b>Email: </b>{{ this.companie.contact_email ?? '-' }}</label>
                                 <label for="time"
-                                    class="block text-sm font-medium text-gray-700 "><b>Telefono: </b>{{ this.companie.contact_phone ?? '-' }}</label>
+                                    class="block text-sm font-medium text-gray-700 "><b>Teléfono: </b>{{ this.companie.contact_phone ?? '-' }}</label>
                             </div>
                         </div>
                     </div>

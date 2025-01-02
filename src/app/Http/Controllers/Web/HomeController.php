@@ -33,8 +33,11 @@ class HomeController extends Controller
                         })->with('competencias')
                     ->get();
                 $users = User::all();
+                $show_competencias = true;
             }else{
                 $companie = Companie::where('id', Auth::user()->companies[0]->id)->first();
+                $show_competencias = $companie->show_competencias;
+
                 $competencias = Competencia::whereIn('id', $companie->competencias->pluck('id')->toArray())->get();
                 if(Auth::user()->roles[0]->id == 2){
                     $diagnosticos = Diagnostico::where('company_id', Auth::user()->companies[0]->id)
@@ -80,9 +83,9 @@ class HomeController extends Controller
                     })->get();
                 }
             }
-            return  Inertia::render('Web/Home',['competencias' => $competencias, 'diagnosticos' => $diagnosticos, 'users' => $users ]);
+            return  Inertia::render('Web/Home',['competencias' => $competencias, 'diagnosticos' => $diagnosticos, 'users' => $users, 'show_competencias' => $show_competencias ]);
         }else{
-            return  Inertia::render('Web/Home',['competencias' => Competencia::all() ]);
+            return  Inertia::render('Web/Home',['competencias' => Competencia::all(), 'show_competencias' => true ]);
         }
     }
 

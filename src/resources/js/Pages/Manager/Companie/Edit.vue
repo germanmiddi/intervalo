@@ -3,14 +3,16 @@
         <Toast :toast="this.message" :type="this.labelType" @clear="clearMessage"></Toast>
         <!-- CONTENT -->
         <div class="flex-grow flex flex-col">
-            <div class="w-11/12 mx-auto flex justify-between items-center">
-                <h1 class="my-5 text-4xl font-bold">Editar Empresa</h1>
-                <div>
-                    <button button class="btn btn-primary btn-sm mr-2" @click.prevent="submit">Guardar</button>
-                    <a class="btn btn-primary btn-sm" :href="route('companie')">Volver</a>
+            <div class="bg-white border-b border-gray-200">
+                <div class="w-11/12 mx-auto flex justify-between items-center">
+                    <h1 class="my-5 text-4xl font-bold">Editar Empresa</h1>
+                    <div>
+                        <button button class="btn btn-primary btn-sm mr-2" @click.prevent="submit">Guardar</button>
+                        <a class="btn btn-primary btn-sm" :href="route('companie')">Volver</a>
+                    </div>
                 </div>
             </div>
-            <hr>
+
 
             <div class="w-11/12 mx-auto mt-4">
                 <div class="card w-full bg-base-100 shadow-xl">
@@ -49,7 +51,7 @@
 
                             <div class="mt-4 ">
                                 <label for="contact_phone"
-                                    class="block text-sm font-semibold text-gray-700">Telefono</label>
+                                    class="block text-sm font-semibold text-gray-700">Teléfono</label>
                                 <input v-model="form.contact_phone" type="text" name="contact_phone" id="contact_phone"
                                     class="mt-1 input input-bordered w-full" />
                             </div>
@@ -59,9 +61,9 @@
 
                 <div class="card w-full bg-base-100 shadow-xl mt-4 mb-4">
                     <div class="card-body">
-                        <h2 class="card-title">Competencias Relacionadas</h2>
-                        <div class="w-full mx-auto flex justify-between items-center">
-                            <div class="mt-4">
+                        <h2 class="card-title mb-3">Competencias</h2>
+                        <div class="w-full mx-auto flex items-center">
+                            <div class="mr-3">
                                 <label for="category"
                                     class="block text-sm font-semibold text-gray-700">Competencia</label>
                                 <select class="select w-full mt-1 input-bordered" v-model="this.competencia_select"
@@ -72,24 +74,33 @@
                                 </select>
                             </div>
                             <div>
-                                <button class="btn btn-primary btn-sm"
+                                <button class="btn btn-primary btn-sm mt-2"
                                     @click.prevent="add_competencias_relacionadas">Agregar</button>
                             </div>
                         </div>
 
-                        <hr>
-                        <div>
-                            <label for="time" class="block text-xl font-medium text-gray-800">Detalle de
-                                Competencias</label>
-                        </div>
-                        <div class="space-y-2 pt-2 pb-5">
+                        <h3 class="block text-xl font-medium text-gray-800 mt-6">Competencias Asignadas</h3>
+
+                        <div class="space-y-4 pt-2 pb-5">
                             <div v-for="cs in this.competencias_select" :key="cs.id"
                                 class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-md font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mr-2">
                                 {{ cs.competencia }} <button @click="remove_competencia_relaciona(cs.id)">
-                                    <Icons name="trash" class="h-6 w-6 ml-2 text-red-500" />
+                                    <Icons name="trash" class="h-6 w-6 ml-2 text-red-400 hover:text-red-600" />
                                 </button>
                             </div>
                         </div>
+
+
+                        <hr class="my-4">
+
+                        <div class="form-control w-6/12">
+                            <label class="label cursor-pointer justify-start">
+                                <input v-model="form.show_competencias" 
+                                type="checkbox" :checked="form.show_competencias" class="checkbox checkbox-primary mr-4" />
+                                <span class="text-lg text-gray-800 ">Mostrar las competencias en el Home</span>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
 
@@ -280,7 +291,7 @@ export default {
         this.form.contact_name = this.companie.contact_name
         this.form.contact_email = this.companie.contact_email
         this.form.contact_phone = this.companie.contact_phone
-
+        this.form.show_competencias = this.companie.show_competencias
     }
 }
 

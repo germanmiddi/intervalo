@@ -47,11 +47,12 @@ class QuizController extends Controller
                 // Busqueda de las competencias relacionadas a la afirmacion.
                 $id = $r['id'];
                 $competencias = Competencia::select('id')
-                ->wherehas('afirmations', function($query) use ($id){
-                                                                $query = $query->where('afirmation_id', $id);
-                                                            })
-                                    ->where('id', '!=', $key) //Levanto solo las competencias distintas a la q estoy sumando
-                                    ->get()->toArray();
+                                            ->wherehas('afirmations', 
+                                                function($query) use ($id){
+                                                    $query = $query->where('afirmation_id', $id);
+                                                })
+                                            ->where('id', '!=', $key) //Levanto solo las competencias distintas a la q estoy sumando
+                                            ->get()->toArray();
                                     
                 // Se Analisis las competencias relacionadas. 
                 foreach ($competencias as $c) {
@@ -110,7 +111,8 @@ class QuizController extends Controller
                 );
                 $capsulas = Competencia::select()->where('id',$r['competencia_id'])->with('capsules')->get()->toArray();
                 foreach ($capsulas[0]['capsules'] as $cap) {
-                    $result[$r['competencia']]['capsulas'][$cap['id']] = $cap['title'];
+                    $result[$r['competencia']]['capsulas'][$cap['id']]['title'] = $cap['title'];
+                    $result[$r['competencia']]['capsulas'][$cap['id']]['url'] = $cap['url'];
                 }
 
                 // Cargar Detalle de competencias relacionadas. 

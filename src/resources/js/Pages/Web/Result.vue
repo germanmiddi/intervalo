@@ -28,8 +28,8 @@
                                     <div class="card-body p-4 grid grid-cols-3 gap-4">
                                         <h2 class="card-title col-span-1">Capsulas Recomendadas:</h2>
                                         <div class="card-actions justify-center col-start-2 col-span-2">
-                                            <div v-for="c in re.capsulas" :key="c.id">
-                                                <div class="badge badge-outline">{{ c }}</div>
+                                            <div v-for="capsula in re.capsulas" :key="capsula.id">
+                                                <div class="badge badge-outline py-5 px-5 hover:bg-blue-500 hover:text-white"><a :href="capsula.url" target="_blank">{{ capsula.title }}</a></div>
                                             </div>
                                         </div>
                                     </div>

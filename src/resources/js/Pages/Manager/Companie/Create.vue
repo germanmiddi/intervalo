@@ -41,7 +41,7 @@
                             </div>
                             
                             <div class="mt-4 ">
-                                <label for="contact_phone" class="block text-sm font-semibold text-gray-700">Telefono</label>
+                                <label for="contact_phone" class="block text-sm font-semibold text-gray-700">Teléfono</label>
                                 <input v-model="form.contact_phone" type="text" name="contact_phone" id="contact_phone"  class="mt-1 input input-bordered w-full" />
                             </div>
                         </div>

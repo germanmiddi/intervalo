@@ -28,9 +28,12 @@ class Test extends Model
                        'test_detail', 
                        'diagnostico', 
                        'diagnostico.diagnostico', 
+                    //    'diagnostico.tests',
+                       'diagnostico.user',
                        'test_detail.competencia_related.competencia'];
 
     protected $appends = ['avg_score'];
+    
     // Valor por defecto.
     protected static function boot()
     {

@@ -116,6 +116,7 @@ class CompanieController extends Controller
                 'contact_name' => $request->contact_name ?? null,
                 'contact_email' => $request->contact_email ?? null,
                 'contact_phone' => $request->contact_phone ?? null,
+                'show_competencias' => $request->show_competencias ?? false,
             ]);
 
             $companie = Companie::find($request->id);

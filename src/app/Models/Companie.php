@@ -18,7 +18,12 @@ class Companie extends Model
         'contact_name',
         'contact_email',
         'contact_phone',
-        'active'
+        'active',
+        'show_competencias'
+    ];
+
+    protected $casts = [
+        'show_competencias' => 'boolean'
     ];
 
     public function scopeActive($query)
